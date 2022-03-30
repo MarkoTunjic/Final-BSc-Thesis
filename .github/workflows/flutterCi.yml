@@ -16,13 +16,13 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: "stable"
-      - run:
+      - run: |
           cd frontend/zavrsni_rad
           flutter pub get
-      - run:
+      - run: |
           cd frontend/zavrsni_rad
           flutter analyze
-      - run:
+      - run: |
           cd frontend/zavrsni_rad
           flutter test
 
