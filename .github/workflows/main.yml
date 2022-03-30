@@ -7,9 +7,6 @@ jobs:
   flutter_test:
     name: Run flutter test and analyze
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./frontend/zavrsni_rad
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v1
@@ -18,9 +15,15 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: "stable"
-      - run: flutter pub get
-      - run: flutter analyze
-      - run: flutter test
+      - name: flutter pub get
+        working-directory: ./frontend/zavrsni_rad
+        run: flutter pub get
+      - name: flutter analyze
+        working-directory: ./frontend/zavrsni_rad
+        run: flutter analyze
+      - name: flutter test
+        working-directory: ./frontend/zavrsni_rad
+        run: flutter test
 
   build_appbundle:
     name: Build Flutter (Android)
@@ -35,9 +38,15 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: "stable"
-      - run: flutter pub get
-      - run: flutter clean
-      - run: flutter build apk --release --split-per-abi
+      - name: flutter pub get
+        working-directory: ./frontend/zavrsni_rad
+        run: flutter pub get
+      - name: flutter clean
+        working-directory: ./frontend/zavrsni_rad
+        run: flutter clean
+      - name: flutter build apk
+        working-directory: ./frontend/zavrsni_rad
+        run: flutter build apk --release --split-per-abin
       - name: Push to Releases
         uses: ncipollo/release-action@v1
         with:
