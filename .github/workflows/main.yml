@@ -7,7 +7,7 @@ jobs:
   flutter_test:
     name: Run flutter test and analyze
     runs-on: ubuntu-latest
-    working-directory: ./frontend/zavrsni_rad
+    working-directory: ../../frontend/zavrsni_rad
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v1
