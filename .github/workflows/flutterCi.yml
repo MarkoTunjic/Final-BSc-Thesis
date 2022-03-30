@@ -16,10 +16,15 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: "stable"
-      - run: cd frontend/zavrsni_rad
-      - run: flutter pub get
-      - run: flutter analyze
-      - run: flutter test
+      - run:
+          cd frontend/zavrsni_rad
+          flutter pub get
+      - run:
+          cd frontend/zavrsni_rad
+          flutter analyze
+      - run:
+          cd frontend/zavrsni_rad
+          flutter test
 
   build_appbundle:
     name: Build Flutter (Android)
