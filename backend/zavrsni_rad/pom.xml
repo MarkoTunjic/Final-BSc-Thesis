@@ -22,16 +22,13 @@
         <profile>
             <id>dev</id>
             <properties>
-                <activatedProperties>dev</activatedProperties>
+                <activatedProperties>develop</activatedProperties>
             </properties>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
         </profile>
         <profile>
             <id>prod</id>
             <properties>
-                <activatedProperties>prod</activatedProperties>
+                <activatedProperties>production</activatedProperties>
             </properties>
         </profile>
     </profiles>
