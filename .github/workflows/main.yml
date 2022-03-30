@@ -67,12 +67,13 @@ jobs:
       - name: flutter build apk
         working-directory: ./frontend/zavrsni_rad
         run: flutter build apk --release --split-per-abi
+
   create_new_release:
     name: Run flutter test and analyze
-      runs-on: ubuntu-latest
-      steps:
-        - name: Push to Releases
-          uses: ncipollo/release-action@v1
-          with:
-            artifacts: "frontend/zavrsni_rad/build/app/outputs/apk/release/*,backend/zavrsni_rad/target/zavrsni_rad-0.0.1-SNAPSHOT.jar"
-            tag: v1.0.${{ github.run_number }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Push to Releases
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "frontend/zavrsni_rad/build/app/outputs/apk/release/*,backend/zavrsni_rad/target/zavrsni_rad-0.0.1-SNAPSHOT.jar"
+          tag: v1.0.${{ github.run_number }}
