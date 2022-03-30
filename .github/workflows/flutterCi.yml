@@ -38,7 +38,15 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: "stable"
-      - run: cd frontend
-      - run: flutter pub get
-      - run: flutter clean
-      - run: flutter build apk --release --split-per-abi
+      - run: |
+          cd frontend/zavrsni_rad
+          cd frontend
+      - run: |
+          cd frontend/zavrsni_rad
+          flutter pub get
+      - run: |
+          cd frontend/zavrsni_rad
+          flutter clean
+      - run: |
+          cd frontend/zavrsni_rad
+          flutter build apk --release --split-per-abi
