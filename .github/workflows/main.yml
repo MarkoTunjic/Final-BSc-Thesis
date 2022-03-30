@@ -10,11 +10,9 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
-
       - name: Generate deployment package
         working-directory: ./backend/zavrsni_rad
         run: mvn clean install
-
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v20
         with:
