@@ -16,14 +16,17 @@ jobs:
         with:
           channel: "stable"
       - name: flutter pub get
-        working-directory: ./frontend/zavrsni_rad
-        run: flutter pub get
+        run: |
+          cd frontend/zavrsni_rad
+          flutter pub get
       - name: flutter analyze
-        working-directory: ./frontend/zavrsni_rad
-        run: flutter analyze
+        run: |
+          cd frontend/zavrsni_rad
+          flutter analyze
       - name: flutter test
-        working-directory: ./frontend/zavrsni_rad
-        run: flutter test
+        run: |
+          cd frontend/zavrsni_rad
+          flutter test
 
   build_appbundle:
     name: Build Flutter (Android)
@@ -39,14 +42,17 @@ jobs:
         with:
           channel: "stable"
       - name: flutter pub get
-        working-directory: ./frontend/zavrsni_rad
-        run: flutter pub get
+        run: |
+          cd frontend/zavrsni_rad
+          flutter pub get
       - name: flutter clean
-        working-directory: ./frontend/zavrsni_rad
-        run: flutter clean
+        run: |
+          cd frontend/zavrsni_rad
+          flutter clean
       - name: flutter build apk
-        working-directory: ./frontend/zavrsni_rad
-        run: flutter build apk --release --split-per-abin
+        run: |
+          cd frontend/zavrsni_rad
+          flutter build apk --release --split-per-abin
       - name: Push to Releases
         uses: ncipollo/release-action@v1
         with:
