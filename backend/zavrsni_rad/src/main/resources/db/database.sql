@@ -1,103 +1,105 @@
-CREATE TABLE Role
+CREATE TABLE role
 (
-  ID INT NOT NULL,
-  RoleName VARCHAR(20) NOT NULL,
-  PRIMARY KEY (ID)
+  id SERIAL,
+  role_name VARCHAR(20) NOT NULL,
+  UNIQUE(role_name),
+  PRIMARY KEY (id)
 );
 
-CREATE TABLE Users
+CREATE TABLE users
 (
-  E_mail VARCHAR(100) NOT NULL,
-  Password CHAR(60) NOT NULL,
-  Username VARCHAR(50) NOT NULL,
-  ID INT NOT NULL,
-  ProfilePicture VARCHAR(100) NOT NULL,
-  IsBanned INT NOT NULL,
-  RoleID INT NOT NULL,
-  IsConfirmed BOOLEAN NOT NULL,
-  PRIMARY KEY (ID),
-  FOREIGN KEY (RoleID) REFERENCES Role(ID)
+  e_mail VARCHAR(100) NOT NULL,
+  password CHAR(60) NOT NULL,
+  username VARCHAR(50) NOT NULL,
+  id SERIAL,
+  profile_picture VARCHAR(100) NOT NULL,
+  is_banned INT NOT NULL,
+  role_id INT NOT NULL,
+  is_confirmed BOOLEAN NOT NULL,
+  UNIQUE(username,e_mail),
+  PRIMARY KEY (id),
+  FOREIGN KEY (role_id) REFERENCES Role(id)
 );
 
-CREATE TABLE Recipe
+CREATE TABLE recipe
 (
-  CoverPicture VARCHAR(100) NOT NULL,
-  RecipeName VARCHAR(50) NOT NULL,
-  Description VARCHAR(500) NOT NULL,
-  ID INT NOT NULL,
-  IsApprooved BOOLEAN NOT NULL,
-  CookingDuration INT NOT NULL,
-  UserID INT NOT NULL,
-  PRIMARY KEY (ID),
-  FOREIGN KEY (UserID) REFERENCES Users(ID)
+  cover_picture VARCHAR(100) NOT NULL,
+  recipe_name VARCHAR(50) NOT NULL,
+  description VARCHAR(500) NOT NULL,
+  id SERIAL,
+  is_approoved BOOLEAN NOT NULL,
+  cooking_duration INT NOT NULL,
+  user_id INT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (user_id) REFERENCES Users(id)
 );
 
-CREATE TABLE RecipeStep
+CREATE TABLE recipe_step
 (
-  ID INT NOT NULL,
-  StepDescription VARCHAR(500) NOT NULL,
-  OrderNumber INT NOT NULL,
-  RecipeID INT NOT NULL,
-  PRIMARY KEY (ID),
-  FOREIGN KEY (RecipeID) REFERENCES Recipe(ID)
+  id SERIAL,
+  step_description VARCHAR(500) NOT NULL,
+  order_number INT NOT NULL,
+  recipe_id INT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (recipe_id) REFERENCES Recipe(id)
 );
 
-CREATE TABLE Image
+CREATE TABLE image
 (
-  ID INT NOT NULL,
-  OrderNumber INT NOT NULL,
-  Link VARCHAR(100) NOT NULL,
-  RecipeID INT NOT NULL,
-  PRIMARY KEY (ID),
-  FOREIGN KEY (RecipeID) REFERENCES Recipe(ID)
+  id SERIAL,
+  order_number INT NOT NULL,
+  link VARCHAR(100) NOT NULL,
+  recipe_id INT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (recipe_id) REFERENCES Recipe(id)
 );
 
-CREATE TABLE Ingredient
+CREATE TABLE ingredient
 (
-  ID INT NOT NULL,
-  IngredientName VARCHAR(50) NOT NULL,
-  Quantity INT NOT NULL,
-  Measure VARCHAR(50) NOT NULL,
-  RecipeID INT NOT NULL,
-  PRIMARY KEY (ID),
-  FOREIGN KEY (RecipeID) REFERENCES Recipe(ID)
+  id SERIAL,
+  ingredient_name VARCHAR(50) NOT NULL,
+  quantity INT NOT NULL,
+  measure VARCHAR(50) NOT NULL,
+  recipe_id INT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (recipe_id) REFERENCES Recipe(id)
 );
 
-CREATE TABLE Video
+CREATE TABLE video
 (
-  ID INT NOT NULL,
-  OrderNumber INT NOT NULL,
-  Link VARCHAR(100) NOT NULL,
-  RecipeID INT NOT NULL,
-  PRIMARY KEY (ID),
-  FOREIGN KEY (RecipeID) REFERENCES Recipe(ID)
+  id SERIAL,
+  order_number INT NOT NULL,
+  link VARCHAR(100) NOT NULL,
+  recipe_id INT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (recipe_id) REFERENCES Recipe(id)
 );
 
-CREATE TABLE Favorite
+CREATE TABLE favorite
 (
-  UserID INT NOT NULL,
-  RecipeID INT NOT NULL,
-  PRIMARY KEY (UserID, RecipeID),
-  FOREIGN KEY (UserID) REFERENCES Users(ID),
-  FOREIGN KEY (RecipeID) REFERENCES Recipe(ID)
+  user_id INT NOT NULL,
+  recipe_id INT NOT NULL,
+  PRIMARY KEY (user_id, recipe_id),
+  FOREIGN KEY (user_id) REFERENCES Users(id),
+  FOREIGN KEY (recipe_id) REFERENCES Recipe(id)
 );
 
-CREATE TABLE Rating
+CREATE TABLE rating
 (
-  RatingValue INT NOT NULL,
-  UserID INT NOT NULL,
-  RecipeID INT NOT NULL,
-  PRIMARY KEY (UserID, RecipeID),
-  FOREIGN KEY (UserID) REFERENCES Users(ID),
-  FOREIGN KEY (RecipeID) REFERENCES Recipe(ID)
+  rating_value INT NOT NULL,
+  user_id INT NOT NULL,
+  recipe_id INT NOT NULL,
+  PRIMARY KEY (user_id, recipe_id),
+  FOREIGN KEY (user_id) REFERENCES Users(id),
+  FOREIGN KEY (recipe_id) REFERENCES Recipe(id)
 );
 
-CREATE TABLE Comments
+CREATE TABLE comments
 (
-  CommentText VARCHAR(200) NOT NULL,
-  UserID INT NOT NULL,
-  RecipeID INT NOT NULL,
-  PRIMARY KEY (UserID, RecipeID),
-  FOREIGN KEY (UserID) REFERENCES Users(ID),
-  FOREIGN KEY (RecipeID) REFERENCES Recipe(ID)
+  comment_text VARCHAR(200) NOT NULL,
+  user_id INT NOT NULL,
+  recipe_id INT NOT NULL,
+  PRIMARY KEY (user_id, recipe_id),
+  FOREIGN KEY (user_id) REFERENCES Users(id),
+  FOREIGN KEY (recipe_id) REFERENCES Recipe(id)
 );

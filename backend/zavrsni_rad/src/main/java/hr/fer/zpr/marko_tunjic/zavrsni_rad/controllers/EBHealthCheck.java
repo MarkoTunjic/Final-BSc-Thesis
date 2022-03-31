@@ -1,4 +1,4 @@
-package hr.fer.zpr.marko_tunjic.zavrsni_rad;
+package hr.fer.zpr.marko_tunjic.zavrsni_rad.controllers;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
