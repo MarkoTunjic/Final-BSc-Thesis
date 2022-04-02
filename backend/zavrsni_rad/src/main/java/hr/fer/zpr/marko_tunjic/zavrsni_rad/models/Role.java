@@ -1,18 +1,11 @@
 package hr.fer.zpr.marko_tunjic.zavrsni_rad.models;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Role {
@@ -23,12 +16,7 @@ public class Role {
     @Enumerated(EnumType.STRING)
     private Roles roleName;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "role", orphanRemoval = true, cascade = CascadeType.ALL)
-    private Set<Users> users;
-
     public Role() {
-        this.users = new HashSet<>();
     }
 
     public Role(Roles roleName) {
@@ -49,14 +37,6 @@ public class Role {
 
     public void setRoleName(Roles roleName) {
         this.roleName = roleName;
-    }
-
-    public Set<Users> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<Users> users) {
-        this.users = users;
     }
 
     @Override

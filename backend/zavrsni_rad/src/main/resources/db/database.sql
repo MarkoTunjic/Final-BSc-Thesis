@@ -13,7 +13,7 @@ CREATE TABLE users
   username VARCHAR(50) NOT NULL,
   id SERIAL,
   profile_picture VARCHAR(100) NOT NULL,
-  is_banned INT NOT NULL,
+  is_banned BOOLEAN NOT NULL,
   role_id INT NOT NULL,
   is_confirmed BOOLEAN NOT NULL,
   UNIQUE(username,e_mail),

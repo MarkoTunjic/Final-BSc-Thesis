@@ -1,0 +1,114 @@
+schema{
+    query: Query
+}
+
+type Query{
+    users: [Users]
+}
+
+type Comments{
+    id: CommentsKey!
+    commentText: String!
+    user: Users
+    recipe: Recipe
+}
+
+type CommentsKey{
+    userId: ID!
+    recipeId: ID!
+}
+
+type Favorite{
+    id: FavoriteKey!
+    user: Users
+    recipe: Recipe
+}
+
+type FavoriteKey{
+    userId: ID!
+    recipeId: ID!
+}
+
+type Image{
+    id: ID!
+    link: String!
+    orderNumber: Int
+    recipe: Recipe!
+}
+
+type Ingredient{
+    id: ID!
+    ingredientName: String!
+    quantity: Int!
+    measure: String!
+    recipe: Recipe!
+}
+
+type Rating{
+    id: RatingKey!
+    ratingValue: Int!
+    user: Users!
+    recipe: Recipe!
+}
+
+type RatingKey{
+    userId: ID!
+    recipeId: ID!
+}
+
+type Recipe{
+    id: ID!
+    coverPicture: String!
+    recipeName: String!
+    description: String!
+    isApprooved: Boolean!
+    cookingDuration: Int!
+    user: Users!
+    recipeSteps: [RecipeStep] @relation
+    ingredients: [Ingredient] @relation
+    images: [Image] @relation
+    videos: [Video] @relation
+    ratings: [Rating] @relation
+    comments: [Comments] @relation
+    favoriteTo: [Favorite] @relation
+}
+
+type RecipeStep{
+    id: ID!
+    stepDescription: String!
+    orderNumber: Int!
+    recipe: Recipe!
+}
+
+type Role{
+    id: ID!
+    roleName: Roles!
+    users: [Users] @relation
+}
+
+enum Roles{
+    USER
+    MODERATOR
+}
+
+type Users{
+    id: ID!
+    username: String!
+    eMail: String!
+    password: String!
+    profilePicture: String!
+    isBanned: Boolean!
+    isConfirmed: Boolean!
+    role: Role!
+    recipes: [Recipe] @relation
+    ratings: [Rating] @relation
+    comments: [Comments] @relation
+    favorites: [Favorite] @relation
+}
+
+type Video{
+    id: ID!
+    link: String!
+    orderNumber: Int!
+    recipe: Recipe!
+}

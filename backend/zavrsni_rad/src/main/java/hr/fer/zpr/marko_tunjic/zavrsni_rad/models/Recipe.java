@@ -1,9 +1,5 @@
 package hr.fer.zpr.marko_tunjic.zavrsni_rad.models;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,9 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Recipe {
@@ -31,7 +24,7 @@ public class Recipe {
     private String description;
 
     @Column(nullable = false, unique = false)
-    private String isApprooved;
+    private Boolean isApprooved;
 
     @Column(nullable = false, unique = false)
     private Integer cookingDuration;
@@ -40,40 +33,11 @@ public class Recipe {
     @JoinColumn(name = "user_id")
     private Users user;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "recipe", orphanRemoval = true, cascade = CascadeType.ALL)
-    private Set<RecipeStep> recipeSteps;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "recipe", orphanRemoval = true, cascade = CascadeType.ALL)
-    private Set<Ingredient> ingredients;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "recipe", orphanRemoval = true, cascade = CascadeType.ALL)
-    private Set<Image> images;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "recipe", orphanRemoval = true, cascade = CascadeType.ALL)
-    private Set<Rating> ratings;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "recipe", orphanRemoval = true, cascade = CascadeType.ALL)
-    private Set<Comments> comments;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "recipe", orphanRemoval = true, cascade = CascadeType.ALL)
-    private Set<Favorite> favoriteTo;
-
     public Recipe() {
-        this.recipeSteps = new HashSet<>();
-        this.ingredients = new HashSet<>();
-        this.images = new HashSet<>();
-        this.ratings = new HashSet<>();
-        this.comments = new HashSet<>();
-        this.favoriteTo = new HashSet<>();
+
     }
 
-    public Recipe(String coverPicture, String recipeName, String description, String isApprooved,
+    public Recipe(String coverPicture, String recipeName, String description, Boolean isApprooved,
             Integer cookingDuration, Users user) {
         this.coverPicture = coverPicture;
         this.recipeName = recipeName;
@@ -115,11 +79,11 @@ public class Recipe {
         this.description = description;
     }
 
-    public String getIsApprooved() {
+    public Boolean getIsApprooved() {
         return isApprooved;
     }
 
-    public void setIsApprooved(String isApprooved) {
+    public void setIsApprooved(Boolean isApprooved) {
         this.isApprooved = isApprooved;
     }
 
@@ -137,54 +101,6 @@ public class Recipe {
 
     public void setUser(Users user) {
         this.user = user;
-    }
-
-    public Set<RecipeStep> getRecipeSteps() {
-        return recipeSteps;
-    }
-
-    public void setRecipeSteps(Set<RecipeStep> recipeSteps) {
-        this.recipeSteps = recipeSteps;
-    }
-
-    public Set<Ingredient> getIngredients() {
-        return ingredients;
-    }
-
-    public void setIngredients(Set<Ingredient> ingredients) {
-        this.ingredients = ingredients;
-    }
-
-    public Set<Image> getImages() {
-        return images;
-    }
-
-    public void setImages(Set<Image> images) {
-        this.images = images;
-    }
-
-    public Set<Rating> getRatings() {
-        return ratings;
-    }
-
-    public void setRatings(Set<Rating> ratings) {
-        this.ratings = ratings;
-    }
-
-    public Set<Comments> getComments() {
-        return comments;
-    }
-
-    public void setComments(Set<Comments> comments) {
-        this.comments = comments;
-    }
-
-    public Set<Favorite> getFavoriteTo() {
-        return favoriteTo;
-    }
-
-    public void setFavoriteTo(Set<Favorite> favoriteTo) {
-        this.favoriteTo = favoriteTo;
     }
 
     @Override
