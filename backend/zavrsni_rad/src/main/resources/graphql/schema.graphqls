@@ -1,9 +1,15 @@
 schema{
     query: Query
+    mutation: Mutation
 }
 
 type Query{
     users: [Users]
+}
+
+type Mutation{
+    login(identifier: String!,password:String!): LoginResponse!
+    register(payload: RegisterRequest!): LoginResponse!
 }
 
 type Comments{
@@ -111,4 +117,16 @@ type Video{
     link: String!
     orderNumber: Int!
     recipe: Recipe!
+}
+
+type LoginResponse{
+    user: Users!
+    token: String!
+}
+
+input RegisterRequest{
+    username: String!
+    eMail: String!
+    password: String!
+    profilePicture: String
 }

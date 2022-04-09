@@ -6,9 +6,7 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
 public class ZavrsniRadApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(ZavrsniRadApplication.class, args);
 	}
-
 }
