@@ -16,6 +16,7 @@ CREATE TABLE users
   is_banned BOOLEAN NOT NULL,
   role_id INT NOT NULL,
   is_confirmed BOOLEAN NOT NULL,
+  confirmation_code char(30) NOT NULL,
   UNIQUE(username,e_mail),
   PRIMARY KEY (id),
   FOREIGN KEY (role_id) REFERENCES Role(id)

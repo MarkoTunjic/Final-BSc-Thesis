@@ -32,6 +32,9 @@ public class Users {
     @Column(nullable = false, unique = false)
     private boolean isConfirmed;
 
+    @Column(length = 30, nullable = false, unique = false)
+    private String confirmationCode;
+
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
@@ -40,7 +43,7 @@ public class Users {
     }
 
     public Users(String username, String eMail, String password, String profilePicture, boolean isBanned,
-            boolean isConfirmed, Role role) {
+            boolean isConfirmed, Role role, String confiramtionCode) {
         this.username = username;
         this.eMail = eMail;
         this.password = password;
@@ -48,6 +51,7 @@ public class Users {
         this.isBanned = isBanned;
         this.isConfirmed = isConfirmed;
         this.role = role;
+        this.confirmationCode = confiramtionCode;
     }
 
     public Long getId() {
@@ -112,6 +116,14 @@ public class Users {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public String getConfirmationCode() {
+        return confirmationCode;
+    }
+
+    public void setConfirmationCode(String confirmationCode) {
+        this.confirmationCode = confirmationCode;
     }
 
     @Override

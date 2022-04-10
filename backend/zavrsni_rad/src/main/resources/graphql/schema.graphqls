@@ -9,7 +9,7 @@ type Query{
 
 type Mutation{
     login(identifier: String!,password:String!): LoginResponse!
-    register(payload: RegisterRequest!): LoginResponse!
+    register(payload: RegisterRequest!): Users!
 }
 
 type Comments{
