@@ -4,6 +4,7 @@ import 'package:zavrsni_rad/screens/get_started_screen.dart';
 import 'package:zavrsni_rad/screens/login_screen.dart';
 import 'package:zavrsni_rad/utilities/shared_preferences_helper.dart';
 import './utilities/global_variables.dart' as globals;
+import '../models/constants/constants.dart' as constants;
 
 void main() {
   runApp(const MyApp());
@@ -28,11 +29,18 @@ class MyApp extends StatelessWidget {
             home: globals.started
                 ? const LoginScreen()
                 : const GetStartedScreen(),
+            theme: ThemeData().copyWith(
+              colorScheme: ThemeData().colorScheme.copyWith(
+                    primary: constants.green,
+                  ),
+            ),
           );
         } else {
           return const MaterialApp(
             debugShowCheckedModeBanner: false,
-            home: CircularProgressIndicator(),
+            home: Scaffold(
+              body: CircularProgressIndicator(),
+            ),
           );
         }
       },

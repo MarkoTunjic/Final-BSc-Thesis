@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zavrsni_rad/screens/login_screen.dart';
 import 'package:zavrsni_rad/widgets/circular_image_with_white_border.dart';
+import 'package:zavrsni_rad/widgets/green_button_widget.dart';
+import '../models/constants/constants.dart' as constants;
 import '../utilities/global_variables.dart' as globals;
 import '../models/constants/shared_preferences_keys.dart' as keys;
 
@@ -100,12 +102,11 @@ class GetStartedScreen extends StatelessWidget {
               Text(
                 "Let's join our community\nto cook better food!",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: 20, color: Color.fromARGB(255, 159, 165, 192)),
+                style: TextStyle(fontSize: 20, color: constants.grey),
               ),
             ],
           ),
-          ElevatedButton(
+          GreenButton(
             onPressed: () async => {
               prefs!.setBool(keys.startedKey, true),
               globals.started = true,
@@ -116,25 +117,7 @@ class GetStartedScreen extends StatelessWidget {
                 ),
               ),
             },
-            child: Container(
-              child: const Text(
-                "Get Started",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 20),
-              ),
-              width: width / 3 * 2,
-              padding: const EdgeInsets.all(15),
-            ),
-            style: ButtonStyle(
-              shape: MaterialStateProperty.all(
-                RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-              ),
-              backgroundColor: MaterialStateProperty.all(
-                const Color.fromARGB(255, 31, 204, 120),
-              ),
-            ),
+            text: "Get Started",
           ),
         ],
         mainAxisAlignment: MainAxisAlignment.spaceAround,
