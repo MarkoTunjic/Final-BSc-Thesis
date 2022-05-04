@@ -14,3 +14,12 @@ const String login = """
     }
   }
 """;
+
+const String register = """
+  mutation Register(\$payload: RegisterRequest!){
+    register(payload: \$payload){
+      username,
+      eMail
+    }
+  }
+""";

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zavrsni_rad/models/user.dart';
+import 'package:zavrsni_rad/screens/register_screen.dart';
 import 'package:zavrsni_rad/widgets/green_button_widget.dart';
 import 'package:zavrsni_rad/widgets/input_field_widget.dart';
 import '../models/constants/constants.dart' as constants;
@@ -127,7 +128,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(fontSize: 15),
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const RegisterScreen(),
+                            ),
+                          );
+                        },
                         child: const Text(
                           "Sign up",
                           style: TextStyle(color: constants.green),

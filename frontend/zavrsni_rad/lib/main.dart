@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:zavrsni_rad/screens/get_started_screen.dart';
 import 'package:zavrsni_rad/screens/login_screen.dart';
 import 'package:zavrsni_rad/utilities/shared_preferences_helper.dart';
 import './utilities/global_variables.dart' as globals;
 import '../models/constants/constants.dart' as constants;
+import 'models/bloc_providers/profile_picture_provider.dart';
 
 Future<void> main() async {
   await initHiveForFlutter();
@@ -26,15 +28,22 @@ class MyApp extends StatelessWidget {
     return FutureBuilder(
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            home: globals.started
-                ? const LoginScreen()
-                : const GetStartedScreen(),
-            theme: ThemeData().copyWith(
-              colorScheme: ThemeData().colorScheme.copyWith(
-                    primary: constants.green,
-                  ),
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider<BlocProfilePicture>(
+                create: (_) => BlocProfilePicture(),
+              ),
+            ],
+            child: MaterialApp(
+              debugShowCheckedModeBanner: false,
+              home: globals.started
+                  ? const LoginScreen()
+                  : const GetStartedScreen(),
+              theme: ThemeData().copyWith(
+                colorScheme: ThemeData().colorScheme.copyWith(
+                      primary: constants.green,
+                    ),
+              ),
             ),
           );
         } else {

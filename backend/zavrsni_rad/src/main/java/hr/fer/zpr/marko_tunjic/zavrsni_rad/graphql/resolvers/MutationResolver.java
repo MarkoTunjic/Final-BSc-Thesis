@@ -1,6 +1,7 @@
 package hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.resolvers;
 
-import java.io.UnsupportedEncodingException;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import javax.mail.MessagingException;
 
@@ -27,7 +28,7 @@ public class MutationResolver implements GraphQLMutationResolver {
     }
 
     @PreAuthorize("isAnonymous()")
-    public Users register(RegisterRequest payload) throws UnsupportedEncodingException, MessagingException {
+    public Users register(RegisterRequest payload) throws MessagingException, FileNotFoundException, IOException {
         return usersService.registerUser(payload);
     }
 }

@@ -2,6 +2,8 @@ package hr.fer.zpr.marko_tunjic.zavrsni_rad.services;
 
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 
@@ -46,6 +48,9 @@ public class UsersService {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Autowired
+    private FileService fileService;
+
     @Value("${spring.mail.username}")
     private String mail;
 
@@ -71,7 +76,7 @@ public class UsersService {
     }
 
     @Transactional
-    public Users registerUser(RegisterRequest payload) throws UnsupportedEncodingException, MessagingException {
+    public Users registerUser(RegisterRequest payload) throws MessagingException, FileNotFoundException, IOException {
         if (userRepository.existsByUsername(payload.getUsername()))
             throw new IllegalArgumentException("Username already exists in database");
         if (userRepository.existsByeMail(payload.geteMail()))
@@ -90,8 +95,9 @@ public class UsersService {
                     break;
             }
         }
+        String url = fileService.upload(payload.getProfilePicture(), payload.getUsername() + "_profilePicture.png");
         Users user = new Users(payload.getUsername(), payload.geteMail(), encoder.encode(payload.getPassword()),
-                payload.getProfilePicture(), false, false, roleRepository.getById((long) 1), codeBuilder.toString());
+                url, false, false, roleRepository.getById((long) 1), codeBuilder.toString());
         System.out.println(codeBuilder.toString());
         userRepository.save(user);
         sendConfirmationMail(user);

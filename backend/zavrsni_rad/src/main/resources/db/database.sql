@@ -12,7 +12,7 @@ CREATE TABLE users
   password CHAR(60) NOT NULL,
   username VARCHAR(50) NOT NULL,
   id SERIAL,
-  profile_picture VARCHAR(100) NOT NULL,
+  profile_picture VARCHAR(500) NOT NULL,
   is_banned BOOLEAN NOT NULL,
   role_id INT NOT NULL,
   is_confirmed BOOLEAN NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE users
 
 CREATE TABLE recipe
 (
-  cover_picture VARCHAR(100) NOT NULL,
+  cover_picture VARCHAR(500) NOT NULL,
   recipe_name VARCHAR(50) NOT NULL,
   description VARCHAR(500) NOT NULL,
   id SERIAL,
@@ -49,7 +49,7 @@ CREATE TABLE image
 (
   id SERIAL,
   order_number INT NOT NULL,
-  link VARCHAR(100) NOT NULL,
+  link VARCHAR(500) NOT NULL,
   recipe_id INT NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (recipe_id) REFERENCES Recipe(id)
@@ -70,7 +70,7 @@ CREATE TABLE video
 (
   id SERIAL,
   order_number INT NOT NULL,
-  link VARCHAR(100) NOT NULL,
+  link VARCHAR(500) NOT NULL,
   recipe_id INT NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (recipe_id) REFERENCES Recipe(id)
