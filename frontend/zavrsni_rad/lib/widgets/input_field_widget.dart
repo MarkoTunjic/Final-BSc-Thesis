@@ -3,31 +3,47 @@ import '../models/constants/constants.dart' as constants;
 
 class InputFieldWidget extends StatelessWidget {
   final String _hintText;
-  final void Function(String?) _onSaved;
+  final void Function(String?)? _onSaved;
   final bool _obscure;
-  final Icon _icon;
-  const InputFieldWidget(
-      {Key? key,
-      required String hintText,
-      required void Function(String?) onSaved,
-      required bool obscure,
-      required Icon icon})
-      : _hintText = hintText,
+  final Icon? _icon;
+  final String? _initialValue;
+  final double _width;
+  final TextInputType _type;
+  final void Function(String)? _onChanged;
+  const InputFieldWidget({
+    Key? key,
+    required String hintText,
+    void Function(String?)? onSaved,
+    required bool obscure,
+    required double width,
+    required TextInputType type,
+    Icon? icon,
+    String? initialValue,
+    void Function(String)? onChanged,
+  })  : _hintText = hintText,
         _onSaved = onSaved,
         _obscure = obscure,
         _icon = icon,
+        _initialValue = initialValue,
+        _width = width,
+        _type = type,
+        _onChanged = onChanged,
         super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       child: TextFormField(
-        onSaved: (newValue) => _onSaved(newValue),
+        onSaved: _onSaved,
         autocorrect: false,
         obscureText: _obscure,
         enableSuggestions: false,
+        initialValue: _initialValue,
+        keyboardType: _type,
+        onChanged: _onChanged,
         decoration: InputDecoration(
           hintText: _hintText,
+          hintStyle: const TextStyle(fontSize: 15),
           errorBorder: const OutlineInputBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(100),
@@ -51,7 +67,7 @@ class InputFieldWidget extends StatelessWidget {
           ),
         ),
       ),
-      width: MediaQuery.of(context).size.width - 20,
+      width: _width,
     );
   }
 }

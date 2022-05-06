@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zavrsni_rad/models/user.dart';
+import 'package:zavrsni_rad/screens/new_recipe_screen.dart';
 import 'package:zavrsni_rad/screens/register_screen.dart';
 import 'package:zavrsni_rad/widgets/green_button_widget.dart';
 import 'package:zavrsni_rad/widgets/input_field_widget.dart';
@@ -67,7 +68,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           hintText: "E-mail or username",
                           onSaved: (newValue) => identifier = newValue!,
                           obscure: false,
+                          width: MediaQuery.of(context).size.width - 20,
                           icon: const Icon(Icons.email),
+                          type: TextInputType.text,
                         ),
                         Padding(
                           child: InputFieldWidget(
@@ -75,11 +78,20 @@ class _LoginScreenState extends State<LoginScreen> {
                             onSaved: (newValue) => password = newValue!,
                             obscure: true,
                             icon: const Icon(Icons.lock),
+                            width: MediaQuery.of(context).size.width - 20,
+                            type: TextInputType.text,
                           ),
                           padding: const EdgeInsets.all(10),
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const NewRecipeScreen(),
+                              ),
+                            );
+                          },
                           child: const Text("Skip for now"),
                           style: ButtonStyle(
                             foregroundColor:

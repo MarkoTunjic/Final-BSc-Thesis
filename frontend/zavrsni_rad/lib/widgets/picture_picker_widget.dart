@@ -1,14 +1,19 @@
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import '../models/constants/constants.dart' as constants;
 
 class PicturePickerWidget extends StatelessWidget {
   final Future<void> Function() _onTap;
+  final Widget text;
+  final double iconSize;
+  final Radius radius;
 
   const PicturePickerWidget({
     Key? key,
+    required this.text,
     required Future<void> Function() onTap,
+    required this.iconSize,
+    required this.radius,
   })  : _onTap = onTap,
         super(key: key);
 
@@ -17,24 +22,23 @@ class PicturePickerWidget extends StatelessWidget {
     return DottedBorder(
       child: SizedBox(
         child: InkWell(
-          onTap: () => _onTap(),
-          child: Column(
-            children: const [
-              Icon(
-                Icons.image,
-                color: constants.grey,
-                size: 30,
-              ),
-              Text(
-                "Choose profile picture (optional)",
-                style: TextStyle(fontSize: 15, color: constants.grey),
-              ),
-            ],
+          onTap: _onTap,
+          child: Center(
+            child: Column(
+              children: [
+                Icon(
+                  Icons.image,
+                  color: constants.grey,
+                  size: iconSize,
+                ),
+                text,
+              ],
+            ),
           ),
         ),
         width: MediaQuery.of(context).size.width - 20,
       ),
-      radius: const Radius.circular(100),
+      radius: radius,
       color: constants.grey,
       borderType: BorderType.RRect,
     );

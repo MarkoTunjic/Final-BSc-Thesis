@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:zavrsni_rad/models/bloc_providers/cover_picture_provider.dart';
+import 'package:zavrsni_rad/models/bloc_providers/ingredients_provider.dart';
+import 'package:zavrsni_rad/models/bloc_providers/recipe_images_provider.dart';
+import 'package:zavrsni_rad/models/bloc_providers/steps_provider.dart';
+import 'package:zavrsni_rad/models/bloc_providers/video_provider.dart';
 import 'package:zavrsni_rad/screens/get_started_screen.dart';
 import 'package:zavrsni_rad/screens/login_screen.dart';
 import 'package:zavrsni_rad/utilities/shared_preferences_helper.dart';
@@ -32,6 +37,21 @@ class MyApp extends StatelessWidget {
             providers: [
               BlocProvider<BlocProfilePicture>(
                 create: (_) => BlocProfilePicture(),
+              ),
+              BlocProvider<BlocIngredients>(
+                create: (_) => BlocIngredients(),
+              ),
+              BlocProvider<BlocSteps>(
+                create: (_) => BlocSteps(),
+              ),
+              BlocProvider<BlocImages>(
+                create: (_) => BlocImages(),
+              ),
+              BlocProvider<BlocVideo>(
+                create: (_) => BlocVideo(),
+              ),
+              BlocProvider<BlocCoverPicture>(
+                create: (_) => BlocCoverPicture(),
               ),
             ],
             child: MaterialApp(

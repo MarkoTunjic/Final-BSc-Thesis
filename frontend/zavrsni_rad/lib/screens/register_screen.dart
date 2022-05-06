@@ -64,6 +64,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           onSaved: (newValue) => request.eMail = newValue!,
                           obscure: false,
                           icon: const Icon(Icons.email),
+                          width: MediaQuery.of(context).size.width - 20,
+                          type: TextInputType.text,
                         ),
                         Padding(
                           child: InputFieldWidget(
@@ -71,6 +73,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             onSaved: (newValue) => request.username = newValue!,
                             obscure: false,
                             icon: const Icon(Icons.person),
+                            width: MediaQuery.of(context).size.width - 20,
+                            type: TextInputType.text,
                           ),
                           padding: const EdgeInsets.only(top: 10),
                         ),
@@ -80,6 +84,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             onSaved: (newValue) => request.password = newValue!,
                             obscure: true,
                             icon: const Icon(Icons.lock),
+                            width: MediaQuery.of(context).size.width - 20,
+                            type: TextInputType.text,
                           ),
                           padding: const EdgeInsets.only(top: 10),
                         ),
@@ -89,13 +95,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             onSaved: (newValue) => request.password = newValue!,
                             obscure: true,
                             icon: const Icon(Icons.lock),
+                            width: MediaQuery.of(context).size.width - 20,
+                            type: TextInputType.text,
                           ),
                           padding: const EdgeInsets.all(10),
-                        ),
-                        BlocBuilder<BlocProfilePicture, File?>(
-                          builder: (context, state) {
-                            return BlocProfilePictureWidget(image: state);
-                          },
                         ),
                         PicturePickerWidget(
                           onTap: () async {
@@ -112,6 +115,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             request.profilePicture = null;
                             BlocProvider.of<BlocProfilePicture>(context)
                                 .add(HideProfilePicture());
+                          },
+                          text: const Text(
+                            "Choose profile picture (optional)",
+                            style:
+                                TextStyle(fontSize: 15, color: constants.grey),
+                          ),
+                          iconSize: 30,
+                          radius: const Radius.circular(100),
+                        ),
+                        BlocBuilder<BlocProfilePicture, File?>(
+                          builder: (context, state) {
+                            return BlocProfilePictureWidget(image: state);
                           },
                         ),
                         TextButton(

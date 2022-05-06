@@ -14,7 +14,7 @@ class BlocProfilePictureWidget extends StatelessWidget {
       return Container();
     }
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(top: 10),
       child: CircleAvatar(
         backgroundImage: FileImage(_image!),
         radius: MediaQuery.of(context).size.width / 10,
