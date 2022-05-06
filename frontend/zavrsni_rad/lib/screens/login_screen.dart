@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zavrsni_rad/models/user.dart';
@@ -8,6 +9,12 @@ import 'package:zavrsni_rad/screens/new_recipe_screen.dart';
 import 'package:zavrsni_rad/screens/register_screen.dart';
 import 'package:zavrsni_rad/widgets/green_button_widget.dart';
 import 'package:zavrsni_rad/widgets/input_field_widget.dart';
+import '../models/bloc_providers/cover_picture_provider.dart';
+import '../models/bloc_providers/ingredients_provider.dart';
+import '../models/bloc_providers/profile_picture_provider.dart';
+import '../models/bloc_providers/recipe_images_provider.dart';
+import '../models/bloc_providers/steps_provider.dart';
+import '../models/bloc_providers/video_provider.dart';
 import '../models/constants/constants.dart' as constants;
 import '../models/constants/shared_preferences_keys.dart' as keys;
 import '../models/constants/graphql_mutations.dart' as mutations;
@@ -88,7 +95,26 @@ class _LoginScreenState extends State<LoginScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => const NewRecipeScreen(),
+                                builder: (context) => MultiBlocProvider(
+                                  providers: [
+                                    BlocProvider<BlocIngredients>(
+                                      create: (_) => BlocIngredients(),
+                                    ),
+                                    BlocProvider<BlocSteps>(
+                                      create: (_) => BlocSteps(),
+                                    ),
+                                    BlocProvider<BlocImages>(
+                                      create: (_) => BlocImages(),
+                                    ),
+                                    BlocProvider<BlocVideo>(
+                                      create: (_) => BlocVideo(),
+                                    ),
+                                    BlocProvider<BlocCoverPicture>(
+                                      create: (_) => BlocCoverPicture(),
+                                    ),
+                                  ],
+                                  child: const NewRecipeScreen(),
+                                ),
                               ),
                             );
                           },
@@ -144,7 +170,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const RegisterScreen(),
+                              builder: (context) =>
+                                  BlocProvider<BlocProfilePicture>(
+                                create: (_) => BlocProfilePicture(),
+                                child: const RegisterScreen(),
+                              ),
                             ),
                           );
                         },

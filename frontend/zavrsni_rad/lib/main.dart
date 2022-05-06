@@ -33,37 +33,15 @@ class MyApp extends StatelessWidget {
     return FutureBuilder(
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
-          return MultiBlocProvider(
-            providers: [
-              BlocProvider<BlocProfilePicture>(
-                create: (_) => BlocProfilePicture(),
-              ),
-              BlocProvider<BlocIngredients>(
-                create: (_) => BlocIngredients(),
-              ),
-              BlocProvider<BlocSteps>(
-                create: (_) => BlocSteps(),
-              ),
-              BlocProvider<BlocImages>(
-                create: (_) => BlocImages(),
-              ),
-              BlocProvider<BlocVideo>(
-                create: (_) => BlocVideo(),
-              ),
-              BlocProvider<BlocCoverPicture>(
-                create: (_) => BlocCoverPicture(),
-              ),
-            ],
-            child: MaterialApp(
-              debugShowCheckedModeBanner: false,
-              home: globals.started
-                  ? const LoginScreen()
-                  : const GetStartedScreen(),
-              theme: ThemeData().copyWith(
-                colorScheme: ThemeData().colorScheme.copyWith(
-                      primary: constants.green,
-                    ),
-              ),
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            home: globals.started
+                ? const LoginScreen()
+                : const GetStartedScreen(),
+            theme: ThemeData().copyWith(
+              colorScheme: ThemeData().colorScheme.copyWith(
+                    primary: constants.green,
+                  ),
             ),
           );
         } else {
