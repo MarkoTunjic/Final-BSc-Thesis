@@ -38,7 +38,7 @@ public class MutationResolver implements GraphQLMutationResolver {
         return usersService.registerUser(payload);
     }
 
-    public Recipe addRecipe(RecipePayload payload) {
+    public Recipe addRecipe(RecipePayload payload) throws FileNotFoundException, IOException {
         return recipeService.addRecipe(payload);
     }
 }
