@@ -3,10 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zavrsni_rad/models/bloc_providers/steps_provider.dart';
 import 'package:zavrsni_rad/widgets/multiline_input_field_widget.dart';
 import '../models/constants/constants.dart' as constants;
+import '../models/recipe_step.dart';
 import '../screens/new_recipe_screen.dart';
 
 class NewStepWidget extends StatelessWidget {
-  final String step;
+  final RecipeStep step;
   final int index;
 
   const NewStepWidget({Key? key, required this.step, required this.index})
@@ -29,11 +30,11 @@ class NewStepWidget extends StatelessWidget {
           MultilineInputFieldWidget(
             hintText: "New step\n\n",
             onSaved: (newValue) {
-              String newStep = newValue ?? "";
+              step.step = newValue ?? "";
               BlocProvider.of<BlocSteps>(context)
-                  .add(EditStep(index: index, step: newStep));
+                  .add(EditStep(index: index, step: step));
             },
-            initialValue: step.isEmpty ? null : step,
+            initialValue: step.step.isEmpty ? null : step.step,
             width: availableWidth * 4 / 5,
           ),
           InkWell(

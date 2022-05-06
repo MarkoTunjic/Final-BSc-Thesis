@@ -113,7 +113,7 @@ public class RecipeService {
             coverPicture = fileService.upload(payload.getCoverPicture(),
                     "recipeImage_" + new Random().nextLong() + ".png");
         newRecipe.setCoverPicture(coverPicture);
-        newRecipe.setDescription(payload.getRecipeDescription());
+        newRecipe.setDescription(payload.getDescription());
         newRecipe.setIsApprooved(false);
         return newRecipe;
     }

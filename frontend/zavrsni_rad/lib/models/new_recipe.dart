@@ -1,35 +1,45 @@
 import 'dart:convert';
 
 import 'package:zavrsni_rad/models/ingredient.dart';
+import 'package:zavrsni_rad/models/recipe_step.dart';
 
 class NewRecipe {
+  int? userId;
   String? coverPicture;
   String? recipeName;
   String? description;
-  double? cookingDuration;
+  int? cookingDuration;
   List<String>? images;
-  List<String>? videos;
+  List<RecipeStep>? steps;
+  String? video;
+  String? videoExtension;
   List<Ingredient>? ingredients;
 
   NewRecipe({
+    this.userId,
     this.cookingDuration,
     this.coverPicture,
     this.recipeName,
     this.description,
     this.images,
-    this.videos,
+    this.video,
     this.ingredients,
+    this.videoExtension,
+    this.steps,
   });
 
   Map<String, dynamic> toJson() {
     return {
+      "userId": userId,
       "coverPicture": coverPicture,
       "recipeName": recipeName,
       "description": description,
       "cookingDuration": cookingDuration.toString(),
-      "images": jsonEncode(images),
-      "videos": jsonEncode(videos),
-      "ingredients": jsonEncode(ingredients),
+      "images": images,
+      "video": video,
+      "videoExtension": videoExtension,
+      "ingredients": ingredients?.map((e) => e.toJson()).toList(),
+      "steps": steps?.map((e) => e.step).toList(),
     };
   }
 }

@@ -23,3 +23,11 @@ const String register = """
     }
   }
 """;
+
+const String addRecipe = """
+  mutation AddRecipe(\$payload: RecipePayload!){
+    addRecipe(payload:\$payload){
+      id
+    }
+  }
+""";

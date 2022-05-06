@@ -1,9 +1,10 @@
 import 'package:bloc/bloc.dart';
+import 'package:zavrsni_rad/models/recipe_step.dart';
 
 abstract class StepEvent {}
 
 class AddStep extends StepEvent {
-  final String step;
+  final RecipeStep step;
   AddStep({required this.step}) : super();
 }
 
@@ -14,12 +15,12 @@ class RemoveStep extends StepEvent {
 
 class EditStep extends StepEvent {
   final int index;
-  final String step;
+  final RecipeStep step;
   EditStep({required this.index, required this.step}) : super();
 }
 
-class BlocSteps extends Bloc<StepEvent, List<String>> {
-  BlocSteps() : super([""]) {
+class BlocSteps extends Bloc<StepEvent, List<RecipeStep>> {
+  BlocSteps() : super([RecipeStep(step: "")]) {
     on<AddStep>((event, emit) {
       state.add(event.step);
       emit([...state]);

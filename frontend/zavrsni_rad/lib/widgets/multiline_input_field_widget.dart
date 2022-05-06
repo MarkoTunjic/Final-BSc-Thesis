@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:zavrsni_rad/screens/new_recipe_screen.dart';
 import '../models/constants/constants.dart' as constants;
 
 class MultilineInputFieldWidget extends StatelessWidget {
   final String _hintText;
-  final void Function(String?) _onSaved;
+  final void Function(String?)? _onSaved;
   final String? initialValue;
   final double width;
+  final void Function(String)? onChanged;
   const MultilineInputFieldWidget(
       {Key? key,
       required String hintText,
-      required void Function(String?) onSaved,
+      void Function(String?)? onSaved,
       required this.width,
       this.initialValue,
+      this.onChanged,
       Icon? icon})
       : _hintText = hintText,
         _onSaved = onSaved,
@@ -21,12 +24,14 @@ class MultilineInputFieldWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       child: TextFormField(
-        onSaved: (newValue) => _onSaved(newValue),
+        onSaved: _onSaved,
         autocorrect: false,
         maxLines: null,
         keyboardType: TextInputType.multiline,
         enableSuggestions: false,
         initialValue: initialValue,
+        autofocus: false,
+        onChanged: onChanged,
         decoration: InputDecoration(
           hintText: _hintText,
           errorBorder: const OutlineInputBorder(

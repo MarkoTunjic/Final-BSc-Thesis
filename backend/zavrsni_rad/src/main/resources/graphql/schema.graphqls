@@ -135,7 +135,7 @@ input RegisterRequest{
 input RecipePayload{
     userId: ID!
     recipeName: String!
-    recipeDescription: String!
+    description: String!
     coverPicture: String
     cookingDuration: Int!
     ingredients: [IngredientPayload]!

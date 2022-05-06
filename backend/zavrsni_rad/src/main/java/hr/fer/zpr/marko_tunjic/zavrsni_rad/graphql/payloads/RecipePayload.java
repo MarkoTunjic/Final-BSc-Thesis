@@ -5,7 +5,7 @@ import java.util.List;
 public class RecipePayload {
     private Long userId;
     private String recipeName;
-    private String recipeDescription;
+    private String description;
     private String coverPicture;
     private Integer cookingDuration;
     private List<IngredientPayload> ingredients;
@@ -16,6 +16,21 @@ public class RecipePayload {
 
     public RecipePayload() {
         super();
+    }
+
+    public RecipePayload(Long userId, String recipeName, String description, String coverPicture,
+            Integer cookingDuration, List<IngredientPayload> ingredients, List<String> steps, List<String> images,
+            String video, String videoExtension) {
+        this.userId = userId;
+        this.recipeName = recipeName;
+        this.description = description;
+        this.coverPicture = coverPicture;
+        this.cookingDuration = cookingDuration;
+        this.ingredients = ingredients;
+        this.steps = steps;
+        this.images = images;
+        this.video = video;
+        this.videoExtension = videoExtension;
     }
 
     public Long getUserId() {
@@ -34,12 +49,12 @@ public class RecipePayload {
         this.recipeName = recipeName;
     }
 
-    public String getRecipeDescription() {
-        return recipeDescription;
+    public String getDescription() {
+        return description;
     }
 
-    public void setRecipeDescription(String recipeDescription) {
-        this.recipeDescription = recipeDescription;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getCoverPicture() {
