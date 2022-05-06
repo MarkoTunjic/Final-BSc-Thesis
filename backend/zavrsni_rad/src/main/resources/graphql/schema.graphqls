@@ -10,6 +10,7 @@ type Query{
 type Mutation{
     login(identifier: String!,password:String!): LoginResponse!
     register(payload: RegisterRequest!): Users!
+    addRecipe(payload: RecipePayload!): Recipe!
 }
 
 type Comments{
@@ -129,4 +130,23 @@ input RegisterRequest{
     eMail: String!
     password: String!
     profilePicture: String
+}
+
+input RecipePayload{
+    userId: ID!
+    recipeName: String!
+    recipeDescription: String!
+    coverPicture: String
+    cookingDuration: Int!
+    ingredients: [IngredientPayload]!
+    steps: [String]!
+    images: [String]
+    video: String
+    videoExtension: String
+}
+
+input IngredientPayload{
+    ingredientName: String!
+    quantity: Int!
+    measure: String!
 }

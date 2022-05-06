@@ -12,8 +12,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.payloads.LoginResponse;
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.payloads.RecipePayload;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.payloads.RegisterRequest;
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Recipe;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Users;
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.services.RecipeService;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.services.UsersService;
 
 @Component
@@ -21,6 +24,9 @@ public class MutationResolver implements GraphQLMutationResolver {
 
     @Autowired
     private UsersService usersService;
+
+    @Autowired
+    private RecipeService recipeService;
 
     @PreAuthorize("isAnonymous()")
     public LoginResponse login(String identifier, String password) {
@@ -30,5 +36,9 @@ public class MutationResolver implements GraphQLMutationResolver {
     @PreAuthorize("isAnonymous()")
     public Users register(RegisterRequest payload) throws MessagingException, FileNotFoundException, IOException {
         return usersService.registerUser(payload);
+    }
+
+    public Recipe addRecipe(RecipePayload payload) {
+        return recipeService.addRecipe(payload);
     }
 }

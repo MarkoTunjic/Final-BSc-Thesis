@@ -18,6 +18,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class FileService {
+    public static final String DEFAULT_PROFILE_PICTURE = "https://firebasestorage.googleapis.com/v0/b/finalbscthesis.appspot.com/o/default_profile.png?alt=media";
+    public static final String DEFAULT_RECIPE_PICTURE = "https://firebasestorage.googleapis.com/v0/b/finalbscthesis.appspot.com/o/default_recipe.png?alt=media";
+
     private static final String DOWNLOAD_URL = "https://firebasestorage.googleapis.com/v0/b/finalbscthesis.appspot.com/o/%s?alt=media";
 
     public String upload(String base64File, String fileName) throws FileNotFoundException, IOException {
