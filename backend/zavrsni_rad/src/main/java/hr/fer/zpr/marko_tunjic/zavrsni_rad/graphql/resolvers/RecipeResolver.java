@@ -74,4 +74,9 @@ public class RecipeResolver implements GraphQLResolver<Recipe> {
     public List<Video> getVideos(Recipe recipe) {
         return videoRepository.findByRecipeId(recipe.getId());
     }
+
+    public Double getAverageRating(Recipe recipe) {
+        Double average = ratingRepository.averageRatingForRecipe(recipe.getId());
+        return average == null ? 0 : average;
+    }
 }

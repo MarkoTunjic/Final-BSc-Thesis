@@ -5,6 +5,7 @@ schema{
 
 type Query{
     users: [Users]
+    recipes(filter: Filter!): Recipes!
 }
 
 type Mutation{
@@ -78,6 +79,7 @@ type Recipe{
     ratings: [Rating] @relation
     comments: [Comments] @relation
     favoriteTo: [Favorite] @relation
+    averageRating: Float
 }
 
 type RecipeStep{
@@ -125,6 +127,11 @@ type LoginResponse{
     token: String!
 }
 
+type Recipes{
+    recipes: [Recipe]!
+    numberOfPages: Int!
+}
+
 input RegisterRequest{
     username: String!
     eMail: String!
@@ -149,4 +156,13 @@ input IngredientPayload{
     ingredientName: String!
     quantity: Int!
     measure: String!
+}
+
+input Filter{
+    index: Int!
+    orderBy: String
+    nameLike: String
+    maxCookingDuration: Int
+    canContainIngredients: [ID]
+    mustNotContaintIngredients: [ID]
 }

@@ -2,6 +2,7 @@ package hr.fer.zpr.marko_tunjic.zavrsni_rad.services;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 import java.util.Random;
 
 import javax.transaction.Transactional;
@@ -9,8 +10,10 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.payloads.Filter;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.payloads.IngredientPayload;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.payloads.RecipePayload;
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.payloads.Recipes;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Image;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Ingredient;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Recipe;
@@ -42,6 +45,8 @@ public class RecipeService {
 
     @Autowired
     private ImageRepository imageRepository;
+
+    public static final int RECIPES_PER_PAGE = 10;
 
     @Transactional
     public Recipe addRecipe(RecipePayload payload) throws FileNotFoundException, IOException {
@@ -116,5 +121,38 @@ public class RecipeService {
         newRecipe.setDescription(payload.getDescription());
         newRecipe.setIsApprooved(false);
         return newRecipe;
+    }
+
+    public Recipes getRecipesForFilter(Filter filter) {
+        List<Recipe> recipes = recipeRepository.findAll();
+        String nameLike = filter.getNameLike() == null ? "" : filter.getNameLike();
+        recipes.removeIf(recipe -> hasGreaterCookingDuration(recipe, filter.getMaxCookingDuration())
+                || containsForbiddenIngredient(recipe, filter.getMustNotContaintIngredients())
+                || !containsAllIngredients(recipe, filter.getCanContainIngredients())
+                || !recipe.getRecipeName().contains(nameLike));
+        int toIndex = recipes.size() > RECIPES_PER_PAGE ? RECIPES_PER_PAGE : recipes.size();
+        recipes = recipes.subList(0, toIndex);
+        Double numberOfPages = Math.ceil(recipes.size() * 1.d / RECIPES_PER_PAGE);
+        return new Recipes(recipes, numberOfPages.intValue());
+    }
+
+    private boolean hasGreaterCookingDuration(Recipe recipe, Integer cookingDuration) {
+        if (cookingDuration == null)
+            return false;
+        return recipe.getCookingDuration() > cookingDuration;
+    }
+
+    private boolean containsForbiddenIngredient(Recipe recipe, List<Long> forbiddenIngredients) {
+        if (forbiddenIngredients == null)
+            return false;
+        List<Ingredient> ingredients = ingredientRepository.findByRecipeId(recipe.getId());
+        return ingredients.stream().anyMatch(ingredient -> forbiddenIngredients.contains(ingredient.getId()));
+    }
+
+    private boolean containsAllIngredients(Recipe recipe, List<Long> requiredIngredients) {
+        if (requiredIngredients == null)
+            return true;
+        List<Ingredient> ingredients = ingredientRepository.findByRecipeId(recipe.getId());
+        return ingredients.stream().allMatch(ingredient -> requiredIngredients.contains(ingredient.getId()));
     }
 }
