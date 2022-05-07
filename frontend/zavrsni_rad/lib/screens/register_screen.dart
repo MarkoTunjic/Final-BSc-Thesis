@@ -6,6 +6,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:zavrsni_rad/models/bloc_providers/profile_picture_provider.dart';
 import 'package:zavrsni_rad/models/register_request.dart';
+import 'package:zavrsni_rad/screens/recipes_screen.dart';
 import 'package:zavrsni_rad/widgets/bloc_profile_picture_widget.dart';
 import 'package:zavrsni_rad/widgets/green_button_widget.dart';
 import 'package:zavrsni_rad/widgets/picture_picker_widget.dart';
@@ -130,7 +131,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           },
                         ),
                         TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const RecipesScreen(),
+                              ),
+                            );
+                          },
                           child: const Text("Skip for now"),
                           style: ButtonStyle(
                             foregroundColor:

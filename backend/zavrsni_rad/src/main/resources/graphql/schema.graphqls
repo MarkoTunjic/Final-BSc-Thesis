@@ -80,6 +80,7 @@ type Recipe{
     comments: [Comments] @relation
     favoriteTo: [Favorite] @relation
     averageRating: Float
+    isLikedByCurrentUser: Boolean
 }
 
 type RecipeStep{

@@ -18,6 +18,7 @@ import '../models/bloc_providers/video_provider.dart';
 import '../models/constants/constants.dart' as constants;
 import '../models/constants/shared_preferences_keys.dart' as keys;
 import '../models/constants/graphql_mutations.dart' as mutations;
+import '../utilities/global_variables.dart' as globals;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -144,6 +145,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           _prefs!.setString(keys.token, token);
                           _prefs!
                               .setString(keys.user, jsonEncode(user.toJson()));
+                          globals.loggedInUser = user;
+                          globals.token = token;
                         }),
                     builder: (RunMutation runMutation, QueryResult? result) {
                       return GreenButton(

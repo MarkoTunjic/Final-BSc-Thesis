@@ -5,6 +5,9 @@ import java.util.List;
 import com.coxautodev.graphql.tools.GraphQLResolver;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Comments;
@@ -14,13 +17,16 @@ import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Ingredient;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Rating;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Recipe;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.RecipeStep;
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Users;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Video;
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Embeddable.FavoriteKey;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.CommentsRepository;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.FavoriteRepository;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.ImageRepository;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.IngredientRepository;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.RatingRepository;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.RecipeStepRepository;
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.UsersRepository;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.VideoRepository;
 
 @Component
@@ -46,6 +52,9 @@ public class RecipeResolver implements GraphQLResolver<Recipe> {
 
     @Autowired
     private VideoRepository videoRepository;
+
+    @Autowired
+    private UsersRepository usersRepository;
 
     public List<RecipeStep> getRecipeSteps(Recipe recipe) {
         return recipeStepRepository.findByRecipeId(recipe.getId());
@@ -78,5 +87,18 @@ public class RecipeResolver implements GraphQLResolver<Recipe> {
     public Double getAverageRating(Recipe recipe) {
         Double average = ratingRepository.averageRatingForRecipe(recipe.getId());
         return average == null ? 0 : average;
+    }
+
+    public Boolean isLikedByCurrentUser(Recipe recipe) {
+
+        Object userDetails = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (userDetails instanceof String)
+            return false;
+
+        String username = ((UserDetails) userDetails).getUsername();
+
+        Users user = usersRepository.findByUsername(username).get();
+        return favoriteRepository.existsById(new FavoriteKey(user.getId(), recipe.getId()));
     }
 }

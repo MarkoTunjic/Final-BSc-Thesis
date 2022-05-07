@@ -1,24 +1,24 @@
 class User {
-  final int id;
+  final int? id;
   final String username;
-  final String eMail;
+  final String? eMail;
   final String profilePicture;
-  final String role;
+  final String? role;
 
   const User({
-    required this.id,
-    required this.eMail,
+    this.id,
+    this.eMail,
     required this.profilePicture,
-    required this.role,
+    this.role,
     required this.username,
   });
 
   factory User.fromJSON(Map<String, dynamic> json) {
     return User(
       eMail: json["eMail"],
-      id: int.parse(json["id"]),
+      id: json["id"] == null ? null : int.parse(json["id"]),
       profilePicture: json["profilePicture"],
-      role: json["role"]["roleName"],
+      role: json["role"]?["roleName"],
       username: json["username"],
     );
   }

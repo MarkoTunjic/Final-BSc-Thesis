@@ -15,7 +15,10 @@ class SharedPreferencesHelper {
       globals.loggedInUser = User.fromJSON(jsonDecode(userJson));
     }
     globals.token = prefs.getString(keys.token);
-    print(globals.token);
-    print(globals.loggedInUser);
+  }
+
+  static Future<void> removeSharedPreference(String key) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove(key);
   }
 }
