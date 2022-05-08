@@ -62,6 +62,7 @@ public class RecipeService {
         return savedRecipe;
     }
 
+    @Transactional
     private void saveVideoFromPayload(RecipePayload payload, Recipe recipe) throws FileNotFoundException, IOException {
         if (payload.getVideo() == null)
             return;
@@ -72,6 +73,7 @@ public class RecipeService {
                 "recipe" + recipe.getId() + "_video" + payload.getVideoExtension()));
     }
 
+    @Transactional
     private void saveImagesFromPayload(RecipePayload payload, Recipe recipe) throws FileNotFoundException, IOException {
         int i = 0;
         for (String payloadImage : payload.getImages()) {
@@ -83,6 +85,7 @@ public class RecipeService {
         }
     }
 
+    @Transactional
     private void saveStepsFromPayload(RecipePayload payload, Recipe recipe) {
         int i = 0;
         for (String step : payload.getSteps()) {
@@ -94,6 +97,7 @@ public class RecipeService {
         }
     }
 
+    @Transactional
     private void saveIngredientsFromPayload(RecipePayload payload, Recipe recipe) {
         for (IngredientPayload ingredientPayload : payload.getIngredients()) {
             Ingredient newIngredient = new Ingredient();
@@ -154,5 +158,10 @@ public class RecipeService {
             return true;
         List<Ingredient> ingredients = ingredientRepository.findByRecipeId(recipe.getId());
         return ingredients.stream().allMatch(ingredient -> requiredIngredients.contains(ingredient.getId()));
+    }
+
+    @Transactional
+    public Recipe getById(Long id) {
+        return recipeRepository.findById(id).get();
     }
 }

@@ -6,6 +6,7 @@ schema{
 type Query{
     users: [Users]
     recipes(filter: Filter!): Recipes!
+    singleRecipe(recipeId: ID!): Recipe!
 }
 
 type Mutation{

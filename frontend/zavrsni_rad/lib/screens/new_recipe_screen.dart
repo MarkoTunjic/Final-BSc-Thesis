@@ -15,15 +15,15 @@ import 'package:zavrsni_rad/models/new_recipe.dart';
 import 'package:zavrsni_rad/widgets/bloc_cover_picture_widget.dart';
 import 'package:zavrsni_rad/widgets/bloc_video_widget.dart';
 import 'package:zavrsni_rad/widgets/green_button_widget.dart';
-import 'package:zavrsni_rad/widgets/ingredients_widget.dart';
+import 'package:zavrsni_rad/widgets/ingredients_input_widget.dart';
 import 'package:zavrsni_rad/widgets/input_field_widget.dart';
 import 'package:zavrsni_rad/widgets/multiline_input_field_widget.dart';
 import 'package:zavrsni_rad/widgets/picture_picker_widget.dart';
 import '../models/constants/constants.dart' as constants;
 import '../models/constants/graphql_mutations.dart' as mutations;
 import '../models/recipe_step.dart';
-import '../widgets/images_widget.dart';
-import '../widgets/steps_widget.dart';
+import '../widgets/images_input_widget.dart';
+import '../widgets/steps_input_widget.dart';
 
 class NewRecipeScreen extends StatefulWidget {
   static final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -261,7 +261,7 @@ class _NewRecipeState extends State<NewRecipeScreen> {
                   newRecipe.images = state
                       .map((e) => base64Encode(e.readAsBytesSync()))
                       .toList();
-                  return ImagesWidget(images: state);
+                  return ImagesInputWidget(images: state);
                 }),
               ),
               BlocBuilder<BlocVideo, File?>(

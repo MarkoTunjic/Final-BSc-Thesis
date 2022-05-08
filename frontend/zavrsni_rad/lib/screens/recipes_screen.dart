@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:zavrsni_rad/models/bloc_providers/ingredients_provider.dart';
+import 'package:zavrsni_rad/models/bloc_providers/steps_provider.dart';
 import 'package:zavrsni_rad/models/filter.dart';
 import 'package:zavrsni_rad/models/recipe_master.dart';
+import 'package:zavrsni_rad/screens/recipe_screen.dart';
 import 'package:zavrsni_rad/widgets/filter_widget.dart';
 import 'package:zavrsni_rad/widgets/menu_widget.dart';
 import 'package:zavrsni_rad/widgets/pagination_widget.dart';
@@ -81,7 +85,16 @@ class _RecipesScreenState extends State<RecipesScreen> {
 
                         return InkWell(
                           child: RecipeMasterWidget(recipe: recipes[index]),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => RecipeScreen(
+                                  id: recipes[index].id,
+                                ),
+                              ),
+                            );
+                          },
                         );
                       },
                     ),

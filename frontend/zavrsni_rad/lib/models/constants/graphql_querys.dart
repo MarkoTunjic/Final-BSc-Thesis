@@ -7,6 +7,7 @@ const String recipes = """
           username,
           profilePicture
         }
+        id,
         averageRating,
         cookingDuration,
         coverPicture,
@@ -14,6 +15,44 @@ const String recipes = """
         isLikedByCurrentUser
       }
       numberOfPages
+    }
+  }
+""";
+
+const String singleRecipe = """
+  query SingleRecipe(\$recipeId: ID!){
+    singleRecipe(recipeId:\$recipeId){
+      coverPicture,
+      recipeName,
+      description,
+      cookingDuration,
+      averageRating,
+      user{
+        username,
+        profilePicture
+      }
+      ingredients{
+        ingredientName,
+        quantity,
+        measure
+      }
+      recipeSteps{
+        orderNumber,
+        stepDescription
+      }
+      images{
+        link
+      }
+      videos{
+        link
+      }
+      comments{
+        commentText,
+        user{
+          username,
+          profilePicture
+        }
+      }
     }
   }
 """;

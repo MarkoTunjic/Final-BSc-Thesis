@@ -11,8 +11,16 @@ class Ingredient {
     return {
       "ingredientName": ingredientName,
       "quantity": quantity.toString(),
-      "measure": measure
+      "measure": measure,
     };
+  }
+
+  factory Ingredient.fromJson(Map<String, dynamic> json) {
+    return Ingredient(
+      ingredientName: json["ingredientName"],
+      measure: json["measure"],
+      quantity: json["quantity"],
+    );
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'package:zavrsni_rad/models/user.dart';
 
 class RecipeMaster {
+  int id;
   User user;
   double averageRating;
   int cookingDuration;
@@ -9,6 +10,7 @@ class RecipeMaster {
   bool isLikedByCurrentUser;
 
   RecipeMaster({
+    required this.id,
     required this.user,
     required this.averageRating,
     required this.cookingDuration,
@@ -18,8 +20,8 @@ class RecipeMaster {
   });
 
   factory RecipeMaster.fromJson(Map<String, dynamic> json) {
-    print(json["user"]);
     return RecipeMaster(
+        id: int.parse(json["id"]),
         user: User.fromJSON(json["user"]),
         averageRating: json["averageRating"],
         cookingDuration: json["cookingDuration"],

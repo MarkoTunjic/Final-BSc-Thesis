@@ -11,6 +11,7 @@ import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.UsersRepository;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.services.RecipeService;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.payloads.Filter;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.payloads.Recipes;
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Recipe;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Users;
 
 @Component
@@ -27,5 +28,9 @@ public class QueryResolver implements GraphQLQueryResolver {
 
     public Recipes getRecipes(Filter filter) {
         return recipeService.getRecipesForFilter(filter);
+    }
+
+    public Recipe getSingleRecipe(Long recipeId) {
+        return recipeService.getById(recipeId);
     }
 }

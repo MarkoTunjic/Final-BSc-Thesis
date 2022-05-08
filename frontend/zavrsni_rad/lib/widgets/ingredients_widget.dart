@@ -1,50 +1,53 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zavrsni_rad/models/bloc_providers/ingredients_provider.dart';
-import 'package:zavrsni_rad/models/ingredient.dart';
-import 'package:zavrsni_rad/widgets/add_remove_widget.dart';
-import 'package:zavrsni_rad/widgets/new_ingredient_widget.dart';
+
+import '../models/ingredient.dart';
+import '../models/constants/constants.dart' as constants;
 
 class IngredientsWidget extends StatelessWidget {
   final List<Ingredient> ingredients;
-
   const IngredientsWidget({Key? key, required this.ingredients})
       : super(key: key);
-  List<Widget> getInputs(List<Ingredient> ingredients) {
-    List<Widget> inputs = [];
-    int i = 0;
+  List<Widget> _getWidgets() {
+    List<Widget> widgets = [];
     for (Ingredient ingredient in ingredients) {
-      inputs.add(NewIngredientWidget(
-        index: i,
-        ingredient: ingredient,
-        key: ValueKey(ingredient.hashCode + i),
-      ));
-      i++;
+      widgets.add(_IngredientWidget(ingredient: ingredient));
     }
-    return inputs;
+    return widgets;
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      children: _getWidgets(),
+    );
+  }
+}
+
+class _IngredientWidget extends StatelessWidget {
+  final Ingredient ingredient;
+  const _IngredientWidget({Key? key, required this.ingredient})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
       children: [
-        ...getInputs(ingredients),
-        AddRemoveWidget(
-          string: "Ingredient",
-          add: (() {
-            BlocProvider.of<BlocIngredients>(context).add(
-              AddIngredient(
-                ingredient: Ingredient(),
-              ),
-            );
-          }),
-          remove: (() {
-            BlocProvider.of<BlocIngredients>(context).add(
-              RemoveIngredient(
-                index: ingredients.length - 1,
-              ),
-            );
-          }),
+        const Icon(
+          Icons.circle,
+          color: constants.green,
+          size: 15,
+        ),
+        Text(
+          " " +
+              ingredient.quantity.toString() +
+              " " +
+              ingredient.measure! +
+              " " +
+              ingredient.ingredientName!,
+          style: const TextStyle(
+            fontSize: 20,
+            color: constants.darkBlue,
+          ),
         ),
       ],
     );

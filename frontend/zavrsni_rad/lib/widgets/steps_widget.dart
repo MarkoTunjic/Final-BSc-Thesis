@@ -1,27 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zavrsni_rad/models/bloc_providers/steps_provider.dart';
 import 'package:zavrsni_rad/models/recipe_step.dart';
-import 'package:zavrsni_rad/widgets/new_step_widget.dart';
 
-import 'add_remove_widget.dart';
+import '../models/constants/constants.dart' as constants;
 
 class StepsWidget extends StatelessWidget {
   final List<RecipeStep> steps;
   const StepsWidget({Key? key, required this.steps}) : super(key: key);
-
-  List<Widget> getWidgets() {
+  List<Widget> _getWidgets() {
+    steps.sort(((a, b) => a.orderNumber!.compareTo(b.orderNumber!)));
     List<Widget> widgets = [];
-    int i = 0;
     for (RecipeStep step in steps) {
-      widgets.add(
-        NewStepWidget(
-          step: step,
-          index: i,
-          key: ValueKey(step.hashCode + i),
-        ),
-      );
-      i++;
+      widgets.add(_StepWidget(step: step));
     }
     return widgets;
   }
@@ -29,24 +18,36 @@ class StepsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      children: _getWidgets(),
+    );
+  }
+}
+
+class _StepWidget extends StatelessWidget {
+  final RecipeStep step;
+  const _StepWidget({Key? key, required this.step}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
       children: [
-        ...getWidgets(),
-        AddRemoveWidget(
-          string: "Step",
-          add: (() {
-            BlocProvider.of<BlocSteps>(context).add(
-              AddStep(
-                step: RecipeStep(step: ""),
-              ),
-            );
-          }),
-          remove: (() {
-            BlocProvider.of<BlocSteps>(context).add(
-              RemoveStep(
-                index: steps.length - 1,
-              ),
-            );
-          }),
+        Padding(
+          padding: const EdgeInsets.all(5),
+          child: CircleAvatar(
+            backgroundColor: constants.grey,
+            child: Text(
+              (step.orderNumber! + 1).toString(),
+              style: const TextStyle(color: Colors.white, fontSize: 10),
+            ),
+            radius: 10,
+          ),
+        ),
+        Text(
+          step.step,
+          style: const TextStyle(
+            fontSize: 20,
+            color: constants.darkBlue,
+          ),
         ),
       ],
     );
