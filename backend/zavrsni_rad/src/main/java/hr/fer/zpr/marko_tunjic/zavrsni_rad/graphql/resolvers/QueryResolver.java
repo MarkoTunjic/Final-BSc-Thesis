@@ -5,6 +5,7 @@ import java.util.List;
 import com.coxautodev.graphql.tools.GraphQLQueryResolver;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.UsersRepository;
@@ -26,10 +27,12 @@ public class QueryResolver implements GraphQLQueryResolver {
         return usersRepository.findAll();
     }
 
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('USER') or isAnonymous()")
     public Recipes getRecipes(Filter filter) {
         return recipeService.getRecipesForFilter(filter);
     }
 
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('USER') or isAnonymous()")
     public Recipe getSingleRecipe(Long recipeId) {
         return recipeService.getById(recipeId);
     }

@@ -3,8 +3,8 @@ class Filter {
   String? orderBy;
   String? nameLike;
   int? maxCookingDuration;
-  List<int>? canContainIngredients;
-  List<int>? mustNotContaintIngredients;
+  List<String>? canContainIngredients;
+  List<String>? mustNotContaintIngredients;
 
   Filter({
     required this.index,

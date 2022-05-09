@@ -1,25 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:zavrsni_rad/models/comment.dart';
-import 'package:zavrsni_rad/models/recipe_step.dart';
 
 import '../models/constants/constants.dart' as constants;
 
-class CommentsWidget extends StatelessWidget {
-  final List<Comment> comments;
-  const CommentsWidget({Key? key, required this.comments}) : super(key: key);
-  List<Widget> _getWidgets() {
+class CommentsWidget {
+  static List<Widget> getWidgets(List<Comment> comments) {
     List<Widget> widgets = [];
     for (Comment comment in comments) {
       widgets.add(_CommentWidget(comment: comment));
     }
     return widgets;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: _getWidgets(),
-    );
   }
 }
 
@@ -44,7 +34,7 @@ class _CommentWidget extends StatelessWidget {
             Row(
               children: [
                 Padding(
-                  padding: EdgeInsets.all(5),
+                  padding: const EdgeInsets.all(5),
                   child: CircleAvatar(
                     backgroundImage: NetworkImage(comment.user.profilePicture),
                   ),
@@ -60,7 +50,7 @@ class _CommentWidget extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
             ),
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: Text(
                 comment.commentText,
                 style: const TextStyle(

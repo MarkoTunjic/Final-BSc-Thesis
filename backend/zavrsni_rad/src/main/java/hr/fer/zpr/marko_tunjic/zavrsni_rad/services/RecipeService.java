@@ -137,7 +137,8 @@ public class RecipeService {
         int toIndex = recipes.size() > RECIPES_PER_PAGE ? RECIPES_PER_PAGE : recipes.size();
         recipes = recipes.subList(0, toIndex);
         Double numberOfPages = Math.ceil(recipes.size() * 1.d / RECIPES_PER_PAGE);
-        return new Recipes(recipes, numberOfPages.intValue());
+
+        return new Recipes(recipes, numberOfPages.intValue(), filter.getIndex());
     }
 
     private boolean hasGreaterCookingDuration(Recipe recipe, Integer cookingDuration) {
@@ -146,18 +147,20 @@ public class RecipeService {
         return recipe.getCookingDuration() > cookingDuration;
     }
 
-    private boolean containsForbiddenIngredient(Recipe recipe, List<Long> forbiddenIngredients) {
-        if (forbiddenIngredients == null)
+    private boolean containsForbiddenIngredient(Recipe recipe, List<String> forbiddenIngredients) {
+        if (forbiddenIngredients == null || forbiddenIngredients.size() == 0)
             return false;
         List<Ingredient> ingredients = ingredientRepository.findByRecipeId(recipe.getId());
-        return ingredients.stream().anyMatch(ingredient -> forbiddenIngredients.contains(ingredient.getId()));
+        return ingredients.stream().anyMatch(ingredient -> forbiddenIngredients.stream().anyMatch(
+                e -> e.contains(ingredient.getIngredientName()) || ingredient.getIngredientName().contains(e)));
     }
 
-    private boolean containsAllIngredients(Recipe recipe, List<Long> requiredIngredients) {
-        if (requiredIngredients == null)
+    private boolean containsAllIngredients(Recipe recipe, List<String> requiredIngredients) {
+        if (requiredIngredients == null || requiredIngredients.size() == 0)
             return true;
         List<Ingredient> ingredients = ingredientRepository.findByRecipeId(recipe.getId());
-        return ingredients.stream().allMatch(ingredient -> requiredIngredients.contains(ingredient.getId()));
+        return ingredients.stream().allMatch(ingredient -> requiredIngredients.stream().anyMatch(
+                e -> e.contains(ingredient.getIngredientName()) || ingredient.getIngredientName().contains(e)));
     }
 
     @Transactional

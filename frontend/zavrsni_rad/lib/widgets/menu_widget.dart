@@ -41,7 +41,7 @@ class MenuWidget extends StatelessWidget {
       );
     }
     if (globals.loggedInUser!.role == "USER") {
-      Row(
+      return Row(
         children: [
           Row(
             children: [

@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:zavrsni_rad/models/recipe_master.dart';
 import '../models/constants/constants.dart' as constants;
 import '../utilities/global_variables.dart' as globals;
+import '../models/constants/graphql_mutations.dart' as mutations;
 
-class RecipeMasterWidget extends StatelessWidget {
+class RecipeMasterWidget extends StatefulWidget {
   final RecipeMaster recipe;
 
   const RecipeMasterWidget({Key? key, required this.recipe}) : super(key: key);
 
+  @override
+  State<StatefulWidget> createState() {
+    return _RecipeMasterWidgetState();
+  }
+}
+
+class _RecipeMasterWidgetState extends State<RecipeMasterWidget> {
   @override
   Widget build(BuildContext context) {
     double availableWidth = MediaQuery.of(context).size.width - 20;
@@ -18,11 +28,12 @@ class RecipeMasterWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(10),
               child: CircleAvatar(
-                backgroundImage: NetworkImage(recipe.user.profilePicture),
+                backgroundImage:
+                    NetworkImage(widget.recipe.user.profilePicture),
               ),
             ),
             Text(
-              recipe.user.username,
+              widget.recipe.user.username,
               style: const TextStyle(color: constants.darkBlue),
             ),
           ],
@@ -31,7 +42,7 @@ class RecipeMasterWidget extends StatelessWidget {
           children: [
             ClipRRect(
               child: Image.network(
-                recipe.coverPicture,
+                widget.recipe.coverPicture,
                 fit: BoxFit.cover,
                 height: availableWidth / 2 - 10,
                 width: availableWidth / 2 - 10,
@@ -41,15 +52,49 @@ class RecipeMasterWidget extends StatelessWidget {
             globals.loggedInUser != null
                 ? Positioned(
                     child: Container(
-                      child: IconButton(
-                        onPressed: () {},
-                        icon: recipe.isLikedByCurrentUser
-                            ? const Icon(
-                                Icons.favorite,
-                                color: Colors.red,
-                              )
-                            : const Icon(Icons.favorite_border_outlined,
-                                color: Colors.white),
+                      child: Mutation(
+                        builder: (runMutation, result) => IconButton(
+                          onPressed: () {
+                            setState(() {
+                              widget.recipe.isLikedByCurrentUser =
+                                  !widget.recipe.isLikedByCurrentUser;
+                            });
+                            runMutation({
+                              "userId": widget.recipe.user.id,
+                              "recipeId": widget.recipe.id,
+                              "state": widget.recipe.isLikedByCurrentUser,
+                            });
+                          },
+                          icon: widget.recipe.isLikedByCurrentUser
+                              ? const Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                )
+                              : const Icon(Icons.favorite_border_outlined,
+                                  color: Colors.white),
+                        ),
+                        options: MutationOptions(
+                            document: gql(mutations.editFavorite),
+                            onCompleted: (result) {
+                              Fluttertoast.showToast(
+                                msg: "Added to favorites", // message
+                                toastLength: Toast.LENGTH_SHORT, // length
+                                gravity:
+                                    ToastGravity.CENTER, // location// duration
+                              );
+                            },
+                            onError: (exception) {
+                              Fluttertoast.showToast(
+                                msg: "Something went wrong", // message
+                                toastLength: Toast.LENGTH_SHORT, // length
+                                gravity:
+                                    ToastGravity.CENTER, // location// duration
+                              );
+                              setState(() {
+                                widget.recipe.isLikedByCurrentUser =
+                                    !widget.recipe.isLikedByCurrentUser;
+                              });
+                            }),
                       ),
                       decoration: const BoxDecoration(
                         color: Color.fromARGB(182, 158, 158, 158),
@@ -64,37 +109,51 @@ class RecipeMasterWidget extends StatelessWidget {
                 : Container(),
           ],
         ),
-        Padding(
-          padding: const EdgeInsets.only(top: 10),
-          child: Text(
-            recipe.recipeName,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          ),
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: Text(
+                widget.recipe.recipeName,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              ),
+            ),
+            (widget.recipe.user.id == globals.loggedInUser?.id ||
+                    globals.loggedInUser?.role == "MODERATOR")
+                ? IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.delete,
+                      color: Colors.red,
+                    ),
+                  )
+                : Container(),
+          ],
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
         ),
-        Padding(
-          padding: const EdgeInsets.only(top: 10),
-          child: Row(
-            children: [
-              Text(
-                recipe.averageRating.toStringAsFixed(1),
-                style: const TextStyle(color: constants.darkBlue),
-              ),
-              const Icon(
-                Icons.star,
-                color: Colors.yellow,
-              ),
-              const Icon(
-                Icons.circle,
-                size: 10,
-                color: constants.grey,
-              ),
-              Text(
-                " >" + recipe.cookingDuration.toString() + "mins",
-                style: const TextStyle(color: constants.darkBlue),
-              ),
-            ],
-            mainAxisAlignment: MainAxisAlignment.center,
-          ),
+        Row(
+          children: [
+            Text(
+              widget.recipe.averageRating.toStringAsFixed(1),
+              style: const TextStyle(color: constants.darkBlue),
+            ),
+            const Icon(
+              Icons.star,
+              color: Colors.yellow,
+            ),
+            const Icon(
+              Icons.circle,
+              size: 10,
+              color: constants.grey,
+            ),
+            Text(
+              " >" + widget.recipe.cookingDuration.toString() + "mins",
+              style: const TextStyle(color: constants.darkBlue),
+            ),
+          ],
+          mainAxisAlignment: MainAxisAlignment.center,
         ),
       ],
       crossAxisAlignment: CrossAxisAlignment.center,

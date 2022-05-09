@@ -4,6 +4,7 @@ const String recipes = """
     {
       recipes{
         user{
+          id,
           username,
           profilePicture
         }
@@ -14,7 +15,8 @@ const String recipes = """
         recipeName,
         isLikedByCurrentUser
       }
-      numberOfPages
+      numberOfPages,
+      currentIndex
     }
   }
 """;
@@ -28,6 +30,7 @@ const String singleRecipe = """
       cookingDuration,
       averageRating,
       user{
+        id,
         username,
         profilePicture
       }

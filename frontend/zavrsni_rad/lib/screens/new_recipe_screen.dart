@@ -291,7 +291,6 @@ class _NewRecipeState extends State<NewRecipeScreen> {
                     child: GreenButton(
                       onPressed: () {
                         NewRecipeScreen.formKey.currentState?.save();
-                        print(newRecipe.toJson());
                         runMutation({"payload": newRecipe.toJson()});
                       },
                       text: "Submit",

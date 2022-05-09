@@ -16,6 +16,7 @@ import hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.payloads.RecipePayload;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.payloads.RegisterRequest;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Recipe;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Users;
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.services.FavoriteService;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.services.RecipeService;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.services.UsersService;
 
@@ -27,6 +28,9 @@ public class MutationResolver implements GraphQLMutationResolver {
 
     @Autowired
     private RecipeService recipeService;
+
+    @Autowired
+    private FavoriteService favoriteService;
 
     @PreAuthorize("isAnonymous()")
     public LoginResponse login(String identifier, String password) {
@@ -41,5 +45,11 @@ public class MutationResolver implements GraphQLMutationResolver {
     @PreAuthorize("isAnonymous()")
     public Recipe addRecipe(RecipePayload payload) throws FileNotFoundException, IOException {
         return recipeService.addRecipe(payload);
+    }
+
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('USER') or isAnonymous()")
+    public Boolean editFavorite(Long userId, Long recipeId, Boolean state)
+            throws FileNotFoundException, IOException, MessagingException {
+        return favoriteService.editFavorite(userId, recipeId, state);
     }
 }

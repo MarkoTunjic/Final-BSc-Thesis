@@ -4,17 +4,12 @@ import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.security.SecureRandom;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -46,13 +41,10 @@ public class UsersService {
     private JwtUtils jwtUtils;
 
     @Autowired
-    private JavaMailSender mailSender;
-
-    @Autowired
     private FileService fileService;
 
-    @Value("${spring.mail.username}")
-    private String mail;
+    @Autowired
+    private MailService mailService;
 
     private SecureRandom sr = new SecureRandom();
 
@@ -100,26 +92,8 @@ public class UsersService {
                 url, false, false, roleRepository.getById((long) 1), codeBuilder.toString());
         System.out.println(codeBuilder.toString());
         userRepository.save(user);
-        sendConfirmationMail(user);
+        mailService.sendConfirmationMail(user);
         return user;
-    }
-
-    public void sendConfirmationMail(Users user) throws UnsupportedEncodingException, MessagingException {
-        String subject = "Please verify your e-mail";
-        String senderName = "FinalBSC";
-        String mailContent = "<p> Dear ${username},</p>".replace("${username}", user.getUsername());
-        mailContent += "<p> Please click the link below to verify your registaration: </p>";
-        mailContent += "<p><a href=\"http://localhost:5000/verify/${confirmationCode}\">click to verify</a></p>"
-                .replace("${confirmationCode}", user.getConfirmationCode());
-        mailContent += "<p> Thank you!<br> The FinalBsc guy</p>";
-
-        MimeMessage mimeMessage = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(mimeMessage);
-        helper.setFrom(mail, senderName);
-        helper.setTo(user.geteMail());
-        helper.setSubject(subject);
-        helper.setText(mailContent, true);
-        mailSender.send(mimeMessage);
     }
 
     @Transactional

@@ -13,6 +13,7 @@ type Mutation{
     login(identifier: String!,password:String!): LoginResponse!
     register(payload: RegisterRequest!): Users!
     addRecipe(payload: RecipePayload!): Recipe!
+    editFavorite(userId: ID!, recipeId: ID!, state: Boolean!): Boolean!
 }
 
 type Comments{
@@ -132,6 +133,7 @@ type LoginResponse{
 type Recipes{
     recipes: [Recipe]!
     numberOfPages: Int!
+    currentIndex: Int!
 }
 
 input RegisterRequest{
@@ -165,6 +167,6 @@ input Filter{
     orderBy: String
     nameLike: String
     maxCookingDuration: Int
-    canContainIngredients: [ID]
-    mustNotContaintIngredients: [ID]
+    canContainIngredients: [String]
+    mustNotContaintIngredients: [String]
 }

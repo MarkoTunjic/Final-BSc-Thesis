@@ -3,8 +3,11 @@ import '../models/constants/constants.dart' as constants;
 
 class PaginationWidget extends StatelessWidget {
   final int maxPages;
+  final int currentPage;
 
-  const PaginationWidget({Key? key, required this.maxPages}) : super(key: key);
+  const PaginationWidget(
+      {Key? key, required this.maxPages, required this.currentPage})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

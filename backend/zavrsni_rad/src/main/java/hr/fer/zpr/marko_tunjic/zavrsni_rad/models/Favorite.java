@@ -11,7 +11,7 @@ import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Embeddable.FavoriteKey;
 @Entity
 public class Favorite {
     @EmbeddedId
-    private FavoriteKey id;
+    private FavoriteKey id = new FavoriteKey();
 
     @ManyToOne
     @MapsId("userId")
@@ -26,10 +26,9 @@ public class Favorite {
     public Favorite() {
     }
 
-    public Favorite(FavoriteKey id, Users user, Recipe recipe) {
-        this.id = id;
-        this.user = user;
+    public Favorite(Users user, Recipe recipe) {
         this.recipe = recipe;
+        this.user = user;
     }
 
     public FavoriteKey getId() {

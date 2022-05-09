@@ -14,6 +14,7 @@ class User {
   });
 
   factory User.fromJSON(Map<String, dynamic> json) {
+    print(json);
     return User(
       eMail: json["eMail"],
       id: json["id"] == null ? null : int.parse(json["id"]),

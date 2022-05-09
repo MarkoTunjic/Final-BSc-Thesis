@@ -98,6 +98,7 @@ public class RecipeResolver implements GraphQLResolver<Recipe> {
         String username = ((UserDetails) userDetails).getUsername();
 
         Users user = usersRepository.findByUsername(username).get();
-        return favoriteRepository.existsById(new FavoriteKey(user.getId(), recipe.getId()));
+        boolean exists = favoriteRepository.existsById(new FavoriteKey(user.getId(), recipe.getId()));
+        return exists;
     }
 }

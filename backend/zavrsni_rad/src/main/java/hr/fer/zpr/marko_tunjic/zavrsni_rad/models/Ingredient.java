@@ -102,4 +102,8 @@ public class Ingredient {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return quantity + " " + measure + " " + ingredientName;
+    }
 }

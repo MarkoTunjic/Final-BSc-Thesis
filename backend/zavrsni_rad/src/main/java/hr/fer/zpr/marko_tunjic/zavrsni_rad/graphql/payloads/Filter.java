@@ -7,11 +7,11 @@ public class Filter {
     private String orderBy;
     private String nameLike;
     private Integer maxCookingDuration;
-    private List<Long> canContainIngredients;
-    private List<Long> mustNotContaintIngredients;
+    private List<String> canContainIngredients;
+    private List<String> mustNotContaintIngredients;
 
     public Filter(int index, String orderBy, String nameLike, Integer maxCookingDuration,
-            List<Long> canContainIngredients, List<Long> mustNotContaintIngredients) {
+            List<String> canContainIngredients, List<String> mustNotContaintIngredients) {
         this.index = index;
         this.orderBy = orderBy;
         this.nameLike = nameLike;
@@ -56,19 +56,19 @@ public class Filter {
         this.maxCookingDuration = maxCookingDuration;
     }
 
-    public List<Long> getCanContainIngredients() {
+    public List<String> getCanContainIngredients() {
         return canContainIngredients;
     }
 
-    public void setCanContainIngredients(List<Long> canContainIngredients) {
+    public void setCanContainIngredients(List<String> canContainIngredients) {
         this.canContainIngredients = canContainIngredients;
     }
 
-    public List<Long> getMustNotContaintIngredients() {
+    public List<String> getMustNotContaintIngredients() {
         return mustNotContaintIngredients;
     }
 
-    public void setMustNotContaintIngredients(List<Long> mustNotContaintIngredients) {
+    public void setMustNotContaintIngredients(List<String> mustNotContaintIngredients) {
         this.mustNotContaintIngredients = mustNotContaintIngredients;
     }
 

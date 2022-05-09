@@ -7,10 +7,20 @@ import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Recipe;
 public class Recipes {
     private List<Recipe> recipes;
     private Integer numberOfPages;
+    private Integer currentIndex;
 
-    public Recipes(List<Recipe> recipes, Integer numberOfPages) {
+    public Recipes(List<Recipe> recipes, Integer numberOfPages, Integer currentIndex) {
         this.recipes = recipes;
         this.numberOfPages = numberOfPages;
+        this.currentIndex = currentIndex;
+    }
+
+    public Integer getCurrentIndex() {
+        return currentIndex;
+    }
+
+    public void setCurrentIndex(Integer currentIndex) {
+        this.currentIndex = currentIndex;
     }
 
     public Recipes() {

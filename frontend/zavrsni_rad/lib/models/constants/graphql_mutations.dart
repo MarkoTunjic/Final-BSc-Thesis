@@ -31,3 +31,9 @@ const String addRecipe = """
     }
   }
 """;
+
+const String editFavorite = """
+  mutation EditFavorite(\$userId: ID!, \$recipeId: ID!, \$state: Boolean!){
+    editFavorite(userId: \$userId, recipeId: \$recipeId, state: \$state)
+  }
+""";
