@@ -43,3 +43,16 @@ const String deleteRecipe = """
     deleteRecipe(recipeId: \$recipeId)
   }
 """;
+
+const String addComment = """
+  mutation AddComment(\$userId: ID!, \$recipeId: ID!, \$commentText: String!){
+    addComment(userId: \$userId, recipeId: \$recipeId, commentText: \$commentText){
+      user{
+        username,
+        profilePicture
+      }
+      commentText,
+      id
+    }
+  }
+""";

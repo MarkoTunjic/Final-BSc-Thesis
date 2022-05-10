@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:video_player/video_player.dart';
+import 'package:zavrsni_rad/models/comment.dart';
 import 'package:zavrsni_rad/models/recipe_detail.dart';
 import 'package:zavrsni_rad/widgets/comments_widget.dart';
 import 'package:zavrsni_rad/widgets/images_widget.dart';
@@ -10,6 +10,8 @@ import 'package:zavrsni_rad/widgets/steps_widget.dart';
 import 'package:zavrsni_rad/widgets/videos_widget.dart';
 import '../models/constants/constants.dart' as constants;
 import '../models/constants/graphql_querys.dart' as querys;
+import '../models/constants/graphql_mutations.dart' as mutations;
+import '../utilities/global_variables.dart' as globals;
 
 class RecipeScreen extends StatefulWidget {
   final int id;
@@ -23,6 +25,9 @@ class RecipeScreen extends StatefulWidget {
 }
 
 class _RecipeScreenState extends State<RecipeScreen> {
+  String? currentCommentText;
+  late RecipeDetail currentRecipe;
+
   @override
   Widget build(BuildContext context) {
     ValueNotifier<GraphQLClient> client = ValueNotifier(
@@ -51,8 +56,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
               return const CircularProgressIndicator();
             }
 
-            RecipeDetail recipe =
-                RecipeDetail.fromJson(result.data?["singleRecipe"]);
+            currentRecipe = RecipeDetail.fromJson(result.data?["singleRecipe"]);
 
             return CustomScrollView(
               shrinkWrap: true,
@@ -77,7 +81,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                     children: [
                       FlexibleSpaceBar(
                         background: Image.network(
-                          recipe.coverPicture,
+                          currentRecipe.coverPicture,
                           width: MediaQuery.of(context).size.width,
                           height: MediaQuery.of(context).size.height / 3,
                           fit: BoxFit.cover,
@@ -114,7 +118,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                         Row(
                           children: [
                             Text(
-                              recipe.recipeName,
+                              currentRecipe.recipeName,
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 30,
@@ -129,7 +133,8 @@ class _RecipeScreenState extends State<RecipeScreen> {
                               onPressed: () {},
                             ),
                             Text(
-                              recipe.averageRating.toStringAsPrecision(1),
+                              currentRecipe.averageRating
+                                  .toStringAsPrecision(1),
                               style: const TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 30,
@@ -158,7 +163,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                             ),
                             Text(
                               " > " +
-                                  recipe.cookingDuration.toString() +
+                                  currentRecipe.cookingDuration.toString() +
                                   "mins",
                               style: const TextStyle(
                                 fontSize: 20,
@@ -173,11 +178,11 @@ class _RecipeScreenState extends State<RecipeScreen> {
                             child: Row(
                               children: [
                                 CircleAvatar(
-                                  backgroundImage:
-                                      NetworkImage(recipe.user.profilePicture),
+                                  backgroundImage: NetworkImage(
+                                      currentRecipe.user.profilePicture),
                                 ),
                                 Text(
-                                  " " + recipe.user.username,
+                                  " " + currentRecipe.user.username,
                                   style: const TextStyle(
                                     fontSize: 20,
                                     color: constants.darkBlue,
@@ -201,7 +206,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                           ),
                         ),
                         Text(
-                          recipe.description,
+                          currentRecipe.description,
                           style: const TextStyle(
                             fontSize: 20,
                             color: constants.darkBlue,
@@ -218,7 +223,8 @@ class _RecipeScreenState extends State<RecipeScreen> {
                             color: constants.darkBlue,
                           ),
                         ),
-                        IngredientsWidget(ingredients: recipe.ingredients),
+                        IngredientsWidget(
+                            ingredients: currentRecipe.ingredients),
                         const Divider(
                           color: Colors.grey,
                         ),
@@ -230,7 +236,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                             color: constants.darkBlue,
                           ),
                         ),
-                        StepsWidget(steps: recipe.steps),
+                        StepsWidget(steps: currentRecipe.steps),
                         const Divider(
                           color: Colors.grey,
                         ),
@@ -242,8 +248,8 @@ class _RecipeScreenState extends State<RecipeScreen> {
                             color: constants.darkBlue,
                           ),
                         ),
-                        VideosWidget(videos: recipe.videos),
-                        ImagesWidget(images: recipe.images),
+                        VideosWidget(videos: currentRecipe.videos),
+                        ImagesWidget(images: currentRecipe.images),
                         const Divider(
                           color: Colors.grey,
                         ),
@@ -260,19 +266,41 @@ class _RecipeScreenState extends State<RecipeScreen> {
                             MultilineInputFieldWidget(
                               hintText: "Add comment\n\n",
                               width: MediaQuery.of(context).size.width * 3 / 4,
+                              initialValue: currentCommentText,
+                              onChanged: (newValue) =>
+                                  currentCommentText = newValue,
                             ),
-                            IconButton(
-                              onPressed: () {},
-                              icon: const Icon(
-                                Icons.send,
-                                color: constants.green,
-                                size: 30,
+                            Mutation(
+                              builder: (runMutation, result) => IconButton(
+                                onPressed: () {
+                                  if (currentCommentText != null &&
+                                      currentCommentText!.isNotEmpty) {
+                                    runMutation({
+                                      "recipeId": currentRecipe.id,
+                                      "userId": globals.loggedInUser!.id,
+                                      "commentText": currentCommentText!,
+                                    });
+                                  }
+                                },
+                                icon: const Icon(
+                                  Icons.send,
+                                  color: constants.green,
+                                  size: 30,
+                                ),
+                              ),
+                              options: MutationOptions(
+                                document: gql(mutations.addComment),
+                                onCompleted: (result) {
+                                  if (result == null) return;
+                                  currentCommentText = null;
+                                  refetch!();
+                                },
                               ),
                             ),
                           ],
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                         ),
-                        ...CommentsWidget.getWidgets(recipe.comments),
+                        ...CommentsWidget.getWidgets(currentRecipe.comments),
                       ],
                     ),
                   ),

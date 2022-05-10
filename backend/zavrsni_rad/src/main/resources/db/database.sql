@@ -97,10 +97,11 @@ CREATE TABLE rating
 
 CREATE TABLE comments
 (
+  id SERIAL,
   comment_text VARCHAR(200) NOT NULL,
   user_id INT NOT NULL,
   recipe_id INT NOT NULL,
-  PRIMARY KEY (user_id, recipe_id),
+  PRIMARY KEY (id),
   FOREIGN KEY (user_id) REFERENCES Users(id),
   FOREIGN KEY (recipe_id) REFERENCES Recipe(id)
 );

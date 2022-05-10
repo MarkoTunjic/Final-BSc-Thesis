@@ -5,6 +5,7 @@ import 'package:zavrsni_rad/models/user.dart';
 import 'comment.dart';
 
 class RecipeDetail {
+  int id;
   User user;
   double averageRating;
   int cookingDuration;
@@ -29,6 +30,7 @@ class RecipeDetail {
     required this.steps,
     required this.videos,
     required this.comments,
+    required this.id,
   });
 
   factory RecipeDetail.fromJson(Map<String, dynamic> json) {
@@ -38,6 +40,7 @@ class RecipeDetail {
     List<dynamic> images = json["images"];
     List<dynamic> videos = json["videos"];
     return RecipeDetail(
+      id: int.parse(json["id"]),
       recipeName: json["recipeName"],
       averageRating: json["averageRating"],
       cookingDuration: json["cookingDuration"],

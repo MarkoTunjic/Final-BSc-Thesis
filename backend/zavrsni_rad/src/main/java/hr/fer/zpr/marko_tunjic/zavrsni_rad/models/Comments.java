@@ -1,47 +1,44 @@
 package hr.fer.zpr.marko_tunjic.zavrsni_rad.models;
 
 import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
-
-import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Embeddable.CommentsKey;
 
 @Entity
 public class Comments {
-    @EmbeddedId
-    private CommentsKey id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
     @Column(length = 200, nullable = false, unique = false)
     private String commentText;
 
     @ManyToOne
-    @MapsId("userId")
     @JoinColumn(name = "user_id")
     private Users user;
 
     @ManyToOne
-    @MapsId("recipeId")
     @JoinColumn(name = "recipe_id")
     private Recipe recipe;
 
     public Comments() {
     }
 
-    public Comments(CommentsKey id, String commentText, Users user, Recipe recipe) {
-        this.id = id;
+    public Comments(String commentText, Users user, Recipe recipe) {
         this.commentText = commentText;
         this.user = user;
         this.recipe = recipe;
     }
 
-    public CommentsKey getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(CommentsKey id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

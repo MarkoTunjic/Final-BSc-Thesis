@@ -14,8 +14,10 @@ import org.springframework.stereotype.Component;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.payloads.LoginResponse;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.payloads.RecipePayload;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.payloads.RegisterRequest;
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Comments;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Recipe;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Users;
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.services.CommentsService;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.services.FavoriteService;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.services.RecipeService;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.services.UsersService;
@@ -31,6 +33,9 @@ public class MutationResolver implements GraphQLMutationResolver {
 
     @Autowired
     private FavoriteService favoriteService;
+
+    @Autowired
+    private CommentsService commentsService;
 
     @PreAuthorize("isAnonymous()")
     public LoginResponse login(String identifier, String password) {
@@ -57,5 +62,10 @@ public class MutationResolver implements GraphQLMutationResolver {
     public Boolean deleteRecipe(Long recipeId)
             throws FileNotFoundException, IOException, MessagingException {
         return recipeService.deleteRecipe(recipeId);
+    }
+
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('USER') or isAnonymous()")
+    public Comments addComment(Long userId, Long recipeId, String commentText) {
+        return commentsService.addComment(userId, recipeId, commentText);
     }
 }

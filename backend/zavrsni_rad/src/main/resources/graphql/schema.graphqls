@@ -15,18 +15,14 @@ type Mutation{
     addRecipe(payload: RecipePayload!): Recipe!
     editFavorite(userId: ID!, recipeId: ID!, state: Boolean!): Boolean!
     deleteRecipe(recipeId: ID!): Boolean!
+    addComment(userId: ID!,recipeId: ID!,commentText: String!): Comments!
 }
 
 type Comments{
-    id: CommentsKey!
+    id: ID!
     commentText: String!
     user: Users
     recipe: Recipe
-}
-
-type CommentsKey{
-    userId: ID!
-    recipeId: ID!
 }
 
 type Favorite{

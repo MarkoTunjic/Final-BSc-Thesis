@@ -21,6 +21,7 @@ import 'package:zavrsni_rad/widgets/multiline_input_field_widget.dart';
 import 'package:zavrsni_rad/widgets/picture_picker_widget.dart';
 import '../models/constants/constants.dart' as constants;
 import '../models/constants/graphql_mutations.dart' as mutations;
+import '../utilities/global_variables.dart' as globals;
 import '../models/recipe_step.dart';
 import '../widgets/images_input_widget.dart';
 import '../widgets/steps_input_widget.dart';
@@ -37,7 +38,8 @@ class NewRecipeScreen extends StatefulWidget {
 
 class _NewRecipeState extends State<NewRecipeScreen> {
   double _currentSliderValue = 30;
-  NewRecipe newRecipe = NewRecipe(cookingDuration: 30, userId: 4);
+  NewRecipe newRecipe =
+      NewRecipe(cookingDuration: 30, userId: globals.loggedInUser!.id);
   final ImagePicker _picker = ImagePicker();
 
   @override

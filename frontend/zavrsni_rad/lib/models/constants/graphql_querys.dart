@@ -24,6 +24,7 @@ const String recipes = """
 const String singleRecipe = """
   query SingleRecipe(\$recipeId: ID!){
     singleRecipe(recipeId:\$recipeId){
+      id,
       coverPicture,
       recipeName,
       description,
@@ -50,6 +51,7 @@ const String singleRecipe = """
         link
       }
       comments{
+        id,
         commentText,
         user{
           username,
