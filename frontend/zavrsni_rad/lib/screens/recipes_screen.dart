@@ -78,7 +78,12 @@ class _RecipesScreenState extends State<RecipesScreen> {
                   List<Widget> recipeWidgets = recipes
                       .map(
                         (e) => InkWell(
-                          child: RecipeMasterWidget(recipe: e),
+                          child: RecipeMasterWidget(
+                            recipe: e,
+                            onDelete: () {
+                              fetchMore!(opts);
+                            },
+                          ),
                           onTap: () {
                             Navigator.push(
                               context,

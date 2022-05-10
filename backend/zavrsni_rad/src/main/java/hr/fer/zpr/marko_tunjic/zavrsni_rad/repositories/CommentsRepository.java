@@ -14,4 +14,6 @@ public interface CommentsRepository extends JpaRepository<Comments, CommentsKey>
     List<Comments> findByUserId(Long userId);
 
     List<Comments> findByRecipeId(Long recipeId);
+
+    void deleteByRecipeId(Long recipeId);
 }

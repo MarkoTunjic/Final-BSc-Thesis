@@ -8,8 +8,10 @@ import '../models/constants/graphql_mutations.dart' as mutations;
 
 class RecipeMasterWidget extends StatefulWidget {
   final RecipeMaster recipe;
-
-  const RecipeMasterWidget({Key? key, required this.recipe}) : super(key: key);
+  final void Function() onDelete;
+  const RecipeMasterWidget(
+      {Key? key, required this.recipe, required this.onDelete})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -113,20 +115,46 @@ class _RecipeMasterWidgetState extends State<RecipeMasterWidget> {
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 10),
-              child: Text(
-                widget.recipe.recipeName,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+              child: FittedBox(
+                fit: BoxFit.contain,
+                child: Text(
+                  widget.recipe.recipeName,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
             ),
             (widget.recipe.user.id == globals.loggedInUser?.id ||
                     globals.loggedInUser?.role == "MODERATOR")
-                ? IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.delete,
-                      color: Colors.red,
+                ? Mutation(
+                    options: MutationOptions(
+                      document: gql(mutations.deleteRecipe),
+                      onCompleted: (result) {
+                        widget.onDelete();
+                        Fluttertoast.showToast(
+                          msg: "Recipe successfully deleted", // message
+                          toastLength: Toast.LENGTH_SHORT, // length
+                          gravity: ToastGravity.CENTER, // location// duration
+                        );
+                      },
+                      onError: (error) {
+                        Fluttertoast.showToast(
+                          msg: "Something went wrong", // message
+                          toastLength: Toast.LENGTH_SHORT, // length
+                          gravity: ToastGravity.CENTER, // location// duration
+                        );
+                      },
                     ),
+                    builder: (runMutation, result) {
+                      return IconButton(
+                        onPressed: () {
+                          runMutation({"recipeId": widget.recipe.id});
+                        },
+                        icon: const Icon(
+                          Icons.delete,
+                          color: Colors.red,
+                        ),
+                      );
+                    },
                   )
                 : Container(),
           ],

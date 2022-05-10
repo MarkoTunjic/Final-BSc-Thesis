@@ -37,3 +37,9 @@ const String editFavorite = """
     editFavorite(userId: \$userId, recipeId: \$recipeId, state: \$state)
   }
 """;
+
+const String deleteRecipe = """
+  mutation DeleteRecipe(\$recipeId: ID!){
+    deleteRecipe(recipeId: \$recipeId)
+  }
+""";

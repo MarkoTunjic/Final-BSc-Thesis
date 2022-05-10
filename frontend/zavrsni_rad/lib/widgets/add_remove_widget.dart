@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/constants/constants.dart' as constants;
+import '../screens/new_recipe_screen.dart';
 
 class AddRemoveWidget extends StatelessWidget {
   final String string;
@@ -15,7 +16,10 @@ class AddRemoveWidget extends StatelessWidget {
     return Row(
       children: [
         InkWell(
-          onTap: add,
+          onTap: () {
+            NewRecipeScreen.formKey.currentState?.save();
+            add();
+          },
           child: Container(
             child: Center(
               child: Text(
@@ -35,7 +39,10 @@ class AddRemoveWidget extends StatelessWidget {
           ),
         ),
         InkWell(
-          onTap: remove,
+          onTap: () {
+            NewRecipeScreen.formKey.currentState?.save();
+            remove();
+          },
           child: Container(
             child: Center(
               child: Text(

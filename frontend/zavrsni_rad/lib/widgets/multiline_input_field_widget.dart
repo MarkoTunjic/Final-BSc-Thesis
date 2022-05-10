@@ -32,6 +32,7 @@ class MultilineInputFieldWidget extends StatelessWidget {
         initialValue: initialValue,
         autofocus: false,
         onChanged: onChanged,
+        onTap: () => NewRecipeScreen.formKey.currentState?.save(),
         decoration: InputDecoration(
           hintText: _hintText,
           errorBorder: const OutlineInputBorder(

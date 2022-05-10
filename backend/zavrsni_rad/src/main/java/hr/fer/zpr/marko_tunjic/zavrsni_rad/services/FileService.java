@@ -32,4 +32,13 @@ public class FileService {
         storage.create(blobInfo, Base64.getDecoder().decode(base64File));
         return String.format(DOWNLOAD_URL, URLEncoder.encode(fileName, StandardCharsets.UTF_8));
     }
+
+    public void delete(String url) throws FileNotFoundException, IOException {
+        String name = url.substring(url.lastIndexOf("/") + 1, url.indexOf("?"));
+        BlobId blobId = BlobId.of("finalbscthesis.appspot.com", name);
+        Credentials credentials = GoogleCredentials.fromStream(
+                new FileInputStream("src/main/resources/finalbscthesis-firebase-adminsdk-4hpv1-305070dc09.json"));
+        Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
+        storage.delete(blobId);
+    }
 }

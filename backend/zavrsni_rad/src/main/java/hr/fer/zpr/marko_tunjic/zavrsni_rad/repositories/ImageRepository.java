@@ -11,4 +11,6 @@ import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Image;
 public interface ImageRepository extends JpaRepository<Image, Long> {
 
     List<Image> findByRecipeId(Long recipeId);
+
+    void deleteByRecipeId(Long recipeId);
 }

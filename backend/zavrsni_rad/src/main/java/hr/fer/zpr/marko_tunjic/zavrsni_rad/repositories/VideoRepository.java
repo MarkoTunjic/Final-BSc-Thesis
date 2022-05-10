@@ -11,4 +11,6 @@ import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Video;
 public interface VideoRepository extends JpaRepository<Video, Long> {
 
     List<Video> findByRecipeId(Long recipeId);
+
+    void deleteByRecipeId(Long recipeId);
 }

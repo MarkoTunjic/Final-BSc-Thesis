@@ -18,4 +18,6 @@ public interface RatingRepository extends JpaRepository<Rating, RatingKey> {
 
     @Query("SELECT AVG(r.ratingValue) FROM Rating r WHERE r.recipe.id = ?1")
     Double averageRatingForRecipe(Long recipeId);
+
+    void deleteByRecipeId(Long recipeId);
 }

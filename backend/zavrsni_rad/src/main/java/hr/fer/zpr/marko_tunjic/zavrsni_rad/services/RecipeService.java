@@ -20,11 +20,15 @@ import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Recipe;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.RecipeStep;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Users;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Video;
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.CommentsRepository;
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.FavoriteRepository;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.ImageRepository;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.IngredientRepository;
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.RatingRepository;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.RecipeRepository;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.RecipeStepRepository;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.UsersRepository;
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.VideoRepository;
 
 @Service
 public class RecipeService {
@@ -45,6 +49,18 @@ public class RecipeService {
 
     @Autowired
     private ImageRepository imageRepository;
+
+    @Autowired
+    private VideoRepository videRepository;
+
+    @Autowired
+    private FavoriteRepository favoriteRepository;
+
+    @Autowired
+    private CommentsRepository commentsRepository;
+
+    @Autowired
+    private RatingRepository ratingRepository;
 
     public static final int RECIPES_PER_PAGE = 10;
 
@@ -71,6 +87,7 @@ public class RecipeService {
         newVideo.setRecipe(recipe);
         newVideo.setLink(fileService.upload(payload.getVideo(),
                 "recipe" + recipe.getId() + "_video" + payload.getVideoExtension()));
+        videRepository.save(newVideo);
     }
 
     @Transactional
@@ -82,6 +99,7 @@ public class RecipeService {
             newImage.setRecipe(recipe);
             newImage.setLink(fileService.upload(payloadImage, "recipe" + recipe.getId() + "_image" + i + ".png"));
             imageRepository.save(newImage);
+            i++;
         }
     }
 
@@ -94,6 +112,7 @@ public class RecipeService {
             newStep.setOrderNumber(i);
             newStep.setStepDescription(step);
             recipeStepRepository.save(newStep);
+            i++;
         }
     }
 
@@ -166,5 +185,38 @@ public class RecipeService {
     @Transactional
     public Recipe getById(Long id) {
         return recipeRepository.findById(id).get();
+    }
+
+    @Transactional
+    public Boolean deleteRecipe(Long recipeId) throws FileNotFoundException, IOException {
+        deleteImagesForRecipe(recipeId);
+        deleteVideosForRecipe(recipeId);
+        Recipe recipe = recipeRepository.findById(recipeId).get();
+        recipeStepRepository.deleteByRecipeId(recipeId);
+        ingredientRepository.deleteByRecipeId(recipeId);
+        commentsRepository.deleteByRecipeId(recipeId);
+        ratingRepository.deleteByRecipeId(recipeId);
+        favoriteRepository.deleteByRecipeId(recipeId);
+        fileService.delete(recipe.getCoverPicture());
+        recipeRepository.deleteById(recipeId);
+        return true;
+    }
+
+    @Transactional
+    private void deleteImagesForRecipe(Long recipeId) throws FileNotFoundException, IOException {
+        List<Image> images = imageRepository.findByRecipeId(recipeId);
+        for (Image image : images) {
+            fileService.delete(image.getLink());
+        }
+        imageRepository.deleteByRecipeId(recipeId);
+    }
+
+    @Transactional
+    private void deleteVideosForRecipe(Long recipeId) throws FileNotFoundException, IOException {
+        List<Video> videos = videRepository.findByRecipeId(recipeId);
+        for (Video video : videos) {
+            fileService.delete(video.getLink());
+        }
+        videRepository.deleteByRecipeId(recipeId);
     }
 }

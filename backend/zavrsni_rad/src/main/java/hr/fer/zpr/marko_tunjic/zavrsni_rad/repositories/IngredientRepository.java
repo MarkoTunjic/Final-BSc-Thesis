@@ -11,4 +11,6 @@ import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Ingredient;
 public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
 
     List<Ingredient> findByRecipeId(Long recipeId);
+
+    void deleteByRecipeId(Long recipeId);
 }

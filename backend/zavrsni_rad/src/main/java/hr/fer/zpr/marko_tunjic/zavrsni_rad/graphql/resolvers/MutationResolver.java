@@ -52,4 +52,10 @@ public class MutationResolver implements GraphQLMutationResolver {
             throws FileNotFoundException, IOException, MessagingException {
         return favoriteService.editFavorite(userId, recipeId, state);
     }
+
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('USER') or isAnonymous()")
+    public Boolean deleteRecipe(Long recipeId)
+            throws FileNotFoundException, IOException, MessagingException {
+        return recipeService.deleteRecipe(recipeId);
+    }
 }

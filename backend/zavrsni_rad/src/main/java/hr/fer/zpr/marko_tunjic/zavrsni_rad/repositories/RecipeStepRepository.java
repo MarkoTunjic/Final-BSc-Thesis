@@ -11,4 +11,6 @@ import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.RecipeStep;
 public interface RecipeStepRepository extends JpaRepository<RecipeStep, Long> {
 
     List<RecipeStep> findByRecipeId(Long recipeId);
+
+    void deleteByRecipeId(Long recipeId);
 }
