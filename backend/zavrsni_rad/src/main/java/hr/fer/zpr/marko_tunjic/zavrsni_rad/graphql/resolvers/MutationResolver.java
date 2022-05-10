@@ -19,6 +19,7 @@ import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Recipe;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Users;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.services.CommentsService;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.services.FavoriteService;
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.services.RatingService;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.services.RecipeService;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.services.UsersService;
 
@@ -36,6 +37,9 @@ public class MutationResolver implements GraphQLMutationResolver {
 
     @Autowired
     private CommentsService commentsService;
+
+    @Autowired
+    private RatingService ratingService;
 
     @PreAuthorize("isAnonymous()")
     public LoginResponse login(String identifier, String password) {
@@ -67,5 +71,15 @@ public class MutationResolver implements GraphQLMutationResolver {
     @PreAuthorize("hasAuthority('USER') or hasAuthority('USER') or isAnonymous()")
     public Comments addComment(Long userId, Long recipeId, String commentText) {
         return commentsService.addComment(userId, recipeId, commentText);
+    }
+
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('USER') or isAnonymous()")
+    public Boolean addRating(Long userId, Long recipeId, Integer ratingValue) {
+        return ratingService.addRating(userId, recipeId, ratingValue);
+    }
+
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('USER') or isAnonymous()")
+    public Boolean deleteComment(Long commentId) {
+        return commentsService.deleteComment(commentId);
     }
 }

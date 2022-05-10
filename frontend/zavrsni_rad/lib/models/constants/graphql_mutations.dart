@@ -56,3 +56,23 @@ const String addComment = """
     }
   }
 """;
+
+const String addRatingAndComment = """
+  mutation AddRatingAndComment(\$userId: ID!, \$recipeId: ID!, \$commentText: String!, \$ratingValue: Int!){
+    addComment(userId: \$userId, recipeId: \$recipeId, commentText: \$commentText){
+      user{
+        username,
+        profilePicture
+      }
+      commentText,
+      id
+    }
+    addRating(userId: \$userId, recipeId: \$recipeId, ratingValue: \$ratingValue)
+  }
+""";
+
+const String deleteComment = """
+  mutation DeleteComment(\$commentId: ID!){
+    deleteComment(commentId: \$commentId)
+  }
+""";

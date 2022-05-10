@@ -30,6 +30,7 @@ const String singleRecipe = """
       description,
       cookingDuration,
       averageRating,
+      ratingFromCurrentUser,
       user{
         id,
         username,
@@ -54,6 +55,7 @@ const String singleRecipe = """
         id,
         commentText,
         user{
+          id,
           username,
           profilePicture
         }

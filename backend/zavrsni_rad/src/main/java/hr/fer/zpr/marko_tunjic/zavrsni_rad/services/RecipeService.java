@@ -147,7 +147,11 @@ public class RecipeService {
     }
 
     public Recipes getRecipesForFilter(Filter filter) {
-        List<Recipe> recipes = recipeRepository.findAll();
+        List<Recipe> recipes;
+        if (filter.getAuthorId() == null)
+            recipes = recipeRepository.findAll();
+        else
+            recipes = recipeRepository.findByUserId(filter.getAuthorId());
         String nameLike = filter.getNameLike() == null ? "" : filter.getNameLike();
         recipes.removeIf(recipe -> hasGreaterCookingDuration(recipe, filter.getMaxCookingDuration())
                 || containsForbiddenIngredient(recipe, filter.getMustNotContaintIngredients())

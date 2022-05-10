@@ -3,14 +3,15 @@ package hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.payloads;
 import java.util.List;
 
 public class Filter {
-    private int index;
+    private Long authorId;
+    private Integer index;
     private String orderBy;
     private String nameLike;
     private Integer maxCookingDuration;
     private List<String> canContainIngredients;
     private List<String> mustNotContaintIngredients;
 
-    public Filter(int index, String orderBy, String nameLike, Integer maxCookingDuration,
+    public Filter(Long authorId, Integer index, String orderBy, String nameLike, Integer maxCookingDuration,
             List<String> canContainIngredients, List<String> mustNotContaintIngredients) {
         this.index = index;
         this.orderBy = orderBy;
@@ -18,10 +19,23 @@ public class Filter {
         this.maxCookingDuration = maxCookingDuration;
         this.canContainIngredients = canContainIngredients;
         this.mustNotContaintIngredients = mustNotContaintIngredients;
+        this.authorId = authorId;
     }
 
     public Filter() {
         super();
+    }
+
+    public Long getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
+    }
+
+    public void setIndex(Integer index) {
+        this.index = index;
     }
 
     public int getIndex() {

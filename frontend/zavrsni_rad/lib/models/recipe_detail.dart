@@ -12,6 +12,7 @@ class RecipeDetail {
   String coverPicture;
   String recipeName;
   String description;
+  int ratingFromCurrentUser;
   List<RecipeStep> steps;
   List<Ingredient> ingredients;
   List<String> images;
@@ -31,6 +32,7 @@ class RecipeDetail {
     required this.videos,
     required this.comments,
     required this.id,
+    required this.ratingFromCurrentUser,
   });
 
   factory RecipeDetail.fromJson(Map<String, dynamic> json) {
@@ -40,18 +42,18 @@ class RecipeDetail {
     List<dynamic> images = json["images"];
     List<dynamic> videos = json["videos"];
     return RecipeDetail(
-      id: int.parse(json["id"]),
-      recipeName: json["recipeName"],
-      averageRating: json["averageRating"],
-      cookingDuration: json["cookingDuration"],
-      coverPicture: json["coverPicture"],
-      description: json["description"],
-      user: User.fromJSON(json["user"]),
-      steps: steps.map((e) => RecipeStep.fromJson(e)).toList(),
-      ingredients: ingredients.map((e) => Ingredient.fromJson(e)).toList(),
-      images: images.map((e) => e["link"].toString()).toList(),
-      videos: videos.map((e) => e["link"].toString()).toList(),
-      comments: comments.map((e) => Comment.fromJson(e)).toList(),
-    );
+        id: int.parse(json["id"]),
+        recipeName: json["recipeName"],
+        averageRating: json["averageRating"],
+        cookingDuration: json["cookingDuration"],
+        coverPicture: json["coverPicture"],
+        description: json["description"],
+        user: User.fromJSON(json["user"]),
+        steps: steps.map((e) => RecipeStep.fromJson(e)).toList(),
+        ingredients: ingredients.map((e) => Ingredient.fromJson(e)).toList(),
+        images: images.map((e) => e["link"].toString()).toList(),
+        videos: videos.map((e) => e["link"].toString()).toList(),
+        comments: comments.map((e) => Comment.fromJson(e)).toList(),
+        ratingFromCurrentUser: json["ratingFromCurrentUser"] ?? 0);
   }
 }

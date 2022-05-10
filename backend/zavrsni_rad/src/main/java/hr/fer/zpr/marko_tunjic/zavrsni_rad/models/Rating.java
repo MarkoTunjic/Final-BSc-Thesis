@@ -13,7 +13,7 @@ import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Embeddable.RatingKey;
 public class Rating {
 
     @EmbeddedId
-    private RatingKey id;
+    private RatingKey id = new RatingKey();
 
     @Column(nullable = false, unique = false)
     private Integer ratingValue;
@@ -31,8 +31,7 @@ public class Rating {
     public Rating() {
     }
 
-    public Rating(RatingKey id, Integer ratingValue, Users user, Recipe recipe) {
-        this.id = id;
+    public Rating(Integer ratingValue, Users user, Recipe recipe) {
         this.ratingValue = ratingValue;
         this.user = user;
         this.recipe = recipe;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:zavrsni_rad/models/comment.dart';
+import 'package:rating_dialog/rating_dialog.dart';
 import 'package:zavrsni_rad/models/recipe_detail.dart';
 import 'package:zavrsni_rad/widgets/comments_widget.dart';
 import 'package:zavrsni_rad/widgets/images_widget.dart';
@@ -30,12 +30,15 @@ class _RecipeScreenState extends State<RecipeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    HttpLink? link;
+    if (globals.token != null) {
+      link = HttpLink(constants.apiLink,
+          defaultHeaders: {"Authorization": "Bearer " + globals.token!});
+    }
     ValueNotifier<GraphQLClient> client = ValueNotifier(
       GraphQLClient(
-        link: constants.api,
-        cache: GraphQLCache(
-          store: HiveStore(),
-        ),
+        link: link ?? constants.api,
+        cache: GraphQLCache(),
       ),
     );
     return GraphQLProvider(
@@ -57,6 +60,45 @@ class _RecipeScreenState extends State<RecipeScreen> {
             }
 
             currentRecipe = RecipeDetail.fromJson(result.data?["singleRecipe"]);
+
+            Widget dialog = GraphQLProvider(
+              client: client,
+              child: Mutation(
+                options: MutationOptions(
+                    document: gql(mutations.addRatingAndComment),
+                    onCompleted: (result) {
+                      refetch!();
+                    }),
+                builder: (runMutation, result) {
+                  return RatingDialog(
+                    title: const Text(
+                      "Rate this recipe",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    submitButtonText: "Submit",
+                    onSubmitted: (value) {
+                      runMutation({
+                        "recipeId": currentRecipe.id,
+                        "userId": globals.loggedInUser!.id,
+                        "commentText": value.comment,
+                        "ratingValue": value.rating
+                      });
+                    },
+                    initialRating:
+                        currentRecipe.ratingFromCurrentUser.toDouble(),
+                    message: const Text(
+                      'Tap a star to set your rating',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 15),
+                    ),
+                  );
+                },
+              ),
+            );
 
             return CustomScrollView(
               shrinkWrap: true,
@@ -130,7 +172,15 @@ class _RecipeScreenState extends State<RecipeScreen> {
                                 Icons.star,
                                 color: Colors.yellow,
                               ),
-                              onPressed: () {},
+                              onPressed: globals.token != null
+                                  ? () {
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: true,
+                                        builder: (context) => dialog,
+                                      );
+                                    }
+                                  : null,
                             ),
                             Text(
                               currentRecipe.averageRating
@@ -300,7 +350,8 @@ class _RecipeScreenState extends State<RecipeScreen> {
                           ],
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                         ),
-                        ...CommentsWidget.getWidgets(currentRecipe.comments),
+                        ...CommentsWidget.getWidgets(currentRecipe.comments,
+                            currentRecipe.user.id!, refetch)
                       ],
                     ),
                   ),

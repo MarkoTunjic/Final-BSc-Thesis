@@ -19,6 +19,7 @@ import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.RecipeStep;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Users;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Video;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Embeddable.FavoriteKey;
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Embeddable.RatingKey;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.CommentsRepository;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.FavoriteRepository;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.ImageRepository;
@@ -100,5 +101,19 @@ public class RecipeResolver implements GraphQLResolver<Recipe> {
         Users user = usersRepository.findByUsername(username).get();
         boolean exists = favoriteRepository.existsById(new FavoriteKey(user.getId(), recipe.getId()));
         return exists;
+    }
+
+    public Integer ratingFromCurrentUser(Recipe recipe) {
+
+        Object userDetails = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (userDetails instanceof String)
+            return 0;
+
+        String username = ((UserDetails) userDetails).getUsername();
+
+        Users user = usersRepository.findByUsername(username).get();
+        Rating rating = ratingRepository.findById(new RatingKey(user.getId(), recipe.getId())).get();
+        return rating.getRatingValue();
     }
 }

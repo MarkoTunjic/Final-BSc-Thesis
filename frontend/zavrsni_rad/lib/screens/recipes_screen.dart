@@ -92,7 +92,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
                                   id: e.id,
                                 ),
                               ),
-                            );
+                            ).then((value) => refetch!());
                           },
                         ),
                       )

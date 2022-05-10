@@ -24,13 +24,16 @@ public class CommentsService {
 
     @Transactional
     public Comments addComment(Long userId, Long recipeId, String commentText) {
+        if (commentText.isBlank())
+            return null;
         Users user = usersRepository.findById(userId).get();
         Recipe recipe = recipeRepository.findById(recipeId).get();
         return commentsRepository.save(new Comments(commentText, user, recipe));
     }
 
     @Transactional
-    public void deleteComment(Long id) {
+    public Boolean deleteComment(Long id) {
         commentsRepository.deleteById(id);
+        return true;
     }
 }

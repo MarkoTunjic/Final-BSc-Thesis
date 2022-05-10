@@ -15,7 +15,9 @@ type Mutation{
     addRecipe(payload: RecipePayload!): Recipe!
     editFavorite(userId: ID!, recipeId: ID!, state: Boolean!): Boolean!
     deleteRecipe(recipeId: ID!): Boolean!
-    addComment(userId: ID!,recipeId: ID!,commentText: String!): Comments!
+    addComment(userId: ID!,recipeId: ID!,commentText: String!): Comments
+    addRating(userId: ID!,recipeId: ID!, ratingValue: Int!): Boolean!
+    deleteComment(commentId: ID!): Boolean!
 }
 
 type Comments{
@@ -80,6 +82,7 @@ type Recipe{
     favoriteTo: [Favorite] @relation
     averageRating: Float
     isLikedByCurrentUser: Boolean
+    ratingFromCurrentUser: Int!
 }
 
 type RecipeStep{
@@ -160,6 +163,7 @@ input IngredientPayload{
 }
 
 input Filter{
+    authorId: ID
     index: Int!
     orderBy: String
     nameLike: String
