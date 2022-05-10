@@ -279,7 +279,8 @@ class _NewRecipeState extends State<NewRecipeScreen> {
                 options: MutationOptions(
                   document: gql(mutations.addRecipe),
                   onCompleted: (dynamic resultData) {
-                    print(resultData);
+                    if (resultData == null) return;
+                    Navigator.pop(context);
                   },
                   onError: (OperationException? e) {
                     for (GraphQLError error in e!.graphqlErrors) {

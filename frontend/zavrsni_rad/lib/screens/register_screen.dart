@@ -135,7 +135,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const RecipesScreen(),
+                                builder: (_) => const RecipesScreen(
+                                  selcted: 0,
+                                ),
                               ),
                             );
                           },

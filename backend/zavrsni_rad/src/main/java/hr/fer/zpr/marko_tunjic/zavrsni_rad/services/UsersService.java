@@ -102,4 +102,8 @@ public class UsersService {
         user.setConfirmed(true);
         userRepository.save(user);
     }
+
+    public Users getById(Long userId) {
+        return userRepository.findById(userId).get();
+    }
 }

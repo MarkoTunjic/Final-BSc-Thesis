@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:zavrsni_rad/models/filter.dart';
 import 'package:zavrsni_rad/models/recipe_master.dart';
+import 'package:zavrsni_rad/models/user.dart';
 import 'package:zavrsni_rad/screens/recipe_screen.dart';
 import 'package:zavrsni_rad/widgets/filter_widget.dart';
 import 'package:zavrsni_rad/widgets/menu_widget.dart';
@@ -12,7 +13,10 @@ import '../models/constants/graphql_querys.dart' as querys;
 import '../utilities/global_variables.dart' as globals;
 
 class RecipesScreen extends StatefulWidget {
-  const RecipesScreen({Key? key}) : super(key: key);
+  final int? authorId;
+  final int selcted;
+  const RecipesScreen({Key? key, this.authorId, required this.selcted})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -25,6 +29,12 @@ class _RecipesScreenState extends State<RecipesScreen> {
   Filter filter = Filter(
       index: 1, mustNotContaintIngredients: [], canContainIngredients: []);
   AuthLink? authLink;
+
+  @override
+  void initState() {
+    super.initState();
+    filter.authorId = widget.authorId;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,6 +128,55 @@ class _RecipesScreenState extends State<RecipesScreen> {
                           backgroundColor:
                               const Color.fromARGB(255, 251, 249, 249),
                         ),
+                        SliverList(
+                          delegate: SliverChildListDelegate.fixed(
+                            [
+                              widget.authorId == null
+                                  ? Container()
+                                  : Query(
+                                      builder: (result, {fetchMore, refetch}) {
+                                        if (result.hasException) {
+                                          return Text(
+                                              result.exception.toString());
+                                        }
+
+                                        if (result.isLoading) {
+                                          return const CircularProgressIndicator();
+                                        }
+                                        User user = User.fromJSON(
+                                            result.data!["userForId"]);
+                                        return Column(
+                                          children: [
+                                            CircleAvatar(
+                                              backgroundImage: NetworkImage(
+                                                  user.profilePicture),
+                                              radius: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  8,
+                                            ),
+                                            Padding(
+                                              child: Text(
+                                                user.username,
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 20),
+                                              ),
+                                              padding: const EdgeInsets.only(
+                                                  top: 10),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                      options: QueryOptions(
+                                          document: gql(querys.userForId),
+                                          variables: {
+                                            "userId": widget.authorId
+                                          }),
+                                    ),
+                            ],
+                          ),
+                        ),
                         SliverGrid.count(
                           crossAxisCount: 2,
                           childAspectRatio: 1 / 1.8,
@@ -142,7 +201,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
                   );
                 },
               ),
-              const MenuWidget(selected: 0)
+              MenuWidget(selected: widget.selcted)
             ],
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
           ),

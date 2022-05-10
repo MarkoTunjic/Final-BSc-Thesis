@@ -4,9 +4,9 @@ schema{
 }
 
 type Query{
-    users: [Users]
     recipes(filter: Filter!): Recipes!
     singleRecipe(recipeId: ID!): Recipe!
+    userForId(userId: ID!): Users!
 }
 
 type Mutation{

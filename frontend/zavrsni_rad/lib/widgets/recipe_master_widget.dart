@@ -79,7 +79,9 @@ class _RecipeMasterWidgetState extends State<RecipeMasterWidget> {
                             document: gql(mutations.editFavorite),
                             onCompleted: (result) {
                               Fluttertoast.showToast(
-                                msg: "Added to favorites", // message
+                                msg: widget.recipe.isLikedByCurrentUser
+                                    ? "Added to favorites"
+                                    : "Removed from favorites", // message
                                 toastLength: Toast.LENGTH_SHORT, // length
                                 gravity:
                                     ToastGravity.CENTER, // location// duration

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:rating_dialog/rating_dialog.dart';
 import 'package:zavrsni_rad/models/recipe_detail.dart';
+import 'package:zavrsni_rad/screens/recipes_screen.dart';
 import 'package:zavrsni_rad/widgets/comments_widget.dart';
 import 'package:zavrsni_rad/widgets/images_widget.dart';
 import 'package:zavrsni_rad/widgets/ingredients_widget.dart';
@@ -242,7 +243,17 @@ class _RecipeScreenState extends State<RecipeScreen> {
                               crossAxisAlignment: CrossAxisAlignment.center,
                             ),
                           ),
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => RecipesScreen(
+                                  authorId: currentRecipe.user.id,
+                                  selcted: 0,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                         const Divider(
                           color: Colors.grey,
@@ -298,8 +309,18 @@ class _RecipeScreenState extends State<RecipeScreen> {
                             color: constants.darkBlue,
                           ),
                         ),
-                        VideosWidget(videos: currentRecipe.videos),
-                        ImagesWidget(images: currentRecipe.images),
+                        currentRecipe.videos.isNotEmpty
+                            ? VideosWidget(videos: currentRecipe.videos)
+                            : const Padding(
+                                child: Text("No videos available"),
+                                padding: EdgeInsets.only(bottom: 10),
+                              ),
+                        currentRecipe.images.isNotEmpty
+                            ? ImagesWidget(images: currentRecipe.images)
+                            : const Padding(
+                                child: Text("No images available"),
+                                padding: EdgeInsets.only(bottom: 10),
+                              ),
                         const Divider(
                           color: Colors.grey,
                         ),
@@ -311,45 +332,51 @@ class _RecipeScreenState extends State<RecipeScreen> {
                             color: constants.darkBlue,
                           ),
                         ),
-                        Row(
-                          children: [
-                            MultilineInputFieldWidget(
-                              hintText: "Add comment\n\n",
-                              width: MediaQuery.of(context).size.width * 3 / 4,
-                              initialValue: currentCommentText,
-                              onChanged: (newValue) =>
-                                  currentCommentText = newValue,
-                            ),
-                            Mutation(
-                              builder: (runMutation, result) => IconButton(
-                                onPressed: () {
-                                  if (currentCommentText != null &&
-                                      currentCommentText!.isNotEmpty) {
-                                    runMutation({
-                                      "recipeId": currentRecipe.id,
-                                      "userId": globals.loggedInUser!.id,
-                                      "commentText": currentCommentText!,
-                                    });
-                                  }
-                                },
-                                icon: const Icon(
-                                  Icons.send,
-                                  color: constants.green,
-                                  size: 30,
-                                ),
-                              ),
-                              options: MutationOptions(
-                                document: gql(mutations.addComment),
-                                onCompleted: (result) {
-                                  if (result == null) return;
-                                  currentCommentText = null;
-                                  refetch!();
-                                },
-                              ),
-                            ),
-                          ],
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        ),
+                        globals.loggedInUser != null
+                            ? Row(
+                                children: [
+                                  MultilineInputFieldWidget(
+                                    hintText: "Add comment\n\n",
+                                    width: MediaQuery.of(context).size.width *
+                                        3 /
+                                        4,
+                                    initialValue: currentCommentText,
+                                    onChanged: (newValue) =>
+                                        currentCommentText = newValue,
+                                  ),
+                                  Mutation(
+                                    builder: (runMutation, result) =>
+                                        IconButton(
+                                      onPressed: () {
+                                        if (currentCommentText != null &&
+                                            currentCommentText!.isNotEmpty) {
+                                          runMutation({
+                                            "recipeId": currentRecipe.id,
+                                            "userId": globals.loggedInUser!.id,
+                                            "commentText": currentCommentText!,
+                                          });
+                                        }
+                                      },
+                                      icon: const Icon(
+                                        Icons.send,
+                                        color: constants.green,
+                                        size: 30,
+                                      ),
+                                    ),
+                                    options: MutationOptions(
+                                      document: gql(mutations.addComment),
+                                      onCompleted: (result) {
+                                        if (result == null) return;
+                                        currentCommentText = null;
+                                        refetch!();
+                                      },
+                                    ),
+                                  ),
+                                ],
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                              )
+                            : Container(),
                         ...CommentsWidget.getWidgets(currentRecipe.comments,
                             currentRecipe.user.id!, refetch)
                       ],

@@ -6,6 +6,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zavrsni_rad/models/user.dart';
 import 'package:zavrsni_rad/screens/new_recipe_screen.dart';
+import 'package:zavrsni_rad/screens/recipes_screen.dart';
 import 'package:zavrsni_rad/screens/register_screen.dart';
 import 'package:zavrsni_rad/widgets/green_button_widget.dart';
 import 'package:zavrsni_rad/widgets/input_field_widget.dart';
@@ -93,28 +94,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         TextButton(
                           onPressed: () {
-                            Navigator.push(
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => MultiBlocProvider(
-                                  providers: [
-                                    BlocProvider<BlocIngredients>(
-                                      create: (_) => BlocIngredients(),
-                                    ),
-                                    BlocProvider<BlocSteps>(
-                                      create: (_) => BlocSteps(),
-                                    ),
-                                    BlocProvider<BlocImages>(
-                                      create: (_) => BlocImages(),
-                                    ),
-                                    BlocProvider<BlocVideo>(
-                                      create: (_) => BlocVideo(),
-                                    ),
-                                    BlocProvider<BlocCoverPicture>(
-                                      create: (_) => BlocCoverPicture(),
-                                    ),
-                                  ],
-                                  child: const NewRecipeScreen(),
+                                builder: (_) => const RecipesScreen(
+                                  selcted: 0,
                                 ),
                               ),
                             );
@@ -136,30 +120,39 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   Mutation(
                     options: MutationOptions(
-                        document: gql(mutations.login),
-                        onCompleted: (dynamic resultData) {
-                          String token = resultData["login"]["token"];
-                          User user =
-                              User.fromJSON(resultData["login"]["user"]);
+                      document: gql(mutations.login),
+                      onCompleted: (dynamic resultData) {
+                        if (resultData == null) return;
+                        String token = resultData["login"]["token"];
+                        User user = User.fromJSON(resultData["login"]["user"]);
 
-                          _prefs!.setString(keys.token, token);
-                          _prefs!
-                              .setString(keys.user, jsonEncode(user.toJson()));
-                          globals.loggedInUser = user;
-                          globals.token = token;
-                        }),
+                        _prefs!.setString(keys.token, token);
+                        _prefs!.setString(keys.user, jsonEncode(user.toJson()));
+                        globals.loggedInUser = user;
+                        globals.token = token;
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const RecipesScreen(
+                              selcted: 0,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                     builder: (RunMutation runMutation, QueryResult? result) {
                       return GreenButton(
-                          onPressed: () {
-                            _formKey.currentState?.save();
-                            runMutation(
-                              {
-                                "identifier": identifier,
-                                "password": password,
-                              },
-                            );
-                          },
-                          text: "Login");
+                        onPressed: () {
+                          _formKey.currentState?.save();
+                          runMutation(
+                            {
+                              "identifier": identifier,
+                              "password": password,
+                            },
+                          );
+                        },
+                        text: "Login",
+                      );
                     },
                   ),
                   Row(

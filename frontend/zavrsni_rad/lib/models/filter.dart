@@ -1,4 +1,5 @@
 class Filter {
+  int? authorId;
   int index;
   String? orderBy;
   String? nameLike;
@@ -13,10 +14,12 @@ class Filter {
     this.mustNotContaintIngredients,
     this.nameLike,
     this.orderBy,
+    this.authorId,
   });
 
   Map<String, dynamic> toJson() {
     return {
+      "authorId": authorId,
       "index": index,
       "orderBy": orderBy,
       "nameLike": nameLike,

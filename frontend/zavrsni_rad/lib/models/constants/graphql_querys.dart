@@ -63,3 +63,13 @@ const String singleRecipe = """
     }
   }
 """;
+
+const String userForId = """
+  query UserForId(\$userId: ID!){
+    userForId(userId: \$userId){
+      id,
+      username,
+      profilePicture
+    }
+  }
+""";

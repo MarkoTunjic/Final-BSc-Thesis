@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zavrsni_rad/screens/login_screen.dart';
 import 'package:zavrsni_rad/utilities/shared_preferences_helper.dart';
+import '../models/bloc_providers/cover_picture_provider.dart';
+import '../models/bloc_providers/ingredients_provider.dart';
+import '../models/bloc_providers/recipe_images_provider.dart';
+import '../models/bloc_providers/steps_provider.dart';
+import '../models/bloc_providers/video_provider.dart';
+import '../screens/new_recipe_screen.dart';
+import '../screens/recipes_screen.dart';
 import '../utilities/global_variables.dart' as globals;
 import '../models/constants/constants.dart' as constants;
 import '../models/constants/shared_preferences_keys.dart' as keys;
@@ -22,7 +30,16 @@ class MenuWidget extends StatelessWidget {
               size: 40,
             ),
             text: "Home",
-            onTap: () {},
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const RecipesScreen(
+                    selcted: 0,
+                  ),
+                ),
+              );
+            },
           ),
           _MenuItem(
             icon: Icon(
@@ -52,7 +69,16 @@ class MenuWidget extends StatelessWidget {
                   size: 40,
                 ),
                 text: "Home",
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const RecipesScreen(
+                        selcted: 0,
+                      ),
+                    ),
+                  );
+                },
               ),
               _MenuItem(
                 icon: Icon(
@@ -61,7 +87,33 @@ class MenuWidget extends StatelessWidget {
                   size: 40,
                 ),
                 text: "Upload",
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MultiBlocProvider(
+                        providers: [
+                          BlocProvider<BlocIngredients>(
+                            create: (_) => BlocIngredients(),
+                          ),
+                          BlocProvider<BlocSteps>(
+                            create: (_) => BlocSteps(),
+                          ),
+                          BlocProvider<BlocImages>(
+                            create: (_) => BlocImages(),
+                          ),
+                          BlocProvider<BlocVideo>(
+                            create: (_) => BlocVideo(),
+                          ),
+                          BlocProvider<BlocCoverPicture>(
+                            create: (_) => BlocCoverPicture(),
+                          ),
+                        ],
+                        child: const NewRecipeScreen(),
+                      ),
+                    ),
+                  );
+                },
               ),
             ],
           ),
@@ -74,7 +126,17 @@ class MenuWidget extends StatelessWidget {
                   size: 40,
                 ),
                 text: "Profile",
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => RecipesScreen(
+                        authorId: globals.loggedInUser!.id,
+                        selcted: 2,
+                      ),
+                    ),
+                  );
+                },
               ),
               _MenuItem(
                 icon: Icon(
@@ -109,7 +171,16 @@ class MenuWidget extends StatelessWidget {
                 size: 40,
               ),
               text: "Home",
-              onTap: () {},
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const RecipesScreen(
+                      selcted: 0,
+                    ),
+                  ),
+                );
+              },
             ),
             _MenuItem(
               icon: Icon(

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:zavrsni_rad/screens/get_started_screen.dart';
 import 'package:zavrsni_rad/screens/login_screen.dart';
+import 'package:zavrsni_rad/screens/recipes_screen.dart';
 import 'package:zavrsni_rad/utilities/shared_preferences_helper.dart';
 import './utilities/global_variables.dart' as globals;
 import '../models/constants/constants.dart' as constants;
@@ -25,12 +26,21 @@ class MyApp extends StatelessWidget {
     SharedPreferencesHelper.readSharedPreferences();
     return FutureBuilder(
       builder: (context, snapshot) {
+        Widget firstScreen;
+        if (!globals.started) {
+          firstScreen = const GetStartedScreen();
+        } else if (globals.loggedInUser == null) {
+          firstScreen = const LoginScreen();
+        } else {
+          firstScreen = const RecipesScreen(
+            selcted: 0,
+          );
+        }
+
         if (snapshot.connectionState == ConnectionState.done) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            home: globals.started
-                ? const LoginScreen()
-                : const GetStartedScreen(),
+            home: firstScreen,
             theme: ThemeData().copyWith(
               colorScheme: ThemeData().colorScheme.copyWith(
                     primary: constants.green,
