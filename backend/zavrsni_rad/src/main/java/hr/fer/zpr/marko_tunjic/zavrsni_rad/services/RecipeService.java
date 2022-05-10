@@ -158,7 +158,7 @@ public class RecipeService {
                 || !containsAllIngredients(recipe, filter.getCanContainIngredients())
                 || !recipe.getRecipeName().contains(nameLike));
         int toIndex = recipes.size() > RECIPES_PER_PAGE ? RECIPES_PER_PAGE : recipes.size();
-        recipes = recipes.subList(0, toIndex);
+        recipes = recipes.subList((filter.getIndex() - 1) * RECIPES_PER_PAGE, toIndex);
         Double numberOfPages = Math.ceil(recipes.size() * 1.d / RECIPES_PER_PAGE);
 
         return new Recipes(recipes, numberOfPages.intValue(), filter.getIndex());

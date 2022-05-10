@@ -23,7 +23,7 @@ class RecipesScreen extends StatefulWidget {
 class _RecipesScreenState extends State<RecipesScreen> {
   int currentIndex = 0;
   Filter filter = Filter(
-      index: 0, mustNotContaintIngredients: [], canContainIngredients: []);
+      index: 1, mustNotContaintIngredients: [], canContainIngredients: []);
   AuthLink? authLink;
 
   @override
@@ -129,6 +129,10 @@ class _RecipesScreenState extends State<RecipesScreen> {
                               PaginationWidget(
                                 maxPages: numberOfPages,
                                 currentPage: currentIndex,
+                                pageChange: (pageIndex) {
+                                  filter.index = pageIndex;
+                                  fetchMore!(opts);
+                                },
                               ),
                             ],
                           ),
