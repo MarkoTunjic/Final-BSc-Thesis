@@ -10,12 +10,9 @@ jobs:
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
-      - name: Compile and package code
-        working-directory: ./backend/zavrsni_rad
-        run: mvn clean package
       - name: Generate deployment package
         working-directory: ./backend/zavrsni_rad
-        run: zip -r package.zip .ebextensions target/zavrsni_rad-0.0.1-SNAPSHOT.jar
+        run: mvn clean package
       - name: Deploy to EB
         uses: einaregilsson/beanstalk-deploy@v20
         with:
@@ -26,7 +23,7 @@ jobs:
           environment_name: Zavrsnirad-env
           version_label: ${{ github.run_number }}
           region: us-east-1
-          deployment_package: backend/zavrsni_rad/package.zip
+          deployment_package: backend/zavrsni_rad/target/zavrsni_rad-0.0.1-SNAPSHOT.jar
 
   build_appbundle:
     name: Build Flutter (Android)
