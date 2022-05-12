@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zavrsni_rad/screens/approoval_screen.dart';
 import 'package:zavrsni_rad/screens/login_screen.dart';
+import 'package:zavrsni_rad/screens/users_screen.dart';
 import 'package:zavrsni_rad/utilities/shared_preferences_helper.dart';
 import '../models/bloc_providers/cover_picture_provider.dart';
 import '../models/bloc_providers/ingredients_provider.dart';
@@ -88,7 +90,7 @@ class MenuWidget extends StatelessWidget {
                 ),
                 text: "Upload",
                 onTap: () {
-                  Navigator.push(
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder: (context) => MultiBlocProvider(
@@ -189,7 +191,16 @@ class MenuWidget extends StatelessWidget {
                 size: 40,
               ),
               text: "Approvals",
-              onTap: () {},
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const ApproovalScreen(
+                      selected: 1,
+                    ),
+                  ),
+                );
+              },
             ),
           ],
         ),
@@ -202,7 +213,16 @@ class MenuWidget extends StatelessWidget {
                 size: 40,
               ),
               text: "Users",
-              onTap: () {},
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const UsersScreen(
+                      selected: 2,
+                    ),
+                  ),
+                );
+              },
             ),
             _MenuItem(
               icon: Icon(

@@ -76,3 +76,15 @@ const String deleteComment = """
     deleteComment(commentId: \$commentId)
   }
 """;
+
+const String changeApproovedStatus = """
+  mutation ChangeApproovedStatus(\$recipeId: ID!, \$isApprooved: Boolean!){
+    changeApproovedStatus(recipeId: \$recipeId, isApprooved: \$isApprooved)
+  }
+""";
+
+const String changeBanStatus = """
+  mutation ChangeBanStatus(\$userId: ID!, \$banStatus: Boolean!){
+    changeBanStatus(userId: \$userId, banStatus: \$banStatus)
+  }
+""";

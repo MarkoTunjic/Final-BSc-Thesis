@@ -31,6 +31,7 @@ const String singleRecipe = """
       cookingDuration,
       averageRating,
       ratingFromCurrentUser,
+      isApprooved,
       user{
         id,
         username,
@@ -70,6 +71,44 @@ const String userForId = """
       id,
       username,
       profilePicture
+    }
+  }
+""";
+
+const String notApproovedRecipes = """
+  query NotApprovedRecipes(\$filter: Filter!){
+    notApprovedRecipes(filter: \$filter){
+      recipes{
+        user{
+          id,
+          username,
+          profilePicture
+        }
+        id,
+        averageRating,
+        cookingDuration,
+        coverPicture,
+        recipeName,
+        isLikedByCurrentUser,
+        isApprooved
+      }
+      numberOfPages,
+      currentIndex
+    }
+  }
+""";
+
+const String users = """
+  query Users(\$filter: Filter!){
+    users(filter: \$filter){
+      users{
+        id,
+        username,
+        profilePicture,
+        isBanned,
+      }
+      numberOfPages,
+      currentIndex,
     }
   }
 """;

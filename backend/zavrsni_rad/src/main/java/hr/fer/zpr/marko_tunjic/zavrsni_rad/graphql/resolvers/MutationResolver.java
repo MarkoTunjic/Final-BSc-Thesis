@@ -9,6 +9,8 @@ import com.coxautodev.graphql.tools.GraphQLMutationResolver;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.payloads.LoginResponse;
@@ -51,35 +53,51 @@ public class MutationResolver implements GraphQLMutationResolver {
         return usersService.registerUser(payload);
     }
 
-    @PreAuthorize("isAnonymous()")
+    @PreAuthorize("hasAuthority('USER')")
     public Recipe addRecipe(RecipePayload payload) throws FileNotFoundException, IOException {
+        Object userDetails = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ((userDetails instanceof String)) {
+            System.out.println("anonymus");
+        } else {
+            System.out.println(((UserDetails) userDetails).getAuthorities());
+        }
         return recipeService.addRecipe(payload);
     }
 
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('USER') or isAnonymous()")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('MODERATOR')")
     public Boolean editFavorite(Long userId, Long recipeId, Boolean state)
             throws FileNotFoundException, IOException, MessagingException {
         return favoriteService.editFavorite(userId, recipeId, state);
     }
 
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('USER') or isAnonymous()")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('MODERATOR')")
     public Boolean deleteRecipe(Long recipeId)
             throws FileNotFoundException, IOException, MessagingException {
         return recipeService.deleteRecipe(recipeId);
     }
 
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('USER') or isAnonymous()")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('MODERATOR')")
     public Comments addComment(Long userId, Long recipeId, String commentText) {
         return commentsService.addComment(userId, recipeId, commentText);
     }
 
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('USER') or isAnonymous()")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('MODERATOR')")
     public Boolean addRating(Long userId, Long recipeId, Integer ratingValue) {
         return ratingService.addRating(userId, recipeId, ratingValue);
     }
 
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('USER') or isAnonymous()")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('MODERATOR')")
     public Boolean deleteComment(Long commentId) {
         return commentsService.deleteComment(commentId);
+    }
+
+    @PreAuthorize("hasAuthority('MODERATOR')")
+    public Boolean changeBanStatus(Long userId, Boolean banStatus) {
+        return usersService.changeBanStatus(userId, banStatus);
+    }
+
+    @PreAuthorize("hasAuthority('MODERATOR')")
+    public Boolean changeApproovedStatus(Long recipeId, Boolean isApprooved) {
+        return recipeService.changeApprovedStatus(recipeId, isApprooved);
     }
 }

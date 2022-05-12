@@ -3,8 +3,11 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:zavrsni_rad/models/recipe_master.dart';
 import '../models/constants/constants.dart' as constants;
+import '../screens/login_screen.dart';
 import '../utilities/global_variables.dart' as globals;
 import '../models/constants/graphql_mutations.dart' as mutations;
+import '../models/constants/shared_preferences_keys.dart' as keys;
+import '../utilities/shared_preferences_helper.dart';
 
 class RecipeMasterWidget extends StatefulWidget {
   final RecipeMaster recipe;
@@ -62,7 +65,7 @@ class _RecipeMasterWidgetState extends State<RecipeMasterWidget> {
                                   !widget.recipe.isLikedByCurrentUser;
                             });
                             runMutation({
-                              "userId": widget.recipe.user.id,
+                              "userId": globals.loggedInUser!.id,
                               "recipeId": widget.recipe.id,
                               "state": widget.recipe.isLikedByCurrentUser,
                             });
@@ -78,6 +81,7 @@ class _RecipeMasterWidgetState extends State<RecipeMasterWidget> {
                         options: MutationOptions(
                             document: gql(mutations.editFavorite),
                             onCompleted: (result) {
+                              if (result == null) return;
                               Fluttertoast.showToast(
                                 msg: widget.recipe.isLikedByCurrentUser
                                     ? "Added to favorites"
@@ -87,7 +91,28 @@ class _RecipeMasterWidgetState extends State<RecipeMasterWidget> {
                                     ToastGravity.CENTER, // location// duration
                               );
                             },
-                            onError: (exception) {
+                            onError: (error) {
+                              if (error!.graphqlErrors[0].message
+                                      .split(":")[1]
+                                      .trim()
+                                      .toLowerCase() ==
+                                  "access is denied") {
+                                SharedPreferencesHelper.removeSharedPreference(
+                                    keys.token);
+                                SharedPreferencesHelper.removeSharedPreference(
+                                    keys.user);
+                                globals.loggedInUser = null;
+                                globals.token = null;
+                                Future.microtask(
+                                  () => Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: ((context) => const LoginScreen(
+                                          error: "Session expired.")),
+                                    ),
+                                  ),
+                                );
+                              }
                               Fluttertoast.showToast(
                                 msg: "Something went wrong", // message
                                 toastLength: Toast.LENGTH_SHORT, // length
@@ -131,6 +156,7 @@ class _RecipeMasterWidgetState extends State<RecipeMasterWidget> {
                     options: MutationOptions(
                       document: gql(mutations.deleteRecipe),
                       onCompleted: (result) {
+                        if (result == null) return;
                         widget.onDelete();
                         Fluttertoast.showToast(
                           msg: "Recipe successfully deleted", // message
@@ -139,6 +165,27 @@ class _RecipeMasterWidgetState extends State<RecipeMasterWidget> {
                         );
                       },
                       onError: (error) {
+                        if (error!.graphqlErrors[0].message
+                                .split(":")[1]
+                                .trim()
+                                .toLowerCase() ==
+                            "access is denied") {
+                          SharedPreferencesHelper.removeSharedPreference(
+                              keys.token);
+                          SharedPreferencesHelper.removeSharedPreference(
+                              keys.user);
+                          globals.loggedInUser = null;
+                          globals.token = null;
+                          Future.microtask(
+                            () => Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: ((context) => const LoginScreen(
+                                    error: "Session expired.")),
+                              ),
+                            ),
+                          );
+                        }
                         Fluttertoast.showToast(
                           msg: "Something went wrong", // message
                           toastLength: Toast.LENGTH_SHORT, // length

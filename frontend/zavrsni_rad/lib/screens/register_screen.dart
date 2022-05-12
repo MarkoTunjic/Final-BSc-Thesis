@@ -13,6 +13,7 @@ import 'package:zavrsni_rad/widgets/picture_picker_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../models/constants/constants.dart' as constants;
 import '../models/constants/graphql_mutations.dart' as mutations;
+import '../utilities/global_variables.dart' as globals;
 import '../widgets/input_field_widget.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -27,8 +28,28 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final ImagePicker _picker = ImagePicker();
+  String? _error;
+  String? _message;
   RegisterRequest request =
       RegisterRequest(username: "", eMail: "", password: "");
+
+  late ValueNotifier<GraphQLClient> client;
+
+  @override
+  void initState() {
+    super.initState();
+    HttpLink? link;
+    if (globals.token != null) {
+      link = HttpLink(constants.apiLink,
+          defaultHeaders: {"Authorization": "Bearer " + globals.token!});
+    }
+    client = ValueNotifier(
+      GraphQLClient(
+        link: link ?? constants.api,
+        cache: GraphQLCache(store: HiveStore()),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -147,6 +168,31 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 MaterialStateProperty.all(constants.grey),
                           ),
                         ),
+                        _error != null
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 20),
+                                child: Text(
+                                  _error!,
+                                  style: const TextStyle(
+                                    color: constants.errorRed,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              )
+                            : Container(),
+                        _message != null
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 20),
+                                child: Text(
+                                  _message!,
+                                  style: const TextStyle(
+                                    color: constants.green,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              )
+                            : Container(),
                       ],
                     ),
                   ),
@@ -158,12 +204,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
               options: MutationOptions(
                 document: gql(mutations.register),
                 onCompleted: (dynamic resultData) {
-                  print(resultData);
+                  setState(() {
+                    _error = null;
+                    _message =
+                        "Registration succesffull.\n Check your e-mail for verification";
+                  });
                 },
-                onError: (OperationException? e) {
-                  for (GraphQLError error in e!.graphqlErrors) {
-                    print(error.message);
-                  }
+                onError: (OperationException? error) {
+                  setState(() {
+                    _message = null;
+                    _error = error!.graphqlErrors[0].message.split(":")[1];
+                  });
                 },
               ),
               builder: (RunMutation runMutation, QueryResult? result) {
@@ -181,6 +232,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ],
           alignment: Alignment.center,
         ),
+        resizeToAvoidBottomInset: false,
       ),
     );
   }

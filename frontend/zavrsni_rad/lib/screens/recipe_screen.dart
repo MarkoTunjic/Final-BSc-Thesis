@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:rating_dialog/rating_dialog.dart';
 import 'package:zavrsni_rad/models/recipe_detail.dart';
@@ -12,7 +13,10 @@ import 'package:zavrsni_rad/widgets/videos_widget.dart';
 import '../models/constants/constants.dart' as constants;
 import '../models/constants/graphql_querys.dart' as querys;
 import '../models/constants/graphql_mutations.dart' as mutations;
+import '../models/constants/shared_preferences_keys.dart' as keys;
 import '../utilities/global_variables.dart' as globals;
+import '../utilities/shared_preferences_helper.dart';
+import 'login_screen.dart';
 
 class RecipeScreen extends StatefulWidget {
   final int id;
@@ -28,20 +32,32 @@ class RecipeScreen extends StatefulWidget {
 class _RecipeScreenState extends State<RecipeScreen> {
   String? currentCommentText;
   late RecipeDetail currentRecipe;
+  late ValueNotifier<GraphQLClient> client;
+
+  bool _showApprooveButton() {
+    if (globals.loggedInUser != null &&
+        globals.loggedInUser!.role == "MODERATOR") return true;
+    return false;
+  }
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     HttpLink? link;
     if (globals.token != null) {
       link = HttpLink(constants.apiLink,
           defaultHeaders: {"Authorization": "Bearer " + globals.token!});
     }
-    ValueNotifier<GraphQLClient> client = ValueNotifier(
+    client = ValueNotifier(
       GraphQLClient(
         link: link ?? constants.api,
-        cache: GraphQLCache(),
+        cache: GraphQLCache(store: HiveStore()),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return GraphQLProvider(
       client: client,
       child: Scaffold(
@@ -66,10 +82,34 @@ class _RecipeScreenState extends State<RecipeScreen> {
               client: client,
               child: Mutation(
                 options: MutationOptions(
-                    document: gql(mutations.addRatingAndComment),
-                    onCompleted: (result) {
-                      refetch!();
-                    }),
+                  document: gql(mutations.addRatingAndComment),
+                  onCompleted: (result) {
+                    if (result == null) return;
+                    refetch!();
+                  },
+                  onError: (error) {
+                    if (error!.graphqlErrors[0].message
+                            .split(":")[1]
+                            .trim()
+                            .toLowerCase() ==
+                        "access is denied") {
+                      SharedPreferencesHelper.removeSharedPreference(
+                          keys.token);
+                      SharedPreferencesHelper.removeSharedPreference(keys.user);
+                      globals.loggedInUser = null;
+                      globals.token = null;
+                      Future.microtask(
+                        () => Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: ((context) =>
+                                const LoginScreen(error: "Session expired.")),
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
                 builder: (runMutation, result) {
                   return RatingDialog(
                     title: const Text(
@@ -192,6 +232,104 @@ class _RecipeScreenState extends State<RecipeScreen> {
                                 color: constants.darkBlue,
                               ),
                             ),
+                            _showApprooveButton()
+                                ? Mutation(
+                                    options: MutationOptions(
+                                      document:
+                                          gql(mutations.changeApproovedStatus),
+                                      onCompleted: (result) {
+                                        if (result == null) return;
+                                        Fluttertoast.showToast(
+                                          msg: currentRecipe.isApprooved
+                                              ? "Successfully approoved"
+                                              : "Successfully disapprooved", // message
+                                          toastLength:
+                                              Toast.LENGTH_SHORT, // length
+                                          gravity:
+                                              ToastGravity.CENTER, // location
+                                        );
+                                      },
+                                      onError: (error) {
+                                        if (error!.graphqlErrors[0].message
+                                                .split(":")[1]
+                                                .trim()
+                                                .toLowerCase() ==
+                                            "access is denied") {
+                                          SharedPreferencesHelper
+                                              .removeSharedPreference(
+                                                  keys.token);
+                                          SharedPreferencesHelper
+                                              .removeSharedPreference(
+                                                  keys.user);
+                                          globals.loggedInUser = null;
+                                          globals.token = null;
+                                          Future.microtask(
+                                            () => Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: ((context) =>
+                                                    const LoginScreen(
+                                                        error:
+                                                            "Session expired.")),
+                                              ),
+                                            ),
+                                          );
+                                        }
+                                        Fluttertoast.showToast(
+                                          msg:
+                                              "Something went wrong", // message
+                                          toastLength:
+                                              Toast.LENGTH_SHORT, // length
+                                          gravity:
+                                              ToastGravity.CENTER, // location
+                                        );
+                                      },
+                                    ),
+                                    builder: (runMutation, result) {
+                                      return InkWell(
+                                        child: Container(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 5),
+                                            child: currentRecipe.isApprooved
+                                                ? const Text(
+                                                    "Disapproove",
+                                                    textAlign: TextAlign.center,
+                                                  )
+                                                : const Text(
+                                                    "Approove",
+                                                    textAlign: TextAlign.center,
+                                                  ),
+                                          ),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: currentRecipe.isApprooved
+                                                  ? constants.errorRed
+                                                  : constants.green,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(100),
+                                          ),
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              4,
+                                        ),
+                                        onTap: () {
+                                          setState(() {
+                                            currentRecipe.isApprooved =
+                                                !currentRecipe.isApprooved;
+                                            runMutation({
+                                              "recipeId": currentRecipe.id,
+                                              "isApprooved":
+                                                  currentRecipe.isApprooved,
+                                            });
+                                          });
+                                        },
+                                      );
+                                    },
+                                  )
+                                : Container()
                           ],
                           mainAxisAlignment: MainAxisAlignment.center,
                         ),
@@ -364,13 +502,39 @@ class _RecipeScreenState extends State<RecipeScreen> {
                                       ),
                                     ),
                                     options: MutationOptions(
-                                      document: gql(mutations.addComment),
-                                      onCompleted: (result) {
-                                        if (result == null) return;
-                                        currentCommentText = null;
-                                        refetch!();
-                                      },
-                                    ),
+                                        document: gql(mutations.addComment),
+                                        onCompleted: (result) {
+                                          if (result == null) return;
+                                          currentCommentText = null;
+                                          refetch!();
+                                        },
+                                        onError: (error) {
+                                          if (error!.graphqlErrors[0].message
+                                                  .split(":")[1]
+                                                  .trim()
+                                                  .toLowerCase() ==
+                                              "access is denied") {
+                                            SharedPreferencesHelper
+                                                .removeSharedPreference(
+                                                    keys.token);
+                                            SharedPreferencesHelper
+                                                .removeSharedPreference(
+                                                    keys.user);
+                                            globals.loggedInUser = null;
+                                            globals.token = null;
+                                            Future.microtask(
+                                              () => Navigator.pushReplacement(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: ((context) =>
+                                                      const LoginScreen(
+                                                          error:
+                                                              "Session expired.")),
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        }),
                                   ),
                                 ],
                                 mainAxisAlignment:

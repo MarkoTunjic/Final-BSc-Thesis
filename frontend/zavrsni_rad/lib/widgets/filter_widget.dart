@@ -10,15 +10,17 @@ class FilterWidget extends StatefulWidget {
   final void Function() onSubmit;
   final String? initialValue;
   final Filter filter;
+  final bool showFilterIcon;
 
-  const FilterWidget(
-      {Key? key,
-      this.onChanged,
-      this.initialValue,
-      this.onEditingcomplete,
-      required this.filter,
-      required this.onSubmit})
-      : super(key: key);
+  const FilterWidget({
+    Key? key,
+    this.onChanged,
+    this.initialValue,
+    this.onEditingcomplete,
+    required this.filter,
+    required this.onSubmit,
+    required this.showFilterIcon,
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -61,279 +63,314 @@ class _FilterWidgetState extends State<FilterWidget> {
           width: availableWidth * 3 / 4,
           margin: const EdgeInsets.only(right: 10),
         ),
-        InkWell(
-          child: const Icon(
-            Icons.filter_alt_rounded,
-            color: constants.grey,
-          ),
-          onTap: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return Column(
-                  children: [
-                    StatefulBuilder(
-                      builder: (context, setState) {
-                        return Dialog(
-                          insetPadding: const EdgeInsets.all(0),
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(20),
-                              topRight: Radius.circular(20),
-                            ),
-                          ),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height / 2,
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(40),
-                                topRight: Radius.circular(40),
-                              ),
-                            ),
-                            child: ListView(
-                              children: [
-                                const Center(
-                                  child: Padding(
-                                    padding:
-                                        EdgeInsets.only(bottom: 10, top: 10),
-                                    child: Text(
-                                      "Add a filter",
-                                      style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                        color: constants.darkBlue,
-                                      ),
-                                    ),
+        widget.showFilterIcon
+            ? InkWell(
+                child: const Icon(
+                  Icons.filter_alt_rounded,
+                  color: constants.grey,
+                ),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Column(
+                        children: [
+                          StatefulBuilder(
+                            builder: (context, setState) {
+                              return Dialog(
+                                insetPadding: const EdgeInsets.all(0),
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(20),
+                                    topRight: Radius.circular(20),
                                   ),
                                 ),
-                                const Divider(),
-                                const Padding(
-                                  padding: EdgeInsets.only(bottom: 10),
-                                  child: Text(
-                                    "Must contain ingredients:",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: constants.darkBlue,
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  height:
+                                      MediaQuery.of(context).size.height / 2,
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(40),
+                                      topRight: Radius.circular(40),
                                     ),
                                   ),
-                                ),
-                                InputFieldWidget(
-                                  hintText: "Ingredient name",
-                                  obscure: false,
-                                  width: MediaQuery.of(context).size.width - 20,
-                                  type: TextInputType.text,
-                                  onEditingCompleted: () {
-                                    if (currentMustContainInput.isNotEmpty) {
-                                      setState(() {
-                                        filter.canContainIngredients!
-                                            .add(currentMustContainInput);
-                                      });
-                                    }
-                                  },
-                                  onChanged: (newValue) =>
-                                      currentMustContainInput = newValue,
-                                ),
-                                filter.canContainIngredients!.isNotEmpty
-                                    ? SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height:
-                                            MediaQuery.of(context).size.height /
-                                                10,
-                                        child: ListView.builder(
-                                          itemCount: filter
-                                              .canContainIngredients!.length,
-                                          shrinkWrap: true,
-                                          scrollDirection: Axis.horizontal,
-                                          itemBuilder: (context, index) {
-                                            return IngredientFilterWidget(
-                                              ingredientName:
-                                                  filter.canContainIngredients![
-                                                      index],
-                                              onDelete: () {
-                                                setState(() {
-                                                  filter.canContainIngredients!
-                                                      .removeAt(index);
-                                                });
-                                              },
-                                            );
-                                          },
-                                        ),
-                                      )
-                                    : Container(),
-                                const Divider(),
-                                const Padding(
-                                  padding: EdgeInsets.only(bottom: 10),
-                                  child: Text(
-                                    "Must not contain ingredients:",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: constants.darkBlue,
-                                    ),
-                                  ),
-                                ),
-                                InputFieldWidget(
-                                  hintText: "Ingredient name",
-                                  obscure: false,
-                                  width: MediaQuery.of(context).size.width - 20,
-                                  type: TextInputType.text,
-                                  onEditingCompleted: () {
-                                    if (currentMustNotContainInput.isNotEmpty) {
-                                      setState(() {
-                                        filter.mustNotContaintIngredients!
-                                            .add(currentMustNotContainInput);
-                                      });
-                                    }
-                                  },
-                                  onChanged: (newValue) =>
-                                      currentMustNotContainInput = newValue,
-                                ),
-                                filter.mustNotContaintIngredients!.isNotEmpty
-                                    ? SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height:
-                                            MediaQuery.of(context).size.height /
-                                                10,
-                                        child: ListView.builder(
-                                          itemCount: filter
-                                              .mustNotContaintIngredients!
-                                              .length,
-                                          shrinkWrap: true,
-                                          scrollDirection: Axis.horizontal,
-                                          itemBuilder: (context, index) {
-                                            return IngredientFilterWidget(
-                                              ingredientName: filter
-                                                      .mustNotContaintIngredients![
-                                                  index],
-                                              onDelete: () {
-                                                setState(() {
-                                                  filter
-                                                      .mustNotContaintIngredients!
-                                                      .removeAt(index);
-                                                });
-                                              },
-                                            );
-                                          },
-                                        ),
-                                      )
-                                    : Container(),
-                                const Divider(),
-                                const Padding(
-                                  padding: EdgeInsets.only(bottom: 10),
-                                  child: Text(
-                                    "Maximal cooking duration:",
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: constants.darkBlue,
-                                    ),
-                                  ),
-                                ),
-                                Row(
-                                  children: ["<0", "30", "60", "90", "120>"]
-                                      .map((e) => Text(
-                                            e,
-                                            style: const TextStyle(
-                                                color: constants.green,
-                                                fontWeight: FontWeight.bold),
-                                          ))
-                                      .toList(),
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                ),
-                                Slider(
-                                  value: _currentSliderValue,
-                                  max: 120,
-                                  divisions: 4,
-                                  min: 0,
-                                  onChanged: (double value) {
-                                    filter.maxCookingDuration = value.toInt();
-                                    setState(() {
-                                      _currentSliderValue = value;
-                                    });
-                                  },
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(top: 20),
-                                  child: Row(
+                                  child: ListView(
                                     children: [
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          filter.canContainIngredients = null;
-                                          filter.mustNotContaintIngredients =
-                                              null;
-                                          filter.maxCookingDuration = 120;
-                                          Navigator.pop(context);
-                                        },
-                                        child: SizedBox(
-                                          child: const Text("Cancel",
-                                              textAlign: TextAlign.center),
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              3,
-                                        ),
-                                        style: ButtonStyle(
-                                          shape: MaterialStateProperty.all(
-                                            RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
+                                      const Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              bottom: 10, top: 10),
+                                          child: Text(
+                                            "Add a filter",
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold,
+                                              color: constants.darkBlue,
                                             ),
-                                          ),
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                            constants.grey,
                                           ),
                                         ),
                                       ),
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          widget.onSubmit();
-                                          Navigator.pop(context);
-                                        },
-                                        child: SizedBox(
-                                          child: const Text("Submit",
-                                              textAlign: TextAlign.center),
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              3,
+                                      const Divider(),
+                                      const Padding(
+                                        padding: EdgeInsets.only(bottom: 10),
+                                        child: Text(
+                                          "Must contain ingredients:",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: constants.darkBlue,
+                                          ),
                                         ),
-                                        style: ButtonStyle(
-                                          shape: MaterialStateProperty.all(
-                                            RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
+                                      ),
+                                      InputFieldWidget(
+                                        hintText: "Ingredient name",
+                                        obscure: false,
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                                20,
+                                        type: TextInputType.text,
+                                        onEditingCompleted: () {
+                                          if (currentMustContainInput
+                                              .isNotEmpty) {
+                                            setState(() {
+                                              filter.canContainIngredients!
+                                                  .add(currentMustContainInput);
+                                            });
+                                          }
+                                        },
+                                        onChanged: (newValue) =>
+                                            currentMustContainInput = newValue,
+                                      ),
+                                      filter.canContainIngredients!.isNotEmpty
+                                          ? SizedBox(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  10,
+                                              child: ListView.builder(
+                                                itemCount: filter
+                                                    .canContainIngredients!
+                                                    .length,
+                                                shrinkWrap: true,
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                itemBuilder: (context, index) {
+                                                  return IngredientFilterWidget(
+                                                    ingredientName: filter
+                                                            .canContainIngredients![
+                                                        index],
+                                                    onDelete: () {
+                                                      setState(() {
+                                                        filter
+                                                            .canContainIngredients!
+                                                            .removeAt(index);
+                                                      });
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                            )
+                                          : Container(),
+                                      const Divider(),
+                                      const Padding(
+                                        padding: EdgeInsets.only(bottom: 10),
+                                        child: Text(
+                                          "Must not contain ingredients:",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: constants.darkBlue,
+                                          ),
+                                        ),
+                                      ),
+                                      InputFieldWidget(
+                                        hintText: "Ingredient name",
+                                        obscure: false,
+                                        width:
+                                            MediaQuery.of(context).size.width -
+                                                20,
+                                        type: TextInputType.text,
+                                        onEditingCompleted: () {
+                                          if (currentMustNotContainInput
+                                              .isNotEmpty) {
+                                            setState(() {
+                                              filter.mustNotContaintIngredients!
+                                                  .add(
+                                                      currentMustNotContainInput);
+                                            });
+                                          }
+                                        },
+                                        onChanged: (newValue) =>
+                                            currentMustNotContainInput =
+                                                newValue,
+                                      ),
+                                      filter.mustNotContaintIngredients!
+                                              .isNotEmpty
+                                          ? SizedBox(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  10,
+                                              child: ListView.builder(
+                                                itemCount: filter
+                                                    .mustNotContaintIngredients!
+                                                    .length,
+                                                shrinkWrap: true,
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                itemBuilder: (context, index) {
+                                                  return IngredientFilterWidget(
+                                                    ingredientName: filter
+                                                            .mustNotContaintIngredients![
+                                                        index],
+                                                    onDelete: () {
+                                                      setState(() {
+                                                        filter
+                                                            .mustNotContaintIngredients!
+                                                            .removeAt(index);
+                                                      });
+                                                    },
+                                                  );
+                                                },
+                                              ),
+                                            )
+                                          : Container(),
+                                      const Divider(),
+                                      const Padding(
+                                        padding: EdgeInsets.only(bottom: 10),
+                                        child: Text(
+                                          "Maximal cooking duration:",
+                                          style: TextStyle(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: constants.darkBlue,
+                                          ),
+                                        ),
+                                      ),
+                                      Row(
+                                        children: [
+                                          "<0",
+                                          "30",
+                                          "60",
+                                          "90",
+                                          "120>"
+                                        ]
+                                            .map((e) => Text(
+                                                  e,
+                                                  style: const TextStyle(
+                                                      color: constants.green,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ))
+                                            .toList(),
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceAround,
+                                      ),
+                                      Slider(
+                                        value: _currentSliderValue,
+                                        max: 120,
+                                        divisions: 4,
+                                        min: 0,
+                                        onChanged: (double value) {
+                                          filter.maxCookingDuration =
+                                              value.toInt();
+                                          setState(() {
+                                            _currentSliderValue = value;
+                                          });
+                                        },
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.only(top: 20),
+                                        child: Row(
+                                          children: [
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                filter.canContainIngredients =
+                                                    null;
+                                                filter.mustNotContaintIngredients =
+                                                    null;
+                                                filter.maxCookingDuration = 120;
+                                                Navigator.pop(context);
+                                              },
+                                              child: SizedBox(
+                                                child: const Text("Cancel",
+                                                    textAlign:
+                                                        TextAlign.center),
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    3,
+                                              ),
+                                              style: ButtonStyle(
+                                                shape:
+                                                    MaterialStateProperty.all(
+                                                  RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            30),
+                                                  ),
+                                                ),
+                                                backgroundColor:
+                                                    MaterialStateProperty.all(
+                                                  constants.grey,
+                                                ),
+                                              ),
                                             ),
-                                          ),
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                            constants.green,
-                                          ),
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                widget.onSubmit();
+                                                Navigator.pop(context);
+                                              },
+                                              child: SizedBox(
+                                                child: const Text("Submit",
+                                                    textAlign:
+                                                        TextAlign.center),
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    3,
+                                              ),
+                                              style: ButtonStyle(
+                                                shape:
+                                                    MaterialStateProperty.all(
+                                                  RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            30),
+                                                  ),
+                                                ),
+                                                backgroundColor:
+                                                    MaterialStateProperty.all(
+                                                  constants.green,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
                                         ),
                                       ),
                                     ],
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
                                   ),
                                 ),
-                              ],
-                            ),
+                              );
+                            },
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                  mainAxisAlignment: MainAxisAlignment.end,
-                );
-              },
-            );
-          },
-        ),
+                        ],
+                        mainAxisAlignment: MainAxisAlignment.end,
+                      );
+                    },
+                  );
+                },
+              )
+            : Container(),
       ],
       mainAxisAlignment: MainAxisAlignment.center,
     );

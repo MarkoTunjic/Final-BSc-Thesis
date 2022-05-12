@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:zavrsni_rad/models/bloc_providers/cover_picture_provider.dart';
@@ -12,6 +13,7 @@ import 'package:zavrsni_rad/models/bloc_providers/steps_provider.dart';
 import 'package:zavrsni_rad/models/bloc_providers/video_provider.dart';
 import 'package:zavrsni_rad/models/ingredient.dart';
 import 'package:zavrsni_rad/models/new_recipe.dart';
+import 'package:zavrsni_rad/screens/recipes_screen.dart';
 import 'package:zavrsni_rad/widgets/bloc_cover_picture_widget.dart';
 import 'package:zavrsni_rad/widgets/bloc_video_widget.dart';
 import 'package:zavrsni_rad/widgets/green_button_widget.dart';
@@ -22,9 +24,12 @@ import 'package:zavrsni_rad/widgets/picture_picker_widget.dart';
 import '../models/constants/constants.dart' as constants;
 import '../models/constants/graphql_mutations.dart' as mutations;
 import '../utilities/global_variables.dart' as globals;
+import '../models/constants/shared_preferences_keys.dart' as keys;
 import '../models/recipe_step.dart';
+import '../utilities/shared_preferences_helper.dart';
 import '../widgets/images_input_widget.dart';
 import '../widgets/steps_input_widget.dart';
+import 'login_screen.dart';
 
 class NewRecipeScreen extends StatefulWidget {
   static final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -40,18 +45,29 @@ class _NewRecipeState extends State<NewRecipeScreen> {
   double _currentSliderValue = 30;
   NewRecipe newRecipe =
       NewRecipe(cookingDuration: 30, userId: globals.loggedInUser!.id);
+  String? _error;
   final ImagePicker _picker = ImagePicker();
+
+  late ValueNotifier<GraphQLClient> client;
+
+  @override
+  void initState() {
+    super.initState();
+    HttpLink? link;
+    if (globals.token != null) {
+      link = HttpLink(constants.apiLink,
+          defaultHeaders: {"Authorization": "Bearer " + globals.token!});
+    }
+    client = ValueNotifier(
+      GraphQLClient(
+        link: link ?? constants.api,
+        cache: GraphQLCache(store: HiveStore()),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    ValueNotifier<GraphQLClient> client = ValueNotifier(
-      GraphQLClient(
-        link: constants.api,
-        cache: GraphQLCache(
-          store: HiveStore(),
-        ),
-      ),
-    );
     return GraphQLProvider(
       client: client,
       child: Scaffold(
@@ -275,17 +291,62 @@ class _NewRecipeState extends State<NewRecipeScreen> {
                   return BlocVideoWidget(video: state);
                 }),
               ),
+              _error != null
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: Text(
+                        _error!,
+                        style: const TextStyle(
+                            color: constants.errorRed,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20),
+                      ),
+                    )
+                  : Container(),
               Mutation(
                 options: MutationOptions(
                   document: gql(mutations.addRecipe),
                   onCompleted: (dynamic resultData) {
                     if (resultData == null) return;
-                    Navigator.pop(context);
+                    _error = null;
+                    Fluttertoast.showToast(
+                      msg: "Successfully added new recipe", // message
+                      toastLength: Toast.LENGTH_SHORT, // length
+                      gravity: ToastGravity.CENTER, // location// duration
+                    );
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const RecipesScreen(selcted: 0),
+                      ),
+                    );
                   },
-                  onError: (OperationException? e) {
-                    for (GraphQLError error in e!.graphqlErrors) {
-                      print(error.message);
+                  onError: (OperationException? error) {
+                    if (error == null) return;
+                    if (error.graphqlErrors[0].message
+                            .split(":")[1]
+                            .trim()
+                            .toLowerCase() ==
+                        "access is denied") {
+                      SharedPreferencesHelper.removeSharedPreference(
+                          keys.token);
+                      SharedPreferencesHelper.removeSharedPreference(keys.user);
+                      globals.loggedInUser = null;
+                      globals.token = null;
+                      Future.microtask(
+                        () => Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: ((context) =>
+                                const LoginScreen(error: "Session expired.")),
+                          ),
+                        ),
+                      );
+                      return;
                     }
+                    setState(() {
+                      _error = error.graphqlErrors[0].message.split(":")[1];
+                    });
                   },
                 ),
                 builder: (RunMutation runMutation, QueryResult? result) {

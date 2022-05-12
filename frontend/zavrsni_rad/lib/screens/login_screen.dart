@@ -5,24 +5,19 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zavrsni_rad/models/user.dart';
-import 'package:zavrsni_rad/screens/new_recipe_screen.dart';
 import 'package:zavrsni_rad/screens/recipes_screen.dart';
 import 'package:zavrsni_rad/screens/register_screen.dart';
 import 'package:zavrsni_rad/widgets/green_button_widget.dart';
 import 'package:zavrsni_rad/widgets/input_field_widget.dart';
-import '../models/bloc_providers/cover_picture_provider.dart';
-import '../models/bloc_providers/ingredients_provider.dart';
 import '../models/bloc_providers/profile_picture_provider.dart';
-import '../models/bloc_providers/recipe_images_provider.dart';
-import '../models/bloc_providers/steps_provider.dart';
-import '../models/bloc_providers/video_provider.dart';
 import '../models/constants/constants.dart' as constants;
 import '../models/constants/shared_preferences_keys.dart' as keys;
 import '../models/constants/graphql_mutations.dart' as mutations;
 import '../utilities/global_variables.dart' as globals;
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({Key? key}) : super(key: key);
+  final String? error;
+  const LoginScreen({Key? key, this.error}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -33,25 +28,32 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   SharedPreferences? _prefs;
+  String? _error;
+  late ValueNotifier<GraphQLClient> client;
 
   @override
   void initState() {
     super.initState();
+    _error = widget.error;
     SharedPreferences.getInstance().then((value) => _prefs = value);
+    HttpLink? link;
+    if (globals.token != null) {
+      link = HttpLink(constants.apiLink,
+          defaultHeaders: {"Authorization": "Bearer " + globals.token!});
+    }
+    client = ValueNotifier(
+      GraphQLClient(
+        link: link ?? constants.api,
+        cache: GraphQLCache(store: HiveStore()),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     String? identifier;
     String? password;
-    ValueNotifier<GraphQLClient> client = ValueNotifier(
-      GraphQLClient(
-        link: constants.api,
-        cache: GraphQLCache(
-          store: HiveStore(),
-        ),
-      ),
-    );
+
     return GraphQLProvider(
       client: client,
       child: Scaffold(
@@ -109,6 +111,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                 MaterialStateProperty.all(constants.grey),
                           ),
                         ),
+                        _error != null
+                            ? Padding(
+                                padding: const EdgeInsets.only(top: 20),
+                                child: Text(
+                                  _error!,
+                                  style: const TextStyle(
+                                      color: constants.errorRed,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20),
+                                ),
+                              )
+                            : Container(),
                       ],
                     ),
                   ),
@@ -123,6 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       document: gql(mutations.login),
                       onCompleted: (dynamic resultData) {
                         if (resultData == null) return;
+                        _error = null;
                         String token = resultData["login"]["token"];
                         User user = User.fromJSON(resultData["login"]["user"]);
 
@@ -138,6 +153,12 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                         );
+                      },
+                      onError: (error) {
+                        setState(() {
+                          _error =
+                              error!.graphqlErrors[0].message.split(":")[1];
+                        });
                       },
                     ),
                     builder: (RunMutation runMutation, QueryResult? result) {

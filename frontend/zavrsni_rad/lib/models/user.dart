@@ -1,11 +1,13 @@
 class User {
-  final int? id;
-  final String username;
-  final String? eMail;
-  final String profilePicture;
-  final String? role;
+  int? id;
+  String username;
+  String? eMail;
+  String profilePicture;
+  String? role;
+  bool? isBanned;
 
-  const User({
+  User({
+    this.isBanned,
     this.id,
     this.eMail,
     required this.profilePicture,
@@ -20,6 +22,7 @@ class User {
       profilePicture: json["profilePicture"],
       role: json["role"]?["roleName"],
       username: json["username"],
+      isBanned: json["isBanned"],
     );
   }
 
@@ -29,10 +32,11 @@ class User {
         "eMail": eMail,
         "role": {"roleName": role},
         "profilePicture": profilePicture,
+        "isBanned": isBanned,
       };
 
   @override
   String toString() {
-    return "User: {id: $id, username: $username, eMail: $eMail, role: $role, profilePicture: $profilePicture}";
+    return "User: {id: $id, username: $username, eMail: $eMail, role: $role, profilePicture: $profilePicture, isBanned: $isBanned}";
   }
 }

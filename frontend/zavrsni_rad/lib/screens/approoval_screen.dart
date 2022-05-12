@@ -1,37 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:zavrsni_rad/models/filter.dart';
-import 'package:zavrsni_rad/models/recipe_master.dart';
-import 'package:zavrsni_rad/models/user.dart';
 import 'package:zavrsni_rad/screens/recipe_screen.dart';
-import 'package:zavrsni_rad/widgets/filter_widget.dart';
-import 'package:zavrsni_rad/widgets/menu_widget.dart';
-import 'package:zavrsni_rad/widgets/pagination_widget.dart';
-import 'package:zavrsni_rad/widgets/recipe_master_widget.dart';
+
 import '../models/constants/constants.dart' as constants;
 import '../models/constants/graphql_querys.dart' as querys;
 import '../utilities/global_variables.dart' as globals;
 import '../models/constants/shared_preferences_keys.dart' as keys;
+import '../models/filter.dart';
+import '../models/recipe_master.dart';
 import '../utilities/shared_preferences_helper.dart';
+import '../widgets/filter_widget.dart';
+import '../widgets/menu_widget.dart';
+import '../widgets/pagination_widget.dart';
+import '../widgets/recipe_master_widget.dart';
 import 'login_screen.dart';
 
-class RecipesScreen extends StatefulWidget {
-  final int? authorId;
-  final int selcted;
-  const RecipesScreen({Key? key, this.authorId, required this.selcted})
-      : super(key: key);
+class ApproovalScreen extends StatefulWidget {
+  final int selected;
+  const ApproovalScreen({Key? key, required this.selected}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _RecipesScreenState();
+    return _ApproovalScreenState();
   }
 }
 
-class _RecipesScreenState extends State<RecipesScreen> {
+class _ApproovalScreenState extends State<ApproovalScreen> {
   int currentIndex = 1;
-  Filter filter = Filter(
-      index: 1, mustNotContaintIngredients: [], canContainIngredients: []);
-  AuthLink? authLink;
+  Filter filter = Filter(index: 1);
   late ValueNotifier<GraphQLClient> client;
 
   @override
@@ -42,7 +38,6 @@ class _RecipesScreenState extends State<RecipesScreen> {
       link = HttpLink(constants.apiLink,
           defaultHeaders: {"Authorization": "Bearer " + globals.token!});
     }
-    filter.authorId = widget.authorId;
     client = ValueNotifier(
       GraphQLClient(
         link: link ?? constants.api,
@@ -70,7 +65,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
             children: [
               Query(
                 options: QueryOptions(
-                  document: gql(querys.recipes),
+                  document: gql(querys.notApproovedRecipes),
                   variables: {"filter": filter.toJson()},
                   fetchPolicy: FetchPolicy.networkOnly,
                 ),
@@ -103,9 +98,11 @@ class _RecipesScreenState extends State<RecipesScreen> {
                   if (result.isLoading) {
                     return const CircularProgressIndicator();
                   }
-                  currentIndex = result.data?["recipes"]["currentIndex"];
+                  currentIndex =
+                      result.data?["notApprovedRecipes"]["currentIndex"];
 
-                  List<dynamic> rawRecipes = result.data?["recipes"]["recipes"];
+                  List<dynamic> rawRecipes =
+                      result.data?["notApprovedRecipes"]["recipes"];
 
                   List<RecipeMaster> recipes =
                       rawRecipes.map((e) => RecipeMaster.fromJson(e)).toList();
@@ -131,7 +128,8 @@ class _RecipesScreenState extends State<RecipesScreen> {
                         ),
                       )
                       .toList();
-                  int numberOfPages = result.data?["recipes"]?["numberOfPages"];
+                  int numberOfPages =
+                      result.data?["notApprovedRecipes"]?["numberOfPages"];
                   return Expanded(
                     child: CustomScrollView(
                       slivers: [
@@ -139,7 +137,7 @@ class _RecipesScreenState extends State<RecipesScreen> {
                           leading: Container(),
                           floating: true,
                           flexibleSpace: FilterWidget(
-                            showFilterIcon: true,
+                            showFilterIcon: false,
                             initialValue: filter.nameLike,
                             onChanged: (newValue) {
                               filter.nameLike = newValue;
@@ -152,81 +150,6 @@ class _RecipesScreenState extends State<RecipesScreen> {
                           ),
                           backgroundColor:
                               const Color.fromARGB(255, 251, 249, 249),
-                        ),
-                        SliverList(
-                          delegate: SliverChildListDelegate.fixed(
-                            [
-                              widget.authorId == null
-                                  ? Container()
-                                  : Query(
-                                      builder: (result, {fetchMore, refetch}) {
-                                        if (result.hasException) {
-                                          if (result.exception!.graphqlErrors[0]
-                                                  .message
-                                                  .split(":")[1]
-                                                  .trim()
-                                                  .toLowerCase() ==
-                                              "access is denied") {
-                                            SharedPreferencesHelper
-                                                .removeSharedPreference(
-                                                    keys.token);
-                                            SharedPreferencesHelper
-                                                .removeSharedPreference(
-                                                    keys.user);
-                                            globals.loggedInUser = null;
-                                            globals.token = null;
-                                            Future.microtask(
-                                              () => Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: ((context) =>
-                                                      const LoginScreen(
-                                                          error:
-                                                              "Session expired.")),
-                                                ),
-                                              ),
-                                            );
-                                          }
-                                          return Text(
-                                              result.exception.toString());
-                                        }
-
-                                        if (result.isLoading) {
-                                          return const CircularProgressIndicator();
-                                        }
-                                        User user = User.fromJSON(
-                                            result.data!["userForId"]);
-                                        return Column(
-                                          children: [
-                                            CircleAvatar(
-                                              backgroundImage: NetworkImage(
-                                                  user.profilePicture),
-                                              radius: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  8,
-                                            ),
-                                            Padding(
-                                              child: Text(
-                                                user.username,
-                                                style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 20),
-                                              ),
-                                              padding: const EdgeInsets.only(
-                                                  top: 10),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                      options: QueryOptions(
-                                          document: gql(querys.userForId),
-                                          variables: {
-                                            "userId": widget.authorId
-                                          }),
-                                    ),
-                            ],
-                          ),
                         ),
                         SliverGrid.count(
                           crossAxisCount: 2,
@@ -246,14 +169,14 @@ class _RecipesScreenState extends State<RecipesScreen> {
                               ),
                             ],
                           ),
-                        )
+                        ),
                       ],
                     ),
                   );
                 },
               ),
               MenuWidget(
-                selected: widget.selcted,
+                selected: widget.selected,
               )
             ],
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

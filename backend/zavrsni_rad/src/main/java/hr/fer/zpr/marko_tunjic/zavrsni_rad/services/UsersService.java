@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.List;
 
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
@@ -16,8 +17,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.payloads.Filter;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.payloads.LoginResponse;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.payloads.RegisterRequest;
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.payloads.UsersResponse;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Users;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.RoleRepository;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.UsersRepository;
@@ -45,6 +48,8 @@ public class UsersService {
 
     @Autowired
     private MailService mailService;
+
+    public static final int USERS_PER_PAGE = 10;
 
     private SecureRandom sr = new SecureRandom();
 
@@ -87,7 +92,11 @@ public class UsersService {
                     break;
             }
         }
-        String url = fileService.upload(payload.getProfilePicture(), payload.getUsername() + "_profilePicture.png");
+        String url;
+        if (payload.getProfilePicture() != null)
+            url = fileService.upload(payload.getProfilePicture(), payload.getUsername() + "_profilePicture.png");
+        else
+            url = FileService.DEFAULT_PROFILE_PICTURE;
         Users user = new Users(payload.getUsername(), payload.geteMail(), encoder.encode(payload.getPassword()),
                 url, false, false, roleRepository.getById((long) 1), codeBuilder.toString());
         System.out.println(codeBuilder.toString());
@@ -105,5 +114,20 @@ public class UsersService {
 
     public Users getById(Long userId) {
         return userRepository.findById(userId).get();
+    }
+
+    @Transactional
+    public Boolean changeBanStatus(Long userId, Boolean banStatus) {
+        Users user = userRepository.findById(userId).get();
+        user.setBanned(banStatus);
+        userRepository.save(user);
+        return true;
+    }
+
+    public UsersResponse getUsers(Filter filter) {
+        String nameLike = filter.getNameLike() == null ? "" : filter.getNameLike();
+        List<Users> users = userRepository.getTen((filter.getIndex() - 1) * USERS_PER_PAGE, nameLike);
+        Double numberOfPages = Math.ceil(userRepository.countByName(nameLike) / (USERS_PER_PAGE * 1.d));
+        return new UsersResponse(users, numberOfPages.intValue(), filter.getIndex());
     }
 }

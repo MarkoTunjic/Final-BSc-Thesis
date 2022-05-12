@@ -7,6 +7,8 @@ type Query{
     recipes(filter: Filter!): Recipes!
     singleRecipe(recipeId: ID!): Recipe!
     userForId(userId: ID!): Users!
+    users(filter: Filter!): UsersResponse!
+    notApprovedRecipes(filter: Filter!): Recipes!
 }
 
 type Mutation{
@@ -18,6 +20,8 @@ type Mutation{
     addComment(userId: ID!,recipeId: ID!,commentText: String!): Comments
     addRating(userId: ID!,recipeId: ID!, ratingValue: Int!): Boolean!
     deleteComment(commentId: ID!): Boolean!
+    changeBanStatus(userId: ID!, banStatus: Boolean!): Boolean!
+    changeApproovedStatus(recipeId: ID!, isApprooved: Boolean!): Boolean!
 }
 
 type Comments{
@@ -107,7 +111,6 @@ type Users{
     id: ID!
     username: String!
     eMail: String!
-    password: String!
     profilePicture: String!
     isBanned: Boolean!
     isConfirmed: Boolean!
@@ -132,6 +135,12 @@ type LoginResponse{
 
 type Recipes{
     recipes: [Recipe]!
+    numberOfPages: Int!
+    currentIndex: Int!
+}
+
+type UsersResponse{
+    users: [Users]!
     numberOfPages: Int!
     currentIndex: Int!
 }

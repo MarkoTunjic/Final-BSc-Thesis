@@ -13,6 +13,7 @@ class RecipeDetail {
   String recipeName;
   String description;
   int ratingFromCurrentUser;
+  bool isApprooved;
   List<RecipeStep> steps;
   List<Ingredient> ingredients;
   List<String> images;
@@ -33,6 +34,7 @@ class RecipeDetail {
     required this.comments,
     required this.id,
     required this.ratingFromCurrentUser,
+    required this.isApprooved,
   });
 
   factory RecipeDetail.fromJson(Map<String, dynamic> json) {
@@ -54,6 +56,7 @@ class RecipeDetail {
         images: images.map((e) => e["link"].toString()).toList(),
         videos: videos.map((e) => e["link"].toString()).toList(),
         comments: comments.map((e) => Comment.fromJson(e)).toList(),
-        ratingFromCurrentUser: json["ratingFromCurrentUser"] ?? 0);
+        ratingFromCurrentUser: json["ratingFromCurrentUser"] ?? 0,
+        isApprooved: json["isApprooved"]);
   }
 }
