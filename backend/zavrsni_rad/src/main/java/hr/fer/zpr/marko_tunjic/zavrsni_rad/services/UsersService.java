@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.List;
 
@@ -78,28 +79,16 @@ public class UsersService {
             throw new IllegalArgumentException("Username already exists in database");
         if (userRepository.existsByeMail(payload.geteMail()))
             throw new IllegalArgumentException("EMail already exists in database");
-        StringBuilder codeBuilder = new StringBuilder();
-        for (int i = 0; i < 30; i++) {
-            switch (sr.nextInt(0, 3)) {
-                case 0:
-                    codeBuilder.append((char) sr.nextInt((int) 'a', (int) 'z' + 1));
-                    break;
-                case 1:
-                    codeBuilder.append((char) sr.nextInt((int) 'A', (int) 'Z' + 1));
-                    break;
-                case 2:
-                    codeBuilder.append((char) sr.nextInt((int) '0', (int) '9' + 1));
-                    break;
-            }
-        }
+        byte[] randomBytes = new byte[30];
+        sr.nextBytes(randomBytes);
+        String confirmationCode = new String(randomBytes, StandardCharsets.UTF_8);
         String url;
         if (payload.getProfilePicture() != null)
             url = fileService.upload(payload.getProfilePicture(), payload.getUsername() + "_profilePicture.png");
         else
             url = FileService.DEFAULT_PROFILE_PICTURE;
         Users user = new Users(payload.getUsername(), payload.geteMail(), encoder.encode(payload.getPassword()),
-                url, false, false, roleRepository.getById((long) 1), codeBuilder.toString());
-        System.out.println(codeBuilder.toString());
+                url, false, false, roleRepository.getById((long) 1), confirmationCode);
         userRepository.save(user);
         mailService.sendConfirmationMail(user);
         return user;
