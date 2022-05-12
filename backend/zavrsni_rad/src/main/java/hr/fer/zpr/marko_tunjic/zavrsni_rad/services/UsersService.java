@@ -82,13 +82,13 @@ public class UsersService {
         for (int i = 0; i < 30; i++) {
             switch (sr.nextInt(0, 3)) {
                 case 0:
-                    codeBuilder.append((char) sr.nextInt('a', 'z' + 1));
+                    codeBuilder.append((char) sr.nextInt((int) 'a', (int) 'z' + 1));
                     break;
                 case 1:
-                    codeBuilder.append((char) sr.nextInt('A', 'Z' + 1));
+                    codeBuilder.append((char) sr.nextInt((int) 'A', (int) 'Z' + 1));
                     break;
                 case 2:
-                    codeBuilder.append((char) sr.nextInt('0', '9' + 1));
+                    codeBuilder.append((char) sr.nextInt((int) '0', (int) '9' + 1));
                     break;
             }
         }
