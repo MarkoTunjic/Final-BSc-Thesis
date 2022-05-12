@@ -26,7 +26,7 @@ jobs:
           environment_name: Zavrsnirad-env
           version_label: ${{ github.run_number }}
           region: us-east-1
-          deployment_package: package.zip
+          deployment_package: backend/zavrsni_rad/package.zip
 
   build_appbundle:
     name: Build Flutter (Android)
