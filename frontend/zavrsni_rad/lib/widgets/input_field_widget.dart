@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:zavrsni_rad/screens/new_recipe_screen.dart';
 import '../models/constants/constants.dart' as constants;
 
 class InputFieldWidget extends StatelessWidget {
