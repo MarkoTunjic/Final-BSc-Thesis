@@ -225,7 +225,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     _message = null;
                     _error = error!.graphqlErrors[0].message.split(":")[1];
                   });
-                  print(_error);
                 },
               ),
               builder: (RunMutation runMutation, QueryResult? result) {
