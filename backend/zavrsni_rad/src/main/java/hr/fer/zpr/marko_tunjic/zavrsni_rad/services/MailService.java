@@ -34,7 +34,7 @@ public class MailService {
         String senderName = "FinalBSC";
         String mailContent = "<p> Dear ${username},</p>".replace("${username}", user.getUsername());
         mailContent += "<p> Please click the link below to verify your registaration: </p>";
-        mailContent += "<p><a href=\"http://localhost:5000/verify/${confirmationCode}\">click to verify</a></p>"
+        mailContent += "<p><a href=\"http://zavrsnirad-env.eba-dcaqggvc.us-east-1.elasticbeanstalk.com/verify/${confirmationCode}\">click to verify</a></p>"
                 .replace("${confirmationCode}", user.getConfirmationCode());
         mailContent += "<p> Thank you!<br> The FinalBsc guy</p>";
 
