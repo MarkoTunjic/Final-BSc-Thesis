@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.List;
 
@@ -79,16 +78,16 @@ public class UsersService {
             throw new IllegalArgumentException("Username already exists in database");
         if (userRepository.existsByeMail(payload.geteMail()))
             throw new IllegalArgumentException("EMail already exists in database");
-        byte[] randomBytes = new byte[30];
-        sr.nextBytes(randomBytes);
-        String confirmationCode = new String(randomBytes, StandardCharsets.UTF_8);
+        StringBuilder codeBuilder = new StringBuilder();
+        for (int i = 0; i < 30; i++)
+            codeBuilder.append(sr.nextInt(10));
         String url;
         if (payload.getProfilePicture() != null)
             url = fileService.upload(payload.getProfilePicture(), payload.getUsername() + "_profilePicture.png");
         else
             url = FileService.DEFAULT_PROFILE_PICTURE;
         Users user = new Users(payload.getUsername(), payload.geteMail(), encoder.encode(payload.getPassword()),
-                url, false, false, roleRepository.getById((long) 1), confirmationCode);
+                url, false, false, roleRepository.getById((long) 1), codeBuilder.toString());
         userRepository.save(user);
         mailService.sendConfirmationMail(user);
         return user;

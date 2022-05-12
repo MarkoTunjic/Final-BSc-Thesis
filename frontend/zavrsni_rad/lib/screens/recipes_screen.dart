@@ -30,7 +30,7 @@ class RecipesScreen extends StatefulWidget {
 class _RecipesScreenState extends State<RecipesScreen> {
   int currentIndex = 1;
   Filter filter = Filter(
-      index: 1, mustNotContaintIngredients: [], canContainIngredients: []);
+      index: 1, mustNotContainIngredients: [], canContainIngredients: []);
   AuthLink? authLink;
   late ValueNotifier<GraphQLClient> client;
 
@@ -101,7 +101,11 @@ class _RecipesScreenState extends State<RecipesScreen> {
                   }
 
                   if (result.isLoading) {
-                    return const CircularProgressIndicator();
+                    return const Expanded(
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
                   }
                   currentIndex = result.data?["recipes"]["currentIndex"];
 

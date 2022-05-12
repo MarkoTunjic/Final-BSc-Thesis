@@ -9,6 +9,7 @@ type Query{
     userForId(userId: ID!): Users!
     users(filter: Filter!): UsersResponse!
     notApprovedRecipes(filter: Filter!): Recipes!
+    favorites(userId: ID!, filter: Filter!): Recipes!
 }
 
 type Mutation{
@@ -178,5 +179,5 @@ input Filter{
     nameLike: String
     maxCookingDuration: Int
     canContainIngredients: [String]
-    mustNotContaintIngredients: [String]
+    mustNotContainIngredients: [String]
 }

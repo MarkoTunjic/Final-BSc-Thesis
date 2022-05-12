@@ -32,7 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? _message;
   RegisterRequest request =
       RegisterRequest(username: "", eMail: "", password: "");
-
+  bool _showProgress = false;
   late ValueNotifier<GraphQLClient> client;
 
   @override
@@ -66,6 +66,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
       child: Scaffold(
         body: Stack(
           children: [
+            _showProgress
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Container(),
             Positioned(
               child: Column(
                 children: [
@@ -205,6 +210,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 document: gql(mutations.register),
                 onCompleted: (dynamic resultData) {
                   setState(() {
+                    _showProgress = false;
+                  });
+                  if (resultData == null) return;
+                  setState(() {
                     _error = null;
                     _message =
                         "Registration succesffull.\n Check your e-mail for verification";
@@ -212,6 +221,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 },
                 onError: (OperationException? error) {
                   setState(() {
+                    _showProgress = false;
                     _message = null;
                     _error = error!.graphqlErrors[0].message.split(":")[1];
                   });

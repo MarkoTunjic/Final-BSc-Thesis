@@ -1,6 +1,7 @@
 package hr.fer.zpr.marko_tunjic.zavrsni_rad.graphql.resolvers;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.coxautodev.graphql.tools.GraphQLResolver;
 
@@ -113,7 +114,9 @@ public class RecipeResolver implements GraphQLResolver<Recipe> {
         String username = ((UserDetails) userDetails).getUsername();
 
         Users user = usersRepository.findByUsername(username).get();
-        Rating rating = ratingRepository.findById(new RatingKey(user.getId(), recipe.getId())).get();
-        return rating.getRatingValue();
+        Optional<Rating> rating = ratingRepository.findById(new RatingKey(user.getId(), recipe.getId()));
+        if (rating.isEmpty())
+            return 0;
+        return rating.get().getRatingValue();
     }
 }

@@ -5,13 +5,13 @@ class Filter {
   String? nameLike;
   int? maxCookingDuration;
   List<String>? canContainIngredients;
-  List<String>? mustNotContaintIngredients;
+  List<String>? mustNotContainIngredients;
 
   Filter({
     required this.index,
     this.canContainIngredients,
     this.maxCookingDuration,
-    this.mustNotContaintIngredients,
+    this.mustNotContainIngredients,
     this.nameLike,
     this.orderBy,
     this.authorId,
@@ -25,7 +25,7 @@ class Filter {
       "nameLike": nameLike,
       "maxCookingDuration": maxCookingDuration,
       "canContainIngredients": canContainIngredients,
-      "mustNotContaintIngredients": mustNotContaintIngredients,
+      "mustNotContainIngredients": mustNotContainIngredients,
     };
   }
 }

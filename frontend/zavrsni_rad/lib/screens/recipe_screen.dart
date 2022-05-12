@@ -32,7 +32,6 @@ class RecipeScreen extends StatefulWidget {
 class _RecipeScreenState extends State<RecipeScreen> {
   String? currentCommentText;
   late RecipeDetail currentRecipe;
-  late ValueNotifier<GraphQLClient> client;
 
   bool _showApprooveButton() {
     if (globals.loggedInUser != null &&
@@ -41,31 +40,25 @@ class _RecipeScreenState extends State<RecipeScreen> {
   }
 
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
     HttpLink? link;
     if (globals.token != null) {
       link = HttpLink(constants.apiLink,
           defaultHeaders: {"Authorization": "Bearer " + globals.token!});
     }
-    client = ValueNotifier(
+    ValueNotifier<GraphQLClient> client = ValueNotifier(
       GraphQLClient(
         link: link ?? constants.api,
-        cache: GraphQLCache(store: HiveStore()),
+        cache: GraphQLCache(),
       ),
     );
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return GraphQLProvider(
       client: client,
       child: Scaffold(
         body: Query(
           options: QueryOptions(
-            document: gql(querys.singleRecipe),
-            variables: {"recipeId": widget.id},
-          ),
+              document: gql(querys.singleRecipe),
+              variables: {"recipeId": widget.id}),
           builder: (QueryResult result,
               {VoidCallback? refetch, FetchMore? fetchMore}) {
             if (result.hasException) {
@@ -73,7 +66,11 @@ class _RecipeScreenState extends State<RecipeScreen> {
             }
 
             if (result.isLoading) {
-              return const CircularProgressIndicator();
+              return const Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
             }
 
             currentRecipe = RecipeDetail.fromJson(result.data?["singleRecipe"]);
@@ -241,8 +238,8 @@ class _RecipeScreenState extends State<RecipeScreen> {
                                         if (result == null) return;
                                         Fluttertoast.showToast(
                                           msg: currentRecipe.isApprooved
-                                              ? "Successfully approoved"
-                                              : "Successfully disapprooved", // message
+                                              ? "Successfully disapprooved"
+                                              : "Successfully approoved", // message
                                           toastLength:
                                               Toast.LENGTH_SHORT, // length
                                           gravity:
@@ -319,11 +316,11 @@ class _RecipeScreenState extends State<RecipeScreen> {
                                           setState(() {
                                             currentRecipe.isApprooved =
                                                 !currentRecipe.isApprooved;
-                                            runMutation({
-                                              "recipeId": currentRecipe.id,
-                                              "isApprooved":
-                                                  currentRecipe.isApprooved,
-                                            });
+                                          });
+                                          runMutation({
+                                            "recipeId": currentRecipe.id,
+                                            "isApprooved":
+                                                currentRecipe.isApprooved,
                                           });
                                         },
                                       );

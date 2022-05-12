@@ -198,7 +198,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                                           if (currentMustNotContainInput
                                               .isNotEmpty) {
                                             setState(() {
-                                              filter.mustNotContaintIngredients!
+                                              filter.mustNotContainIngredients!
                                                   .add(
                                                       currentMustNotContainInput);
                                             });
@@ -208,7 +208,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                                             currentMustNotContainInput =
                                                 newValue,
                                       ),
-                                      filter.mustNotContaintIngredients!
+                                      filter.mustNotContainIngredients!
                                               .isNotEmpty
                                           ? SizedBox(
                                               width: MediaQuery.of(context)
@@ -220,7 +220,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                                                   10,
                                               child: ListView.builder(
                                                 itemCount: filter
-                                                    .mustNotContaintIngredients!
+                                                    .mustNotContainIngredients!
                                                     .length,
                                                 shrinkWrap: true,
                                                 scrollDirection:
@@ -228,12 +228,12 @@ class _FilterWidgetState extends State<FilterWidget> {
                                                 itemBuilder: (context, index) {
                                                   return IngredientFilterWidget(
                                                     ingredientName: filter
-                                                            .mustNotContaintIngredients![
+                                                            .mustNotContainIngredients![
                                                         index],
                                                     onDelete: () {
                                                       setState(() {
                                                         filter
-                                                            .mustNotContaintIngredients!
+                                                            .mustNotContainIngredients!
                                                             .removeAt(index);
                                                       });
                                                     },
@@ -294,7 +294,7 @@ class _FilterWidgetState extends State<FilterWidget> {
                                               onPressed: () {
                                                 filter.canContainIngredients =
                                                     null;
-                                                filter.mustNotContaintIngredients =
+                                                filter.mustNotContainIngredients =
                                                     null;
                                                 filter.maxCookingDuration = 120;
                                                 Navigator.pop(context);

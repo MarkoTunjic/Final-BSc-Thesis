@@ -30,6 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
   SharedPreferences? _prefs;
   String? _error;
   late ValueNotifier<GraphQLClient> client;
+  bool _showProgressIndicator = false;
 
   @override
   void initState() {
@@ -59,6 +60,11 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
         body: Stack(
           children: [
+            _showProgressIndicator
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Container(),
             Positioned(
               top: MediaQuery.of(context).size.height / 5,
               child: Column(
@@ -136,6 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     options: MutationOptions(
                       document: gql(mutations.login),
                       onCompleted: (dynamic resultData) {
+                        _showProgressIndicator = false;
                         if (resultData == null) return;
                         _error = null;
                         String token = resultData["login"]["token"];
@@ -171,6 +178,9 @@ class _LoginScreenState extends State<LoginScreen> {
                               "password": password,
                             },
                           );
+                          setState(() {
+                            _showProgressIndicator = true;
+                          });
                         },
                         text: "Login",
                       );

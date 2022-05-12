@@ -112,3 +112,25 @@ const String users = """
     }
   }
 """;
+
+const String favorites = """
+  query Favorites(\$userId: ID!, \$filter: Filter!){
+    favorites(userId: \$userId,filter: \$filter){
+      recipes{
+        user{
+          id,
+          username,
+          profilePicture
+        }
+        id,
+        averageRating,
+        cookingDuration,
+        coverPicture,
+        recipeName,
+        isLikedByCurrentUser
+      }
+      numberOfPages,
+      currentIndex
+    }
+  }
+""";

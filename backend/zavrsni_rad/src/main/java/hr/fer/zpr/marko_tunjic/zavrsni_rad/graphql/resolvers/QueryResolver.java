@@ -46,4 +46,9 @@ public class QueryResolver implements GraphQLQueryResolver {
     public Recipes getNotApprovedRecipes(Filter filter) {
         return recipeService.getNotApproovedRecipes(filter);
     }
+
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('MODERATOR')")
+    public Recipes getFavorites(Long userId, Filter filter) {
+        return recipeService.getFavorites(userId, filter);
+    }
 }

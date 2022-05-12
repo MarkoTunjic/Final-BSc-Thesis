@@ -27,4 +27,12 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
         @Query(value = "SELECT COUNT(*) FROM recipe WHERE recipe_name LIKE %?1% AND is_approoved=?2", nativeQuery = true)
         Long countByNameAndApprooved(String nameLike, Boolean approved);
+
+        @Query(value = "SELECT recipe.* " +
+                        "FROM recipe INNER JOIN favorite " +
+                        "ON recipe.id=favorite.recipe_id " +
+                        "WHERE favorite.user_id=?1 AND recipe.is_approoved=true " +
+                        "AND recipe.recipe_name LIKE %?2% AND recipe.cooking_duration<=?3 " +
+                        "ORDER BY recipe.id", nativeQuery = true)
+        List<Recipe> getFavorites(Long userId, String nameLike, Integer cookingDuration);
 }

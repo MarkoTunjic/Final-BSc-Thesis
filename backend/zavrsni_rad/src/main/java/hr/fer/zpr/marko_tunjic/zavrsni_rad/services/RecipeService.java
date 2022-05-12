@@ -158,9 +158,10 @@ public class RecipeService {
             recipes = recipeRepository.findByApprovedAndNameLikeAndCookingDurationAndUserId(nameLike, true,
                     cookingDuration, filter.getAuthorId());
 
-        recipes.removeIf(recipe -> containsForbiddenIngredient(recipe, filter.getMustNotContaintIngredients())
+        recipes.removeIf(recipe -> containsForbiddenIngredient(recipe, filter.getMustNotContainIngredients())
                 || !containsAllIngredients(recipe, filter.getCanContainIngredients()));
-        int toIndex = recipes.size() > RECIPES_PER_PAGE ? RECIPES_PER_PAGE : recipes.size();
+        int toIndex = recipes.size() > RECIPES_PER_PAGE * filter.getIndex() ? RECIPES_PER_PAGE * filter.getIndex()
+                : recipes.size();
         recipes = recipes.subList((filter.getIndex() - 1) * RECIPES_PER_PAGE, toIndex);
         Double numberOfPages = Math.ceil(recipes.size() * 1.d / RECIPES_PER_PAGE);
 
@@ -172,7 +173,7 @@ public class RecipeService {
             return false;
         List<Ingredient> ingredients = ingredientRepository.findByRecipeId(recipe.getId());
         return ingredients.stream().anyMatch(ingredient -> forbiddenIngredients.stream().anyMatch(
-                e -> e.contains(ingredient.getIngredientName()) || ingredient.getIngredientName().contains(e)));
+                e -> e.equals(ingredient.getIngredientName())));
     }
 
     private boolean containsAllIngredients(Recipe recipe, List<String> requiredIngredients) {
@@ -180,7 +181,7 @@ public class RecipeService {
             return true;
         List<Ingredient> ingredients = ingredientRepository.findByRecipeId(recipe.getId());
         return ingredients.stream().allMatch(ingredient -> requiredIngredients.stream().anyMatch(
-                e -> e.contains(ingredient.getIngredientName()) || ingredient.getIngredientName().contains(e)));
+                e -> e.equals(ingredient.getIngredientName())));
     }
 
     @Transactional
@@ -234,6 +235,22 @@ public class RecipeService {
         List<Recipe> recipes = recipeRepository.getTen((filter.getIndex() - 1) * RECIPES_PER_PAGE, false, nameLike);
         Double numberOfPages = Math
                 .ceil(recipeRepository.countByNameAndApprooved(nameLike, false) / (RECIPES_PER_PAGE * 1.d));
+        return new Recipes(recipes, numberOfPages.intValue(), filter.getIndex());
+    }
+
+    public Recipes getFavorites(Long userId, Filter filter) {
+        String nameLike = filter.getNameLike() == null ? "" : filter.getNameLike();
+        int cookingDuration = filter.getMaxCookingDuration() == null ? Integer.MAX_VALUE
+                : filter.getMaxCookingDuration();
+
+        List<Recipe> recipes = recipeRepository.getFavorites(userId, nameLike, cookingDuration);
+        recipes.removeIf(recipe -> containsForbiddenIngredient(recipe, filter.getMustNotContainIngredients())
+                || !containsAllIngredients(recipe, filter.getCanContainIngredients()));
+        int toIndex = recipes.size() > RECIPES_PER_PAGE * filter.getIndex() ? RECIPES_PER_PAGE * filter.getIndex()
+                : recipes.size();
+        recipes = recipes.subList((filter.getIndex() - 1) * RECIPES_PER_PAGE, toIndex);
+        Double numberOfPages = Math.ceil(recipes.size() * 1.d / RECIPES_PER_PAGE);
+
         return new Recipes(recipes, numberOfPages.intValue(), filter.getIndex());
     }
 }

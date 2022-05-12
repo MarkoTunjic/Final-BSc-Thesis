@@ -1,33 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:zavrsni_rad/models/filter.dart';
+import 'package:zavrsni_rad/models/recipe_master.dart';
 import 'package:zavrsni_rad/screens/recipe_screen.dart';
-
+import 'package:zavrsni_rad/widgets/filter_widget.dart';
+import 'package:zavrsni_rad/widgets/menu_widget.dart';
+import 'package:zavrsni_rad/widgets/pagination_widget.dart';
+import 'package:zavrsni_rad/widgets/recipe_master_widget.dart';
 import '../models/constants/constants.dart' as constants;
 import '../models/constants/graphql_querys.dart' as querys;
 import '../utilities/global_variables.dart' as globals;
 import '../models/constants/shared_preferences_keys.dart' as keys;
-import '../models/filter.dart';
-import '../models/recipe_master.dart';
 import '../utilities/shared_preferences_helper.dart';
-import '../widgets/filter_widget.dart';
-import '../widgets/menu_widget.dart';
-import '../widgets/pagination_widget.dart';
-import '../widgets/recipe_master_widget.dart';
 import 'login_screen.dart';
 
-class ApproovalScreen extends StatefulWidget {
+class FavoritesScreen extends StatefulWidget {
   final int selected;
-  const ApproovalScreen({Key? key, required this.selected}) : super(key: key);
+  const FavoritesScreen({Key? key, required this.selected}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _ApproovalScreenState();
+    return _FavoritesScreenState();
   }
 }
 
-class _ApproovalScreenState extends State<ApproovalScreen> {
+class _FavoritesScreenState extends State<FavoritesScreen> {
   int currentIndex = 1;
-  Filter filter = Filter(index: 1);
+  Filter filter = Filter(
+      index: 1, mustNotContainIngredients: [], canContainIngredients: []);
   late ValueNotifier<GraphQLClient> client;
 
   @override
@@ -49,7 +49,10 @@ class _ApproovalScreenState extends State<ApproovalScreen> {
   @override
   Widget build(BuildContext context) {
     FetchMoreOptions opts = FetchMoreOptions(
-      variables: {"filter": filter},
+      variables: {
+        "userId": globals.loggedInUser!.id,
+        "filter": filter,
+      },
       updateQuery: (Map<String, dynamic>? previousResultData,
           Map<String, dynamic>? fetchMoreResultData) {
         return fetchMoreResultData;
@@ -65,8 +68,11 @@ class _ApproovalScreenState extends State<ApproovalScreen> {
             children: [
               Query(
                 options: QueryOptions(
-                  document: gql(querys.notApproovedRecipes),
-                  variables: {"filter": filter.toJson()},
+                  document: gql(querys.favorites),
+                  variables: {
+                    "userId": globals.loggedInUser!.id,
+                    "filter": filter.toJson(),
+                  },
                   fetchPolicy: FetchPolicy.networkOnly,
                 ),
                 builder: (QueryResult result,
@@ -97,16 +103,14 @@ class _ApproovalScreenState extends State<ApproovalScreen> {
 
                   if (result.isLoading) {
                     return const Expanded(
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
+                        child: Center(
+                      child: CircularProgressIndicator(),
+                    ));
                   }
-                  currentIndex =
-                      result.data?["notApprovedRecipes"]["currentIndex"];
+                  currentIndex = result.data?["favorites"]["currentIndex"];
 
                   List<dynamic> rawRecipes =
-                      result.data?["notApprovedRecipes"]["recipes"];
+                      result.data?["favorites"]["recipes"];
 
                   List<RecipeMaster> recipes =
                       rawRecipes.map((e) => RecipeMaster.fromJson(e)).toList();
@@ -133,7 +137,7 @@ class _ApproovalScreenState extends State<ApproovalScreen> {
                       )
                       .toList();
                   int numberOfPages =
-                      result.data?["notApprovedRecipes"]?["numberOfPages"];
+                      result.data?["favorites"]?["numberOfPages"];
                   return Expanded(
                     child: CustomScrollView(
                       slivers: [
@@ -141,7 +145,7 @@ class _ApproovalScreenState extends State<ApproovalScreen> {
                           leading: Container(),
                           floating: true,
                           flexibleSpace: FilterWidget(
-                            showFilterIcon: false,
+                            showFilterIcon: true,
                             initialValue: filter.nameLike,
                             onChanged: (newValue) {
                               filter.nameLike = newValue;
@@ -173,7 +177,7 @@ class _ApproovalScreenState extends State<ApproovalScreen> {
                               ),
                             ],
                           ),
-                        ),
+                        )
                       ],
                     ),
                   );

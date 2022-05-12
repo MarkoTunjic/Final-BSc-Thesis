@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zavrsni_rad/screens/approoval_screen.dart';
+import 'package:zavrsni_rad/screens/favorites_screen.dart';
 import 'package:zavrsni_rad/screens/login_screen.dart';
 import 'package:zavrsni_rad/screens/users_screen.dart';
 import 'package:zavrsni_rad/utilities/shared_preferences_helper.dart';
@@ -62,189 +63,209 @@ class MenuWidget extends StatelessWidget {
     if (globals.loggedInUser!.role == "USER") {
       return Row(
         children: [
-          Row(
-            children: [
-              _MenuItem(
-                icon: Icon(
-                  Icons.home,
-                  color: selected == 0 ? constants.green : constants.grey,
-                  size: 40,
+          _MenuItem(
+            icon: Icon(
+              Icons.home,
+              color: selected == 0 ? constants.green : constants.grey,
+              size: 40,
+            ),
+            text: "Home",
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const RecipesScreen(
+                    selcted: 0,
+                  ),
                 ),
-                text: "Home",
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const RecipesScreen(
-                        selcted: 0,
-                      ),
-                    ),
-                  );
-                },
-              ),
-              _MenuItem(
-                icon: Icon(
-                  Icons.edit,
-                  color: selected == 1 ? constants.green : constants.grey,
-                  size: 40,
-                ),
-                text: "Upload",
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MultiBlocProvider(
-                        providers: [
-                          BlocProvider<BlocIngredients>(
-                            create: (_) => BlocIngredients(),
-                          ),
-                          BlocProvider<BlocSteps>(
-                            create: (_) => BlocSteps(),
-                          ),
-                          BlocProvider<BlocImages>(
-                            create: (_) => BlocImages(),
-                          ),
-                          BlocProvider<BlocVideo>(
-                            create: (_) => BlocVideo(),
-                          ),
-                          BlocProvider<BlocCoverPicture>(
-                            create: (_) => BlocCoverPicture(),
-                          ),
-                        ],
-                        child: const NewRecipeScreen(),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
+              );
+            },
           ),
-          Row(
-            children: [
-              _MenuItem(
-                icon: Icon(
-                  Icons.person,
-                  color: selected == 2 ? constants.green : constants.grey,
-                  size: 40,
-                ),
-                text: "Profile",
-                onTap: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => RecipesScreen(
-                        authorId: globals.loggedInUser!.id,
-                        selcted: 2,
+          _MenuItem(
+            icon: Icon(
+              Icons.edit,
+              color: selected == 1 ? constants.green : constants.grey,
+              size: 40,
+            ),
+            text: "Upload",
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => MultiBlocProvider(
+                    providers: [
+                      BlocProvider<BlocIngredients>(
+                        create: (_) => BlocIngredients(),
                       ),
-                    ),
-                  );
-                },
-              ),
-              _MenuItem(
-                icon: Icon(
-                  Icons.logout,
-                  color: selected == 3 ? constants.green : constants.grey,
-                  size: 40,
+                      BlocProvider<BlocSteps>(
+                        create: (_) => BlocSteps(),
+                      ),
+                      BlocProvider<BlocImages>(
+                        create: (_) => BlocImages(),
+                      ),
+                      BlocProvider<BlocVideo>(
+                        create: (_) => BlocVideo(),
+                      ),
+                      BlocProvider<BlocCoverPicture>(
+                        create: (_) => BlocCoverPicture(),
+                      ),
+                    ],
+                    child: const NewRecipeScreen(),
+                  ),
                 ),
-                text: "Logout",
-                onTap: () {
-                  globals.loggedInUser = null;
-                  globals.token = null;
-                  SharedPreferencesHelper.removeSharedPreference(keys.user);
-                  SharedPreferencesHelper.removeSharedPreference(keys.token);
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (_) => const LoginScreen()));
-                },
-              ),
-            ],
+              );
+            },
+          ),
+          _MenuItem(
+            icon: Icon(
+              Icons.favorite,
+              color: selected == 2 ? constants.green : constants.grey,
+              size: 40,
+            ),
+            text: "Favorites",
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const FavoritesScreen(
+                    selected: 2,
+                  ),
+                ),
+              );
+            },
+          ),
+          _MenuItem(
+            icon: Icon(
+              Icons.person,
+              color: selected == 3 ? constants.green : constants.grey,
+              size: 40,
+            ),
+            text: "Profile",
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => RecipesScreen(
+                    authorId: globals.loggedInUser!.id,
+                    selcted: 3,
+                  ),
+                ),
+              );
+            },
+          ),
+          _MenuItem(
+            icon: Icon(
+              Icons.logout,
+              color: selected == 4 ? constants.green : constants.grey,
+              size: 40,
+            ),
+            text: "Logout",
+            onTap: () {
+              globals.loggedInUser = null;
+              globals.token = null;
+              SharedPreferencesHelper.removeSharedPreference(keys.user);
+              SharedPreferencesHelper.removeSharedPreference(keys.token);
+              Navigator.pushReplacement(context,
+                  MaterialPageRoute(builder: (_) => const LoginScreen()));
+            },
           ),
         ],
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
       );
     }
     return Row(
       children: [
-        Row(
-          children: [
-            _MenuItem(
-              icon: Icon(
-                Icons.home,
-                color: selected == 0 ? constants.green : constants.grey,
-                size: 40,
+        _MenuItem(
+          icon: Icon(
+            Icons.home,
+            color: selected == 0 ? constants.green : constants.grey,
+            size: 40,
+          ),
+          text: "Home",
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const RecipesScreen(
+                  selcted: 0,
+                ),
               ),
-              text: "Home",
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const RecipesScreen(
-                      selcted: 0,
-                    ),
-                  ),
-                );
-              },
-            ),
-            _MenuItem(
-              icon: Icon(
-                Icons.approval,
-                color: selected == 1 ? constants.green : constants.grey,
-                size: 40,
-              ),
-              text: "Approvals",
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const ApproovalScreen(
-                      selected: 1,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
+            );
+          },
         ),
-        Row(
-          children: [
-            _MenuItem(
-              icon: Icon(
-                Icons.person,
-                color: selected == 2 ? constants.green : constants.grey,
-                size: 40,
+        _MenuItem(
+          icon: Icon(
+            Icons.approval,
+            color: selected == 1 ? constants.green : constants.grey,
+            size: 40,
+          ),
+          text: "Approvals",
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const ApproovalScreen(
+                  selected: 1,
+                ),
               ),
-              text: "Users",
-              onTap: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const UsersScreen(
-                      selected: 2,
-                    ),
-                  ),
-                );
-              },
-            ),
-            _MenuItem(
-              icon: Icon(
-                Icons.logout,
-                color: selected == 3 ? constants.green : constants.grey,
-                size: 40,
+            );
+          },
+        ),
+        _MenuItem(
+          icon: Icon(
+            Icons.favorite,
+            color: selected == 2 ? constants.green : constants.grey,
+            size: 40,
+          ),
+          text: "Favorites",
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const FavoritesScreen(
+                  selected: 2,
+                ),
               ),
-              text: "Logout",
-              onTap: () {
-                globals.loggedInUser = null;
-                globals.token = null;
-                SharedPreferencesHelper.removeSharedPreference(keys.user);
-                SharedPreferencesHelper.removeSharedPreference(keys.token);
-                Navigator.pop(context);
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (_) => const LoginScreen()));
-              },
-            ),
-          ],
+            );
+          },
+        ),
+        _MenuItem(
+          icon: Icon(
+            Icons.person,
+            color: selected == 3 ? constants.green : constants.grey,
+            size: 40,
+          ),
+          text: "Users",
+          onTap: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const UsersScreen(
+                  selected: 3,
+                ),
+              ),
+            );
+          },
+        ),
+        _MenuItem(
+          icon: Icon(
+            Icons.logout,
+            color: selected == 4 ? constants.green : constants.grey,
+            size: 40,
+          ),
+          text: "Logout",
+          onTap: () {
+            globals.loggedInUser = null;
+            globals.token = null;
+            SharedPreferencesHelper.removeSharedPreference(keys.user);
+            SharedPreferencesHelper.removeSharedPreference(keys.token);
+            Navigator.pop(context);
+            Navigator.push(context,
+                MaterialPageRoute(builder: (_) => const LoginScreen()));
+          },
         ),
       ],
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
     );
   }
 }
