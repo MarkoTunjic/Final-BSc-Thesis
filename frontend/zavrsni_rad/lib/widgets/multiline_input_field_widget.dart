@@ -8,15 +8,17 @@ class MultilineInputFieldWidget extends StatelessWidget {
   final String? initialValue;
   final double width;
   final void Function(String)? onChanged;
-  const MultilineInputFieldWidget(
-      {Key? key,
-      required String hintText,
-      void Function(String?)? onSaved,
-      required this.width,
-      this.initialValue,
-      this.onChanged,
-      Icon? icon})
-      : _hintText = hintText,
+  final String? Function(String?)? validator;
+  const MultilineInputFieldWidget({
+    Key? key,
+    required String hintText,
+    void Function(String?)? onSaved,
+    required this.width,
+    this.initialValue,
+    this.onChanged,
+    Icon? icon,
+    this.validator,
+  })  : _hintText = hintText,
         _onSaved = onSaved,
         super(key: key);
 
@@ -33,6 +35,7 @@ class MultilineInputFieldWidget extends StatelessWidget {
         autofocus: false,
         onChanged: onChanged,
         onTap: () => NewRecipeScreen.formKey.currentState?.save(),
+        validator: validator,
         decoration: InputDecoration(
           hintText: _hintText,
           errorBorder: const OutlineInputBorder(

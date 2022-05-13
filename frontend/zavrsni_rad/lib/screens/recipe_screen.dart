@@ -248,7 +248,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                                           toastLength:
                                               Toast.LENGTH_SHORT, // length
                                           gravity:
-                                              ToastGravity.CENTER, // location
+                                              ToastGravity.BOTTOM, // location
                                         );
                                         refetch!();
                                       },
@@ -284,7 +284,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                                           toastLength:
                                               Toast.LENGTH_SHORT, // length
                                           gravity:
-                                              ToastGravity.CENTER, // location
+                                              ToastGravity.BOTTOM, // location
                                         );
                                       },
                                     ),

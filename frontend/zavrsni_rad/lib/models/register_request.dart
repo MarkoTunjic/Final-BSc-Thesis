@@ -3,6 +3,7 @@ class RegisterRequest {
   String eMail;
   String password;
   String? profilePicture;
+  String? repeatPassword;
 
   RegisterRequest({
     required this.username,

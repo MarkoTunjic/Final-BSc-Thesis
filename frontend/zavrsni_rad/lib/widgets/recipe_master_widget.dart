@@ -88,7 +88,7 @@ class _RecipeMasterWidgetState extends State<RecipeMasterWidget> {
                                     : "Removed from favorites", // message
                                 toastLength: Toast.LENGTH_SHORT, // length
                                 gravity:
-                                    ToastGravity.CENTER, // location// duration
+                                    ToastGravity.BOTTOM, // location// duration
                               );
                             },
                             onError: (error) {
@@ -117,7 +117,7 @@ class _RecipeMasterWidgetState extends State<RecipeMasterWidget> {
                                 msg: "Something went wrong", // message
                                 toastLength: Toast.LENGTH_SHORT, // length
                                 gravity:
-                                    ToastGravity.CENTER, // location// duration
+                                    ToastGravity.BOTTOM, // location// duration
                               );
                               setState(() {
                                 widget.recipe.isLikedByCurrentUser =
@@ -161,7 +161,7 @@ class _RecipeMasterWidgetState extends State<RecipeMasterWidget> {
                         Fluttertoast.showToast(
                           msg: "Recipe successfully deleted", // message
                           toastLength: Toast.LENGTH_SHORT, // length
-                          gravity: ToastGravity.CENTER, // location// duration
+                          gravity: ToastGravity.BOTTOM, // location// duration
                         );
                       },
                       onError: (error) {
@@ -189,7 +189,7 @@ class _RecipeMasterWidgetState extends State<RecipeMasterWidget> {
                         Fluttertoast.showToast(
                           msg: "Something went wrong", // message
                           toastLength: Toast.LENGTH_SHORT, // length
-                          gravity: ToastGravity.CENTER, // location// duration
+                          gravity: ToastGravity.BOTTOM, // location// duration
                         );
                       },
                     ),

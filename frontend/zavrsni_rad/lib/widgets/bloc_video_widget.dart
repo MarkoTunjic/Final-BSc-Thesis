@@ -53,7 +53,7 @@ class _BlocVideoState extends State<BlocVideoWidget> {
               Padding(
                 padding: EdgeInsets.only(top: 15, bottom: 15),
                 child: Text(
-                  "(Up To 12MB)",
+                  "(Up To 50MB)",
                   style: TextStyle(color: constants.grey, fontSize: 10),
                 ),
               ),

@@ -14,6 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../models/constants/constants.dart' as constants;
 import '../models/constants/graphql_mutations.dart' as mutations;
 import '../utilities/global_variables.dart' as globals;
+import '../utilities/validation.dart' as validators;
 import '../widgets/input_field_widget.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -93,6 +94,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           icon: const Icon(Icons.email),
                           width: MediaQuery.of(context).size.width - 20,
                           type: TextInputType.text,
+                          validator: (input) {
+                            String? validationResult;
+                            validationResult =
+                                validators.validateNotEmpty(input);
+                            if (validationResult != null) {
+                              return validationResult;
+                            }
+                            validationResult =
+                                validators.validateLength(input, 100);
+                            if (validationResult != null) {
+                              return validationResult;
+                            }
+                            validationResult = validators.validateEmail(input);
+                            if (validationResult != null) {
+                              return validationResult;
+                            }
+                            return null;
+                          },
                         ),
                         Padding(
                           child: InputFieldWidget(
@@ -102,6 +121,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             icon: const Icon(Icons.person),
                             width: MediaQuery.of(context).size.width - 20,
                             type: TextInputType.text,
+                            validator: (input) {
+                              String? validationResult;
+                              validationResult =
+                                  validators.validateNotEmpty(input);
+                              if (validationResult != null) {
+                                return validationResult;
+                              }
+                              validationResult =
+                                  validators.validateLength(input, 50);
+                              if (validationResult != null) {
+                                return validationResult;
+                              }
+                              return null;
+                            },
                           ),
                           padding: const EdgeInsets.only(top: 10),
                         ),
@@ -113,17 +146,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             icon: const Icon(Icons.lock),
                             width: MediaQuery.of(context).size.width - 20,
                             type: TextInputType.text,
+                            validator: (input) {
+                              return validators.validatePassword(
+                                  input, request.repeatPassword);
+                            },
                           ),
                           padding: const EdgeInsets.only(top: 10),
                         ),
                         Padding(
                           child: InputFieldWidget(
                             hintText: "Repeat password",
-                            onSaved: (newValue) => request.password = newValue!,
+                            onSaved: (newValue) =>
+                                request.repeatPassword = newValue,
+                            onChanged: (newValue) =>
+                                request.repeatPassword = newValue,
                             obscure: true,
                             icon: const Icon(Icons.lock),
                             width: MediaQuery.of(context).size.width - 20,
                             type: TextInputType.text,
+                            validator: (input) {
+                              return validators.validatePassword(
+                                  input, request.repeatPassword);
+                            },
                           ),
                           padding: const EdgeInsets.all(10),
                         ),
@@ -158,7 +202,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         TextButton(
                           onPressed: () {
-                            Navigator.push(
+                            Navigator.pushReplacement(
                               context,
                               MaterialPageRoute(
                                 builder: (_) => const RecipesScreen(
@@ -232,11 +276,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 return Positioned(
                   child: GreenButton(
                       onPressed: () {
-                        setState(() {
-                          _showProgress = true;
-                        });
-                        _formKey.currentState?.save();
-                        runMutation({"payload": request.toJson()});
+                        if (_formKey.currentState!.validate()) {
+                          setState(() {
+                            _showProgress = true;
+                          });
+                          _formKey.currentState?.save();
+                          runMutation({"payload": request.toJson()});
+                        }
                       },
                       text: "Sign Up"),
                   bottom: 20,

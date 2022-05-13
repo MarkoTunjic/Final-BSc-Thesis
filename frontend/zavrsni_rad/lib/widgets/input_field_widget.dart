@@ -11,6 +11,7 @@ class InputFieldWidget extends StatelessWidget {
   final TextInputType _type;
   final void Function(String)? _onChanged;
   final void Function()? onEditingCompleted;
+  final String? Function(String?)? validator;
   const InputFieldWidget({
     Key? key,
     required String hintText,
@@ -22,6 +23,7 @@ class InputFieldWidget extends StatelessWidget {
     String? initialValue,
     void Function(String)? onChanged,
     this.onEditingCompleted,
+    this.validator,
   })  : _hintText = hintText,
         _onSaved = onSaved,
         _obscure = obscure,
@@ -44,6 +46,7 @@ class InputFieldWidget extends StatelessWidget {
         keyboardType: _type,
         onChanged: _onChanged,
         onEditingComplete: onEditingCompleted,
+        validator: validator,
         decoration: InputDecoration(
           hintText: _hintText,
           hintStyle: const TextStyle(fontSize: 15),

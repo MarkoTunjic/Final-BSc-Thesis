@@ -25,6 +25,7 @@ import '../models/constants/constants.dart' as constants;
 import '../models/constants/graphql_mutations.dart' as mutations;
 import '../utilities/global_variables.dart' as globals;
 import '../models/constants/shared_preferences_keys.dart' as keys;
+import '../utilities/validation.dart' as validators;
 import '../models/recipe_step.dart';
 import '../utilities/shared_preferences_helper.dart';
 import '../widgets/images_input_widget.dart';
@@ -129,6 +130,19 @@ class _NewRecipeState extends State<NewRecipeScreen> {
                         width: MediaQuery.of(context).size.width - 20,
                         initialValue: newRecipe.recipeName,
                         type: TextInputType.text,
+                        validator: (input) {
+                          String? validationResult;
+                          validationResult = validators.validateNotEmpty(input);
+                          if (validationResult != null) {
+                            return validationResult;
+                          }
+                          validationResult =
+                              validators.validateLength(input, 50);
+                          if (validationResult != null) {
+                            return validationResult;
+                          }
+                          return null;
+                        },
                       ),
                     ],
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,6 +162,19 @@ class _NewRecipeState extends State<NewRecipeScreen> {
                         onChanged: (value) => newRecipe.description = value,
                         width: MediaQuery.of(context).size.width - 20,
                         initialValue: newRecipe.description,
+                        validator: (input) {
+                          String? validationResult;
+                          validationResult = validators.validateNotEmpty(input);
+                          if (validationResult != null) {
+                            return validationResult;
+                          }
+                          validationResult =
+                              validators.validateLength(input, 500);
+                          if (validationResult != null) {
+                            return validationResult;
+                          }
+                          return null;
+                        },
                       )
                     ],
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -214,6 +241,18 @@ class _NewRecipeState extends State<NewRecipeScreen> {
                           return FormField(
                             builder: (_) =>
                                 IngredientsWidget(ingredients: state),
+                            validator: (input) {
+                              if (state.isEmpty) {
+                                Fluttertoast.showToast(
+                                  msg:
+                                      "Must contain atleast 1 ingredient", // message
+                                  toastLength: Toast.LENGTH_SHORT, // length
+                                  gravity: ToastGravity.BOTTOM, // location
+                                );
+                                return "Must contain atleast 1 ingredient";
+                              }
+                              return null;
+                            },
                           );
                         }),
                       ),
@@ -235,6 +274,17 @@ class _NewRecipeState extends State<NewRecipeScreen> {
                           newRecipe.steps = state;
                           return FormField(
                             builder: (_) => StepsWidget(steps: state),
+                            validator: (input) {
+                              if (state.isEmpty) {
+                                Fluttertoast.showToast(
+                                  msg: "Must contain atleast 1 step", // message
+                                  toastLength: Toast.LENGTH_SHORT, // length
+                                  gravity: ToastGravity.BOTTOM, // location
+                                );
+                                return "Must contain atleast 1 step";
+                              }
+                              return null;
+                            },
                           );
                         }),
                       ),
@@ -328,7 +378,7 @@ class _NewRecipeState extends State<NewRecipeScreen> {
                         Fluttertoast.showToast(
                           msg: "Successfully added new recipe", // message
                           toastLength: Toast.LENGTH_SHORT, // length
-                          gravity: ToastGravity.CENTER, // location// duration
+                          gravity: ToastGravity.BOTTOM, // location// duration
                         );
                         Navigator.pushReplacement(
                           context,
@@ -371,11 +421,14 @@ class _NewRecipeState extends State<NewRecipeScreen> {
                         padding: const EdgeInsets.all(10),
                         child: GreenButton(
                           onPressed: () {
-                            setState(() {
-                              _showProgressIndicator = true;
-                            });
-                            NewRecipeScreen.formKey.currentState?.save();
-                            runMutation({"payload": newRecipe.toJson()});
+                            if (NewRecipeScreen.formKey.currentState!
+                                .validate()) {
+                              setState(() {
+                                _showProgressIndicator = true;
+                              });
+                              NewRecipeScreen.formKey.currentState?.save();
+                              runMutation({"payload": newRecipe.toJson()});
+                            }
                           },
                           text: "Submit",
                         ),

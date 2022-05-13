@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zavrsni_rad/models/bloc_providers/steps_provider.dart';
 import 'package:zavrsni_rad/widgets/multiline_input_field_widget.dart';
 import '../models/constants/constants.dart' as constants;
+import '../utilities/validation.dart' as validators;
 import '../models/recipe_step.dart';
 import '../screens/new_recipe_screen.dart';
 
@@ -36,6 +37,14 @@ class NewStepWidget extends StatelessWidget {
             },
             initialValue: step.step.isEmpty ? null : step.step,
             width: availableWidth * 4 / 5,
+            validator: (input) {
+              String? validationResult;
+              validationResult = validators.validateNotEmpty(input);
+              if (validationResult != null) return validationResult;
+              validationResult = validators.validateLength(input, 500);
+              if (validationResult != null) return validationResult;
+              return null;
+            },
           ),
           InkWell(
             child: const Icon(

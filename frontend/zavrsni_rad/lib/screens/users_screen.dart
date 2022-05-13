@@ -131,7 +131,7 @@ class _UsersScreenState extends State<UsersScreen> {
                                         ? "Successfully banned"
                                         : "Successfully unbanned", // message
                                     toastLength: Toast.LENGTH_SHORT, // length
-                                    gravity: ToastGravity.CENTER, // location
+                                    gravity: ToastGravity.BOTTOM, // location
                                   );
                                   refetch!();
                                 },
@@ -161,7 +161,7 @@ class _UsersScreenState extends State<UsersScreen> {
                                   Fluttertoast.showToast(
                                     msg: "Something went wrong", // message
                                     toastLength: Toast.LENGTH_SHORT, // length
-                                    gravity: ToastGravity.CENTER, // location
+                                    gravity: ToastGravity.BOTTOM, // location
                                   );
                                 },
                               ),

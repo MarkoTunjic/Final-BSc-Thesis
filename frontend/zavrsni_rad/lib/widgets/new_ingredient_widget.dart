@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zavrsni_rad/models/bloc_providers/ingredients_provider.dart';
 import 'package:zavrsni_rad/screens/new_recipe_screen.dart';
 import 'package:zavrsni_rad/widgets/input_field_widget.dart';
+import '../utilities/validation.dart' as validators;
 
 import '../models/ingredient.dart';
 
@@ -35,6 +36,14 @@ class NewIngredientWidget extends StatelessWidget {
             type: TextInputType.text,
             width: availableWidth * 4 / 10 - 20,
             initialValue: _ingredient.ingredientName,
+            validator: (input) {
+              String? validationResult;
+              validationResult = validators.validateNotEmpty(input);
+              if (validationResult != null) return validationResult;
+              validationResult = validators.validateLength(input, 50);
+              if (validationResult != null) return validationResult;
+              return null;
+            },
           ),
           InputFieldWidget(
             hintText: "Quantity",
@@ -51,6 +60,14 @@ class NewIngredientWidget extends StatelessWidget {
             initialValue: _ingredient.quantity == null
                 ? null
                 : _ingredient.quantity!.toString(),
+            validator: (input) {
+              String? validationResult;
+              validationResult = validators.validateNotEmpty(input);
+              if (validationResult != null) return validationResult;
+              validationResult = validators.validateIsNumber(input);
+              if (validationResult != null) return validationResult;
+              return null;
+            },
           ),
           InputFieldWidget(
             hintText: "Measure",
@@ -63,6 +80,14 @@ class NewIngredientWidget extends StatelessWidget {
             type: TextInputType.text,
             width: availableWidth * 3 / 10 - 15,
             initialValue: _ingredient.measure,
+            validator: (input) {
+              String? validationResult;
+              validationResult = validators.validateNotEmpty(input);
+              if (validationResult != null) return validationResult;
+              validationResult = validators.validateLength(input, 50);
+              if (validationResult != null) return validationResult;
+              return null;
+            },
           ),
           InkWell(
             child: const Icon(
