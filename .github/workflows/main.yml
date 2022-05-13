@@ -27,7 +27,6 @@ jobs:
 
   build_appbundle:
     name: Build Flutter (Android)
-    working-directory: ./frontend/zavrsni_rad
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -39,9 +38,13 @@ jobs:
         with:
           flutter-version: '2.10.5'
       - run: flutter pub get
+        working-directory: ./frontend/zavrsni_rad
       - run: flutter test
+        working-directory: ./frontend/zavrsni_rad
       - run: flutter build apk
+        working-directory: ./frontend/zavrsni_rad
       - run: flutter build appbundle
+        working-directory: ./frontend/zavrsni_rad
       - name: Push to Releases
         uses: ncipollo/release-action@v1
         with:
