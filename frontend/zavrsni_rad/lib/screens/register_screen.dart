@@ -225,17 +225,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     _message = null;
                     _error = error!.graphqlErrors[0].message.split(":")[1];
                   });
+                  print(_error);
                 },
               ),
               builder: (RunMutation runMutation, QueryResult? result) {
                 return Positioned(
                   child: GreenButton(
                       onPressed: () {
-                        _formKey.currentState?.save();
-                        runMutation({"payload": request.toJson()});
                         setState(() {
                           _showProgress = true;
                         });
+                        _formKey.currentState?.save();
+                        runMutation({"payload": request.toJson()});
                       },
                       text: "Sign Up"),
                   bottom: 20,

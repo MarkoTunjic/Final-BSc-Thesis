@@ -102,10 +102,9 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                   }
 
                   if (result.isLoading) {
-                    return const Expanded(
-                        child: Center(
+                    return const Center(
                       child: CircularProgressIndicator(),
-                    ));
+                    );
                   }
                   currentIndex = result.data?["favorites"]["currentIndex"];
 

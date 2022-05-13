@@ -32,7 +32,7 @@ class RecipeScreen extends StatefulWidget {
 class _RecipeScreenState extends State<RecipeScreen> {
   String? currentCommentText;
   late RecipeDetail currentRecipe;
-
+  late ValueNotifier<GraphQLClient> client;
   bool _showApprooveButton() {
     if (globals.loggedInUser != null &&
         globals.loggedInUser!.role == "MODERATOR") return true;
@@ -40,25 +40,32 @@ class _RecipeScreenState extends State<RecipeScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     HttpLink? link;
     if (globals.token != null) {
       link = HttpLink(constants.apiLink,
           defaultHeaders: {"Authorization": "Bearer " + globals.token!});
     }
-    ValueNotifier<GraphQLClient> client = ValueNotifier(
+    client = ValueNotifier(
       GraphQLClient(
         link: link ?? constants.api,
-        cache: GraphQLCache(),
+        cache: GraphQLCache(store: HiveStore()),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return GraphQLProvider(
       client: client,
       child: Scaffold(
         body: Query(
           options: QueryOptions(
-              document: gql(querys.singleRecipe),
-              variables: {"recipeId": widget.id}),
+            document: gql(querys.singleRecipe),
+            variables: {"recipeId": widget.id},
+            fetchPolicy: FetchPolicy.cacheAndNetwork,
+          ),
           builder: (QueryResult result,
               {VoidCallback? refetch, FetchMore? fetchMore}) {
             if (result.hasException) {
@@ -66,10 +73,8 @@ class _RecipeScreenState extends State<RecipeScreen> {
             }
 
             if (result.isLoading) {
-              return const Expanded(
-                child: Center(
-                  child: CircularProgressIndicator(),
-                ),
+              return const Center(
+                child: CircularProgressIndicator(),
               );
             }
 
@@ -245,6 +250,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
                                           gravity:
                                               ToastGravity.CENTER, // location
                                         );
+                                        refetch!();
                                       },
                                       onError: (error) {
                                         if (error!.graphqlErrors[0].message
@@ -499,39 +505,40 @@ class _RecipeScreenState extends State<RecipeScreen> {
                                       ),
                                     ),
                                     options: MutationOptions(
-                                        document: gql(mutations.addComment),
-                                        onCompleted: (result) {
-                                          if (result == null) return;
-                                          currentCommentText = null;
-                                          refetch!();
-                                        },
-                                        onError: (error) {
-                                          if (error!.graphqlErrors[0].message
-                                                  .split(":")[1]
-                                                  .trim()
-                                                  .toLowerCase() ==
-                                              "access is denied") {
-                                            SharedPreferencesHelper
-                                                .removeSharedPreference(
-                                                    keys.token);
-                                            SharedPreferencesHelper
-                                                .removeSharedPreference(
-                                                    keys.user);
-                                            globals.loggedInUser = null;
-                                            globals.token = null;
-                                            Future.microtask(
-                                              () => Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: ((context) =>
-                                                      const LoginScreen(
-                                                          error:
-                                                              "Session expired.")),
-                                                ),
+                                      document: gql(mutations.addComment),
+                                      onCompleted: (result) {
+                                        if (result == null) return;
+                                        currentCommentText = null;
+                                        refetch!();
+                                      },
+                                      onError: (error) {
+                                        if (error!.graphqlErrors[0].message
+                                                .split(":")[1]
+                                                .trim()
+                                                .toLowerCase() ==
+                                            "access is denied") {
+                                          SharedPreferencesHelper
+                                              .removeSharedPreference(
+                                                  keys.token);
+                                          SharedPreferencesHelper
+                                              .removeSharedPreference(
+                                                  keys.user);
+                                          globals.loggedInUser = null;
+                                          globals.token = null;
+                                          Future.microtask(
+                                            () => Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: ((context) =>
+                                                    const LoginScreen(
+                                                        error:
+                                                            "Session expired.")),
                                               ),
-                                            );
-                                          }
-                                        }),
+                                            ),
+                                          );
+                                        }
+                                      },
+                                    ),
                                   ),
                                 ],
                                 mainAxisAlignment:

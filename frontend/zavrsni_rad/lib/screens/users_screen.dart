@@ -97,10 +97,8 @@ class _UsersScreenState extends State<UsersScreen> {
                   }
 
                   if (result.isLoading) {
-                    return const Expanded(
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                    return const Center(
+                      child: CircularProgressIndicator(),
                     );
                   }
                   currentIndex = result.data?["users"]["currentIndex"];

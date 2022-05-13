@@ -100,11 +100,15 @@
 						<phase>package</phase>
 						<configuration>
 							<target>
-								<unzip src="${project.build.directory}/${project.build.finalName}.jar" dest="${project.build.directory}/${project.build.finalName}" />
 								<copy todir="${project.build.directory}/${project.build.finalName}/" overwrite="false">
 									<fileset dir="./" includes=".ebextensions/**" />
+									<fileset dir="${project.build.directory}" includes="*.jar" />
 								</copy>
-								<zip compress="false" destfile="${project.build.directory}/${project.build.finalName}.jar" basedir="${project.build.directory}/${project.build.finalName}" />
+								<copy todir="${project.build.directory}/${project.build.finalName}/" overwrite="false">
+									<fileset dir="./" includes=".platform/**" />
+									<fileset dir="${project.build.directory}" includes="*.jar" />
+								</copy>
+								<zip destfile="${project.build.directory}/${project.build.finalName}.zip" basedir="${project.build.directory}/${project.build.finalName}" />
 							</target>
 						</configuration>
 						<goals>

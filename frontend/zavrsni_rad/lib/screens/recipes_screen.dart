@@ -101,10 +101,8 @@ class _RecipesScreenState extends State<RecipesScreen> {
                   }
 
                   if (result.isLoading) {
-                    return const Expanded(
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                    return const Center(
+                      child: CircularProgressIndicator(),
                     );
                   }
                   currentIndex = result.data?["recipes"]["currentIndex"];

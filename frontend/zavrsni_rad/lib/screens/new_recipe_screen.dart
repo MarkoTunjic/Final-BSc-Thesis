@@ -371,11 +371,11 @@ class _NewRecipeState extends State<NewRecipeScreen> {
                         padding: const EdgeInsets.all(10),
                         child: GreenButton(
                           onPressed: () {
-                            NewRecipeScreen.formKey.currentState?.save();
-                            runMutation({"payload": newRecipe.toJson()});
                             setState(() {
                               _showProgressIndicator = true;
                             });
+                            NewRecipeScreen.formKey.currentState?.save();
+                            runMutation({"payload": newRecipe.toJson()});
                           },
                           text: "Submit",
                         ),

@@ -23,34 +23,24 @@ jobs:
           environment_name: Zavrsnirad-env
           version_label: ${{ github.run_number }}
           region: us-east-1
-          deployment_package: backend/zavrsni_rad/target/zavrsni_rad-0.0.1-SNAPSHOT.jar
+          deployment_package: backend/zavrsni_rad/target/zavrsni_rad-0.0.1-SNAPSHOT.zip
 
   build_appbundle:
     name: Build Flutter (Android)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-java@v1
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v2
         with:
-          java-version: "12.x"
-      - uses: subosito/flutter-action@v1
+          distribution: 'zulu'
+          java-version: '11'
+      - uses: subosito/flutter-action@v2
         with:
-          channel: "stable"
-      - name: flutter pub get
-        working-directory: ./frontend/zavrsni_rad
-        run: flutter pub get
-      - name: flutter analyze
-        working-directory: ./frontend/zavrsni_rad
-        run: flutter analyze
-      - name: flutter test
-        working-directory: ./frontend/zavrsni_rad
-        run: flutter test
-      - name: flutter clean
-        working-directory: ./frontend/zavrsni_rad
-        run: flutter clean
-      - name: flutter build apk
-        working-directory: ./frontend/zavrsni_rad
-        run: flutter build apk --release --split-per-abi
+          flutter-version: '2.10.5'
+      - run: flutter pub get
+      - run: flutter test
+      - run: flutter build apk
+      - run: flutter build appbundle
       - name: Push to Releases
         uses: ncipollo/release-action@v1
         with:

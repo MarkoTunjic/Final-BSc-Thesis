@@ -96,10 +96,8 @@ class _ApproovalScreenState extends State<ApproovalScreen> {
                   }
 
                   if (result.isLoading) {
-                    return const Expanded(
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                    return const Center(
+                      child: CircularProgressIndicator(),
                     );
                   }
                   currentIndex =
