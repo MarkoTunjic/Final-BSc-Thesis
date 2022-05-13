@@ -14,6 +14,7 @@ import '../models/constants/constants.dart' as constants;
 import '../models/constants/shared_preferences_keys.dart' as keys;
 import '../models/constants/graphql_mutations.dart' as mutations;
 import '../utilities/global_variables.dart' as globals;
+import '../utilities/validation.dart' as validators;
 
 class LoginScreen extends StatefulWidget {
   final String? error;
@@ -88,6 +89,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           width: MediaQuery.of(context).size.width - 20,
                           icon: const Icon(Icons.email),
                           type: TextInputType.text,
+                          validator: (input) {
+                            return validators.validateNotEmpty(input);
+                          },
                         ),
                         Padding(
                           child: InputFieldWidget(
@@ -97,6 +101,9 @@ class _LoginScreenState extends State<LoginScreen> {
                             icon: const Icon(Icons.lock),
                             width: MediaQuery.of(context).size.width - 20,
                             type: TextInputType.text,
+                            validator: (input) {
+                              return validators.validateNotEmpty(input);
+                            },
                           ),
                           padding: const EdgeInsets.all(10),
                         ),
@@ -171,16 +178,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     builder: (RunMutation runMutation, QueryResult? result) {
                       return GreenButton(
                         onPressed: () {
-                          _formKey.currentState?.save();
-                          runMutation(
-                            {
-                              "identifier": identifier,
-                              "password": password,
-                            },
-                          );
-                          setState(() {
-                            _showProgressIndicator = true;
-                          });
+                          if (_formKey.currentState!.validate()) {
+                            _formKey.currentState?.save();
+                            runMutation(
+                              {
+                                "identifier": identifier,
+                                "password": password,
+                              },
+                            );
+                            setState(() {
+                              _showProgressIndicator = true;
+                            });
+                          }
                         },
                         text: "Login",
                       );
