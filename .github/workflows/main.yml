@@ -27,6 +27,7 @@ jobs:
 
   build_appbundle:
     name: Build Flutter (Android)
+    working-directory: ./frontend/zavrsni_rad
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
