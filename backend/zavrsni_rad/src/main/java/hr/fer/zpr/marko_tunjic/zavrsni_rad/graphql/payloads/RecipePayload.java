@@ -11,8 +11,8 @@ public class RecipePayload {
     private List<IngredientPayload> ingredients;
     private List<String> steps;
     private List<String> images;
-    private String video;
-    private String videoExtension;
+    private List<String> videos;
+    private List<String> videoExtensions;
 
     public RecipePayload() {
         super();
@@ -20,7 +20,7 @@ public class RecipePayload {
 
     public RecipePayload(Long userId, String recipeName, String description, String coverPicture,
             Integer cookingDuration, List<IngredientPayload> ingredients, List<String> steps, List<String> images,
-            String video, String videoExtension) {
+            List<String> video, List<String> videoExtension) {
         this.userId = userId;
         this.recipeName = recipeName;
         this.description = description;
@@ -29,8 +29,8 @@ public class RecipePayload {
         this.ingredients = ingredients;
         this.steps = steps;
         this.images = images;
-        this.video = video;
-        this.videoExtension = videoExtension;
+        this.videos = video;
+        this.videoExtensions = videoExtension;
     }
 
     public Long getUserId() {
@@ -97,20 +97,20 @@ public class RecipePayload {
         this.images = images;
     }
 
-    public String getVideo() {
-        return video;
+    public List<String> getVideos() {
+        return videos;
     }
 
-    public void setVideo(String video) {
-        this.video = video;
+    public void setVideos(List<String> videos) {
+        this.videos = videos;
     }
 
-    public String getVideoExtension() {
-        return videoExtension;
+    public List<String> getVideoExtensions() {
+        return videoExtensions;
     }
 
-    public void setVideoExtension(String videoExtension) {
-        this.videoExtension = videoExtension;
+    public void setVideoExtensions(List<String> videoExtensions) {
+        this.videoExtensions = videoExtensions;
     }
 
 }

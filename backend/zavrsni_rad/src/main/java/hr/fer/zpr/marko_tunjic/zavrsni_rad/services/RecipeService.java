@@ -80,14 +80,18 @@ public class RecipeService {
 
     @Transactional
     private void saveVideoFromPayload(RecipePayload payload, Recipe recipe) throws FileNotFoundException, IOException {
-        if (payload.getVideo() == null)
+        if (payload.getVideos() == null)
             return;
-        Video newVideo = new Video();
-        newVideo.setOrderNumber(0);
-        newVideo.setRecipe(recipe);
-        newVideo.setLink(fileService.upload(payload.getVideo(),
-                "recipe" + recipe.getId() + "_video" + payload.getVideoExtension()));
-        videRepository.save(newVideo);
+        int i = 0;
+        for (String video : payload.getVideos()) {
+            Video newVideo = new Video();
+            newVideo.setOrderNumber(0);
+            newVideo.setRecipe(recipe);
+            newVideo.setLink(fileService.upload(video,
+                    "recipe" + recipe.getId() + "_video" + i + payload.getVideoExtensions().get(i)));
+            videRepository.save(newVideo);
+            i++;
+        }
     }
 
     @Transactional

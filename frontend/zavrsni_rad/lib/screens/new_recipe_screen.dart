@@ -15,7 +15,6 @@ import 'package:zavrsni_rad/models/ingredient.dart';
 import 'package:zavrsni_rad/models/new_recipe.dart';
 import 'package:zavrsni_rad/screens/recipes_screen.dart';
 import 'package:zavrsni_rad/widgets/bloc_cover_picture_widget.dart';
-import 'package:zavrsni_rad/widgets/bloc_video_widget.dart';
 import 'package:zavrsni_rad/widgets/green_button_widget.dart';
 import 'package:zavrsni_rad/widgets/ingredients_input_widget.dart';
 import 'package:zavrsni_rad/widgets/input_field_widget.dart';
@@ -28,6 +27,7 @@ import '../models/constants/shared_preferences_keys.dart' as keys;
 import '../utilities/validation.dart' as validators;
 import '../models/recipe_step.dart';
 import '../utilities/shared_preferences_helper.dart';
+import '../widgets/bloc_videos_widget.dart';
 import '../widgets/images_input_widget.dart';
 import '../widgets/steps_input_widget.dart';
 import 'login_screen.dart';
@@ -325,11 +325,25 @@ class _NewRecipeState extends State<NewRecipeScreen> {
                         onTap: () async {
                           final XFile? image = await _picker.pickImage(
                               source: ImageSource.gallery);
+
                           if (image != null) {
-                            File file = File(image.path);
-                            BlocProvider.of<BlocImages>(context)
-                                .add(AddImage(image: file));
-                            return;
+                            image.length().then(
+                              (value) {
+                                if (value < 12000000) {
+                                  File file = File(image.path);
+                                  BlocProvider.of<BlocImages>(context)
+                                      .add(AddImage(image: file));
+                                  return;
+                                } else {
+                                  Fluttertoast.showToast(
+                                    msg: "Image too big", // message
+                                    toastLength: Toast.LENGTH_SHORT, // length
+                                    gravity: ToastGravity
+                                        .BOTTOM, // location// duration
+                                  );
+                                }
+                              },
+                            );
                           }
                         },
                         iconSize: MediaQuery.of(context).size.width / 10,
@@ -346,14 +360,18 @@ class _NewRecipeState extends State<NewRecipeScreen> {
                       return ImagesInputWidget(images: state);
                     }),
                   ),
-                  BlocBuilder<BlocVideo, File?>(
+                  BlocBuilder<BlocVideo, List<File>>(
                     builder: ((context, state) {
-                      if (state != null) {
-                        newRecipe.video = base64Encode(state.readAsBytesSync());
-                        newRecipe.videoExtension =
-                            "." + state.path.split(".").last;
+                      if (state.isNotEmpty) {
+                        newRecipe.videos = state
+                            .map((e) => base64Encode(e.readAsBytesSync()))
+                            .toList();
+
+                        newRecipe.videoExtensions = state
+                            .map((e) => "." + e.path.split(".").last)
+                            .toList();
                       }
-                      return BlocVideoWidget(video: state);
+                      return BlocVideosWidget(videos: state);
                     }),
                   ),
                   _error != null

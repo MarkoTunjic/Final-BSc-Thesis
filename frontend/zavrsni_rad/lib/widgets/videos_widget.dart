@@ -17,7 +17,7 @@ class VideosWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.width / 2,
+      height: MediaQuery.of(context).size.width,
       child: PageView(
         controller: PageController(initialPage: 0),
         scrollDirection: Axis.horizontal,

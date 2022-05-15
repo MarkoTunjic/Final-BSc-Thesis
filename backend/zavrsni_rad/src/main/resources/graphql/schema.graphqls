@@ -162,8 +162,8 @@ input RecipePayload{
     ingredients: [IngredientPayload]!
     steps: [String]!
     images: [String]
-    video: String
-    videoExtension: String
+    videos: [String]
+    videoExtensions: [String]
 }
 
 input IngredientPayload{

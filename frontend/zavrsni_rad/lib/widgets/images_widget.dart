@@ -40,7 +40,7 @@ class _ImageWidget extends StatelessWidget {
         image,
         fit: BoxFit.cover,
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.width / 2,
+        height: MediaQuery.of(context).size.width,
       ),
       borderRadius: const BorderRadius.all(
         Radius.circular(20),

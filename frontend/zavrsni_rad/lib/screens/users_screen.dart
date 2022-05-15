@@ -240,6 +240,12 @@ class _UsersScreenState extends State<UsersScreen> {
                         SliverList(
                           delegate: SliverChildListDelegate.fixed(
                             [
+                              users.isEmpty
+                                  ? const Text(
+                                      "No results",
+                                      textAlign: TextAlign.center,
+                                    )
+                                  : Container(),
                               PaginationWidget(
                                 maxPages: numberOfPages,
                                 currentPage: currentIndex,

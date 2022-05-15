@@ -23,6 +23,7 @@ class _PaginationWidgetState extends State<PaginationWidget> {
   int currentInput = 0;
   @override
   Widget build(BuildContext context) {
+    if (widget.maxPages <= 1) return Container();
     return Row(
       children: [
         Padding(
@@ -35,36 +36,41 @@ class _PaginationWidgetState extends State<PaginationWidget> {
             },
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(5),
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width / 8,
-            height: MediaQuery.of(context).size.width / 8,
-            child: TextField(
-              keyboardType: TextInputType.number,
-              onChanged: (newValue) => currentInput = int.parse(newValue),
-              onEditingComplete: () {
-                if (currentInput <= 0 || currentInput > widget.maxPages) {
-                  return;
-                }
-                widget.pageChange(currentInput);
-              },
-              decoration: const InputDecoration(
-                fillColor: Color.fromARGB(64, 158, 158, 158),
-                filled: true,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(20),
-                  ),
-                  borderSide: BorderSide(
-                    color: constants.inputBorder,
-                    style: BorderStyle.solid,
-                    width: 2,
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width / 7,
+                height: MediaQuery.of(context).size.width / 7,
+                child: TextField(
+                  keyboardType: TextInputType.number,
+                  onChanged: (newValue) => currentInput = int.parse(newValue),
+                  onEditingComplete: () {
+                    if (currentInput <= 0 || currentInput > widget.maxPages) {
+                      return;
+                    }
+                    widget.pageChange(currentInput);
+                  },
+                  decoration: const InputDecoration(
+                    fillColor: Color.fromARGB(64, 158, 158, 158),
+                    filled: true,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20),
+                      ),
+                      borderSide: BorderSide(
+                        color: constants.inputBorder,
+                        style: BorderStyle.solid,
+                        width: 2,
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
+            Text("/" + widget.maxPages.toString()),
+          ],
         ),
         Padding(
           padding: const EdgeInsets.all(5),

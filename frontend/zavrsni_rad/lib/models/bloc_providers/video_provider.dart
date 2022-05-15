@@ -4,22 +4,25 @@ import 'package:bloc/bloc.dart';
 
 abstract class VideoEvent {}
 
-class SetVideo extends VideoEvent {
+class AddVideo extends VideoEvent {
   final File video;
-  SetVideo({required this.video}) : super();
+  AddVideo({required this.video}) : super();
 }
 
 class RemoveVideo extends VideoEvent {
-  RemoveVideo() : super();
+  final int index;
+  RemoveVideo({required this.index}) : super();
 }
 
-class BlocVideo extends Bloc<VideoEvent, File?> {
-  BlocVideo() : super(null) {
-    on<SetVideo>((event, emit) {
-      emit(event.video);
+class BlocVideo extends Bloc<VideoEvent, List<File>> {
+  BlocVideo() : super([]) {
+    on<AddVideo>((event, emit) {
+      state.add(event.video);
+      emit([...state]);
     });
     on<RemoveVideo>((event, emit) {
-      emit(null);
+      state.removeAt(event.index);
+      emit([...state]);
     });
   }
 }

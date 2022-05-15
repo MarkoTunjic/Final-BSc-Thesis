@@ -161,6 +161,12 @@ class _ApproovalScreenState extends State<ApproovalScreen> {
                         SliverList(
                           delegate: SliverChildListDelegate.fixed(
                             [
+                              recipeWidgets.isEmpty
+                                  ? const Text(
+                                      "No results",
+                                      textAlign: TextAlign.center,
+                                    )
+                                  : Container(),
                               PaginationWidget(
                                 maxPages: numberOfPages,
                                 currentPage: currentIndex,

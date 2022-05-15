@@ -238,6 +238,12 @@ class _RecipesScreenState extends State<RecipesScreen> {
                         SliverList(
                           delegate: SliverChildListDelegate.fixed(
                             [
+                              recipeWidgets.isEmpty
+                                  ? const Text(
+                                      "No results",
+                                      textAlign: TextAlign.center,
+                                    )
+                                  : Container(),
                               PaginationWidget(
                                 maxPages: numberOfPages,
                                 currentPage: currentIndex,

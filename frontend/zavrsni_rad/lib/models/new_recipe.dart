@@ -9,8 +9,8 @@ class NewRecipe {
   int? cookingDuration;
   List<String>? images;
   List<RecipeStep>? steps;
-  String? video;
-  String? videoExtension;
+  List<String>? videos;
+  List<String>? videoExtensions;
   List<Ingredient>? ingredients;
 
   NewRecipe({
@@ -20,9 +20,9 @@ class NewRecipe {
     this.recipeName,
     this.description,
     this.images,
-    this.video,
+    this.videos,
     this.ingredients,
-    this.videoExtension,
+    this.videoExtensions,
     this.steps,
   });
 
@@ -34,8 +34,8 @@ class NewRecipe {
       "description": description,
       "cookingDuration": cookingDuration.toString(),
       "images": images,
-      "video": video,
-      "videoExtension": videoExtension,
+      "videos": videos,
+      "videoExtensions": videoExtensions,
       "ingredients": ingredients?.map((e) => e.toJson()).toList(),
       "steps": steps?.map((e) => e.step).toList(),
     };
