@@ -167,7 +167,10 @@ class _FavoritesScreenState extends State<FavoritesScreen> {
                           delegate: SliverChildListDelegate.fixed(
                             [
                               recipeWidgets.isEmpty
-                                  ? const Text("No results")
+                                  ? const Text(
+                                      "No results",
+                                      textAlign: TextAlign.center,
+                                    )
                                   : Container(),
                               PaginationWidget(
                                 maxPages: numberOfPages,

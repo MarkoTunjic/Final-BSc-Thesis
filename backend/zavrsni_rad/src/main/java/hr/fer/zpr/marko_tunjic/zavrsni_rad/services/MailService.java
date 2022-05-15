@@ -15,8 +15,10 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Ingredient;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Recipe;
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.RecipeStep;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.models.Users;
 import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.IngredientRepository;
+import hr.fer.zpr.marko_tunjic.zavrsni_rad.repositories.RecipeStepRepository;
 
 @Service
 public class MailService {
@@ -25,6 +27,8 @@ public class MailService {
 
     @Autowired
     private IngredientRepository ingredientRepository;
+    @Autowired
+    private RecipeStepRepository recipeStepRepository;
 
     @Value("${spring.mail.username}")
     private String mail;
@@ -55,6 +59,12 @@ public class MailService {
         List<Ingredient> ingredients = ingredientRepository.findByRecipeId(recipe.getId());
         for (Ingredient ingredient : ingredients) {
             mailContent += "<p>${ingredinet}</p>".replace("${ingredinet}", ingredient.toString());
+        }
+        mailContent += "<p> Here are the steps for your recipe:</p>";
+        List<RecipeStep> steps = recipeStepRepository.findByRecipeId(recipe.getId());
+        for (RecipeStep step : steps) {
+            mailContent += "<p>${step}</p>".replace("${step}",
+                    String.format("%d. %s", step.getOrderNumber(), step.getStepDescription()));
         }
         mailContent += "<p> Thank you!<br> The FinalBsc guy</p>";
 

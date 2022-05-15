@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Optional;
 
 import javax.mail.MessagingException;
 import javax.transaction.Transactional;
@@ -57,7 +58,10 @@ public class UsersService {
         String username;
         Users user;
         if (identifier.contains("@")) {
-            user = userRepository.findByeMail(identifier).get();
+            Optional<Users> optionalUser = userRepository.findByeMail(identifier);
+            if (optionalUser.isEmpty())
+                throw new IllegalStateException("Invalid username or password");
+            user = optionalUser.get();
             username = user.getUsername();
         } else {
             user = userRepository.findByUsername(identifier).get();
@@ -78,6 +82,14 @@ public class UsersService {
             throw new IllegalArgumentException("Username already exists in database");
         if (userRepository.existsByeMail(payload.geteMail()))
             throw new IllegalArgumentException("EMail already exists in database");
+        if (payload.getUsername().isBlank())
+            throw new IllegalArgumentException("Username can not be blank");
+        if (payload.geteMail().isBlank())
+            throw new IllegalArgumentException("Email can not be blank");
+        if (payload.getPassword().equals(payload.getPassword().toLowerCase()))
+            throw new IllegalArgumentException("Password must contain at least 1 uppercase");
+        if (payload.getPassword().length() < 8)
+            throw new IllegalArgumentException("Password must have atleast 8 characters");
         StringBuilder codeBuilder = new StringBuilder();
         for (int i = 0; i < 30; i++)
             codeBuilder.append(sr.nextInt(10));

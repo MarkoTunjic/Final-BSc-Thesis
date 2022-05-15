@@ -23,12 +23,17 @@ public class FileService {
     private static final String DOWNLOAD_URL = "https://firebasestorage.googleapis.com/v0/b/finalbscthesis.appspot.com/o/%s?alt=media";
 
     public String upload(String base64File, String fileName) throws FileNotFoundException, IOException {
+        byte[] file = Base64.getDecoder().decode(base64File);
+        if (fileName.endsWith(".png") && file.length > 12000000)
+            throw new IllegalArgumentException("Too big image");
+        if (!fileName.endsWith(".png") && file.length > 50000000)
+            throw new IllegalArgumentException("Too big image");
         BlobId blobId = BlobId.of("finalbscthesis.appspot.com", fileName);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("media").build();
         Credentials credentials = GoogleCredentials.fromStream(
                 getClass().getResourceAsStream("/finalbscthesis-firebase-adminsdk-4hpv1-305070dc09.json"));
         Storage storage = StorageOptions.newBuilder().setCredentials(credentials).build().getService();
-        storage.create(blobInfo, Base64.getDecoder().decode(base64File));
+        storage.create(blobInfo, file);
         return String.format(DOWNLOAD_URL, URLEncoder.encode(fileName, StandardCharsets.UTF_8));
     }
 

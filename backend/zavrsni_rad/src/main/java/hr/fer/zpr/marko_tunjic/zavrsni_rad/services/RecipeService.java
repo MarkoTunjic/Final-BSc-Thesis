@@ -66,6 +66,16 @@ public class RecipeService {
 
     @Transactional
     public Recipe addRecipe(RecipePayload payload) throws FileNotFoundException, IOException {
+        if (payload.getIngredients().size() <= 0)
+            throw new IllegalArgumentException("Must contain at least 1 ingredient");
+        if (payload.getSteps().size() <= 0)
+            throw new IllegalArgumentException("Must contain at least 1 step");
+        if (payload.getCookingDuration() < 0 || payload.getCookingDuration() > 120)
+            throw new IllegalArgumentException("Cooking time from 0 to 120");
+        if (payload.getDescription().isBlank())
+            throw new IllegalArgumentException("Description can not be blank");
+        if (payload.getRecipeName().isBlank())
+            throw new IllegalArgumentException("Recipe name can not be blank");
         Recipe newRecipe = fillRecipeFromPayload(payload);
 
         Recipe savedRecipe = recipeRepository.save(newRecipe);
@@ -82,10 +92,12 @@ public class RecipeService {
     private void saveVideoFromPayload(RecipePayload payload, Recipe recipe) throws FileNotFoundException, IOException {
         if (payload.getVideos() == null)
             return;
+        if (payload.getVideoExtensions().size() != payload.getVideos().size())
+            throw new IllegalArgumentException("Invalid data format received");
         int i = 0;
         for (String video : payload.getVideos()) {
             Video newVideo = new Video();
-            newVideo.setOrderNumber(0);
+            newVideo.setOrderNumber(i);
             newVideo.setRecipe(recipe);
             newVideo.setLink(fileService.upload(video,
                     "recipe" + recipe.getId() + "_video" + i + payload.getVideoExtensions().get(i)));
@@ -111,6 +123,8 @@ public class RecipeService {
     private void saveStepsFromPayload(RecipePayload payload, Recipe recipe) {
         int i = 0;
         for (String step : payload.getSteps()) {
+            if (step.isBlank())
+                throw new IllegalArgumentException("Step can not be blank");
             RecipeStep newStep = new RecipeStep();
             newStep.setRecipe(recipe);
             newStep.setOrderNumber(i);
@@ -123,6 +137,9 @@ public class RecipeService {
     @Transactional
     private void saveIngredientsFromPayload(RecipePayload payload, Recipe recipe) {
         for (IngredientPayload ingredientPayload : payload.getIngredients()) {
+            if (ingredientPayload.getIngredientName().isBlank() || ingredientPayload.getMeasure().isBlank()
+                    || ingredientPayload.getQuantity() < 0)
+                throw new IllegalArgumentException("Invalid ingredient received");
             Ingredient newIngredient = new Ingredient();
             newIngredient.setRecipe(recipe);
             newIngredient.setIngredientName(ingredientPayload.getIngredientName());

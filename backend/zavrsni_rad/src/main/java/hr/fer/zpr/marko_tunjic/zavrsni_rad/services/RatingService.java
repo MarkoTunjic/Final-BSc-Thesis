@@ -25,6 +25,8 @@ public class RatingService {
     private RatingRepository ratingRepository;
 
     public Boolean addRating(Long userId, Long recipeId, Integer ratingValue) {
+        if (ratingValue > 5 || ratingValue < 0)
+            throw new IllegalArgumentException("Rating can be from 1 to 5");
         RatingKey ratingKey = new RatingKey(userId, recipeId);
         Optional<Rating> optionalRating = ratingRepository.findById(ratingKey);
         if (!optionalRating.isPresent()) {

@@ -69,17 +69,17 @@ class _NewRecipeState extends State<NewRecipeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GraphQLProvider(
-      client: client,
-      child: Scaffold(
-        body: Stack(
-          children: [
-            _showProgressIndicator
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Container(),
-            Form(
+    return Scaffold(
+      body: Stack(
+        children: [
+          _showProgressIndicator
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : Container(),
+          GraphQLProvider(
+            client: client,
+            child: Form(
               key: NewRecipeScreen.formKey,
               child: ListView(
                 keyboardDismissBehavior:
@@ -456,8 +456,8 @@ class _NewRecipeState extends State<NewRecipeScreen> {
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

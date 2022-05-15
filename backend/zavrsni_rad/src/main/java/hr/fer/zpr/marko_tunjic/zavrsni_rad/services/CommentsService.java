@@ -25,7 +25,9 @@ public class CommentsService {
     @Transactional
     public Comments addComment(Long userId, Long recipeId, String commentText) {
         if (commentText.isBlank())
-            return null;
+            throw new IllegalArgumentException("Comment can not be empty");
+        if (commentText.length() > 200)
+            throw new IllegalArgumentException("Comment can not be longer than 200 characters");
         Users user = usersRepository.findById(userId).get();
         Recipe recipe = recipeRepository.findById(recipeId).get();
         return commentsRepository.save(new Comments(commentText, user, recipe));
