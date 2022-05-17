@@ -42,14 +42,18 @@ class _StepWidget extends StatelessWidget {
             radius: 10,
           ),
         ),
-        Text(
-          step.step,
-          style: const TextStyle(
-            fontSize: 20,
-            color: constants.darkBlue,
+        Flexible(
+          child: Text(
+            step.step,
+            style: const TextStyle(
+              fontSize: 20,
+              color: constants.darkBlue,
+            ),
+            overflow: TextOverflow.visible,
           ),
         ),
       ],
+      crossAxisAlignment: CrossAxisAlignment.start,
     );
   }
 }

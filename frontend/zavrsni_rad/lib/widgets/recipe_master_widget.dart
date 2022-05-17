@@ -142,13 +142,13 @@ class _RecipeMasterWidgetState extends State<RecipeMasterWidget> {
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 10),
-              child: FittedBox(
-                fit: BoxFit.contain,
-                child: Text(
-                  widget.recipe.recipeName,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
+              child: SizedBox(
+                  child: Text(
+                    widget.recipe.recipeName,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.visible,
+                  ),
+                  width: MediaQuery.of(context).size.width / 3 - 20),
             ),
             (widget.recipe.user.id == globals.loggedInUser?.id ||
                     globals.loggedInUser?.role == "MODERATOR")

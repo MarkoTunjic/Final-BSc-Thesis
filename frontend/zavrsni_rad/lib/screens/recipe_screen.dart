@@ -202,12 +202,14 @@ class _RecipeScreenState extends State<RecipeScreen> {
                       [
                         Row(
                           children: [
-                            Text(
-                              currentRecipe.recipeName,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 30,
-                                color: constants.darkBlue,
+                            FittedBox(
+                              fit: BoxFit.fitWidth,
+                              child: Text(
+                                currentRecipe.recipeName,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: constants.darkBlue,
+                                ),
                               ),
                             ),
                             IconButton(
