@@ -115,12 +115,18 @@ class _FilterWidgetState extends State<FilterWidget> {
                                       const Padding(
                                         padding: EdgeInsets.only(bottom: 10),
                                         child: Text(
-                                          "Must contain ingredients:",
+                                          "Ingredients i have:",
                                           style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.bold,
                                             color: constants.darkBlue,
                                           ),
+                                        ),
+                                      ),
+                                      const Flexible(
+                                        child: Text(
+                                          "(60% of ingredients must match for a recipe to be shown)",
+                                          overflow: TextOverflow.visible,
                                         ),
                                       ),
                                       InputFieldWidget(

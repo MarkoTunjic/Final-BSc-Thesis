@@ -2,8 +2,11 @@ package hr.fer.zpr.marko_tunjic.zavrsni_rad.services;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -201,8 +204,17 @@ public class RecipeService {
         if (requiredIngredients == null || requiredIngredients.size() == 0)
             return true;
         List<Ingredient> ingredients = ingredientRepository.findByRecipeId(recipe.getId());
-        return ingredients.stream().allMatch(ingredient -> requiredIngredients.stream().anyMatch(
-                e -> e.equals(ingredient.getIngredientName())));
+        Set<String> ingredientNames = ingredients.stream().map(ing -> ing.getIngredientName().toLowerCase())
+                .collect(Collectors.toCollection(() -> new HashSet<>()));
+        Set<String> intersection = requiredIngredients.stream()
+                .filter(name -> ingredientNames.contains(name.toLowerCase())).collect(Collectors.toSet());
+        return intersection.size() * 1.d / ingredients.size() * 1.d >= 0.6;
+
+        /*
+         * return ingredients.stream().allMatch(ingredient ->
+         * requiredIngredients.stream().anyMatch(
+         * e -> e.equals(ingredient.getIngredientName())));
+         */
     }
 
     @Transactional
