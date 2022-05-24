@@ -168,6 +168,8 @@ public class RecipeService {
     }
 
     public Recipes getRecipesForFilter(Filter filter) {
+        if (filter.getIndex() < 0)
+            throw new IllegalArgumentException("Page index can not be less than 0!");
         List<Recipe> recipes;
         String nameLike = filter.getNameLike() == null ? "" : filter.getNameLike();
         int cookingDuration = filter.getMaxCookingDuration() == null ? Integer.MAX_VALUE

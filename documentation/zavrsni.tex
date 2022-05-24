@@ -1,21 +1,25 @@
 \documentclass[times, utf8, zavrsni]{fer}
 \usepackage{booktabs}
+\usepackage[hidelinks]{hyperref}
+\usepackage{listings}
+\usepackage{multicol}
+\usepackage{caption}
+\usepackage{subcaption}
+
+\graphicspath{ {./images/} }
 
 \begin{document}
 
 % TODO: Navedite broj rada.
-\thesisnumber{000}
+\thesisnumber{448}
 
 % TODO: Navedite naslov rada.
-\title{Naslov}
+\title{Mobilna aplikacija za upravljanje receptima}
 
 % TODO: Navedite vaše ime i prezime.
-\author{Arthur Denta}
+\author{Marko Tunjić}
 
 \maketitle
-
-% Ispis stranice s napomenom o umetanju izvornika rada. Uklonite naredbu \izvornik ako želite izbaciti tu stranicu.
-\izvornik
 
 % Dodavanje zahvale ili prazne stranice. Ako ne želite dodati zahvalu, naredbu ostavite radi prazne stranice.
 \zahvala{}
@@ -23,7 +27,355 @@
 \tableofcontents
 
 \chapter{Uvod}
-Uvod rada. Nakon uvoda dolaze poglavlja u kojima se obrađuje tema.
+Internet i web stranice su već dugo vremena dio ljudske svakodnevice. Zbog
+današnje potrebe za brzinom i efikasnošću sve popularnije su mobilne aplikacije,
+jer su vrlo jednostavne za koristiti. Naime potrebno je samo izvaditi mobitel
+kliknuti na aplikaciju i sve je spremno. Upravo zato danas puno web aplikacija
+također ima i svoju mobilnu inačicu.
+\\\\
+Tako se do danas pojavio velik broj jezika
+i radnih okvira za razvoj mobilnih aplikacija kao na primjer kotlin, swift, flutter,
+react native i slično. Problem kod mobilnih uređaja je što ovisno koji operacijski
+sustav uređaj koristi jedna aplikacija neće biti kompatibilna na svim ostalima.
+Neki od prethodno navedenih radnih okvira, kao na primjer: flutter i react native,
+rješavaju problem kompatibilnosti operacijskih sustava uređaja takozvanim "native" pristupom
+i jednom isprogramirana aplikacija u tim okvirima će se moći izvoditi na svim uređajima.
+\\\\
+Unatoč tranziciji sa preglednika na mobilne uređaje nije nestala potreba
+za poslužiteljskim dijelom i bazom podataka, jer takva arhitektura omogućava
+komunikaciju i dijeljenje sadržaja među ljudima širom svijeta. Pa se tako na
+poslužiteljskoj strani i dalje koriste stvari kao Spring, ASP.NET i slični okviri,
+a za bazu upravitelji po izboru na primjer PostgreSQL, MSSQL, MySQL\dots
+Iz tog razloga je još uvijek popularan oblikovni obrazac MVC (Model-View-Controller).
+\\\\
+Jedini problem je što mobilne aplikacije nažalost ne podržavaju HTTP i SOAP protokol
+na način kao i web preglednici pa se mobilne aplikacije koriste novijim načinom prijenosa
+podataka između upravljačkog dijela aplikacije i korisničkog dijela aplikacije.
+To je JSON format podataka s odgovarajućim JSON zahtjevima prema poslužitelju.
+Uz JSON se koristi neki od arhitekturnih stilova kao REST ili GraphQL koji su alternativa
+za SOAP protokol i s njime mogu i web i mobilne aplikacije uspješno uspostavljati komunikaciju.
+\\\\
+Također zbog naglog razvoja interneta i pojave velikog broja poslužitelja i baza podataka
+pojavila se potreba za računalima na kojima će biti pokrenuti ti poslužitelji i
+baze podataka, tako se pojavio "oblak" i usluge u oblaku (eng. Cloud, Cloud Services).
+Uz pomoć tih usluga vrlo je lako pokrenuti instancu potrebne baze i poslužitelja
+u "oblaku" koji će biti globalno dostupan. Kao pružatelji takvih usluga se ističu:
+AWS, Heroku, Azure i tako dalje.
+\\\\
+Cilj ovoga rada bio je izraditi mobilnu aplikaciju koja će korisnicima olakšati: pristup,
+pamćenje, dijeljenje i pretraživanje recepata. Sadržaj je podijeljen u 4 dijela u kojima
+će se opisati zahtjevi, način izrade svakog sloja aplikacije (baza podataka,
+poslužiteljski i korisnički dio), korištene tehnologije i konačni proizvod.
+
+\chapter{Zahtjevi}
+
+\section{Funkcionalni}
+\begin{enumerate}
+      \item \textbf{\underline{Korisnici aplikacije:}} Aplikaciji mogu pristupiti 3 vrste korisnika:
+            anonimni, prijavljeni i administratori i ovisno o vrsti korisnika kojoj pripada svaki ima
+            različite ovlasti i uloge.
+      \item \textbf{\underline{Mogućnosti anonimnih korisnika:}} oni mogu samo pregledavati i pretraživati
+            recepte. Recepti se mogu pretraživati po nazivu ili po sastojcima pri čemu se pretraga po
+            sastojcima može obaviti po sastojcima koje recept ne smije sadržavati (što je bitno zbog
+            alergija) ili po sastojcima koje korisnik ima pri ruci.
+      \item \textbf{\underline{Mogućnosti prijavljenih korisnika:}} prijavljeni korisnici uz funkcionalnosti \linebreak
+            anonimnih korisnika mogu također i dodavati vlastite recepte, komentirati sve recepte
+            i dodavati željene recepte u listu omiljenih recepata pri čemu korisnik na vlastiti e-mail
+            dobije poruku sa listom potrebnih sastojaka koja može poslužiti kao lista za kupnju.
+      \item \textbf{\underline{Mogućnosti administatora:}} administatori za razliku od prijavljenih
+            korisnika ne mogu dodavati vlastite recepte, ali zato imaju ulogu odabrovanja recepata, jer
+            naime prije negoli bilo koji recept postane javno vidljiv administratori ga moraju odobriti.
+      \item \textbf{\underline{Format recepta:}} uz zahtjeve da recept ima svoje korake pripreme i
+            sastojke potrebne za izradu jela, svaki recept također može imati priloženo više forografija
+            i/ili videozapisa koji pobliže opisuju recept i pomažu korisnicima pri kuhanju.
+      \item \textbf{\underline{Registracija:}} korisnik će pri registraciji morati predati neku vlastitu
+            postojeću e-mail adresu na koju će primati liste za kupnju od recepata koje dodaju u svoje favorite.
+\end{enumerate}
+
+\section{Dodatne funkcionalnosti}
+\begin{enumerate}
+      \item \textbf{\underline{Dodatne mogućnosti prijavljenih korisnika:}} prijavljeni korisnici će
+            dodatno moći brisati vlastite recepte, komentare na vlastitim receptima i vlastite komentare
+            na tuđim receptima. Također će moći ocjenjivati recepte ocjenama od 0 do 5 i pretraživati
+            recepte po trajanju pripreme.
+      \item \textbf{\underline{Dodatne mogućnosti administatora:}} administratori osim što mogu odobriti
+            recepte isto tako ih mogu poništiti, nadalje mogu brisati sve recepte i sve komentare sa svih recepata
+            i za kraj mogu suspendirati korisnike aplikacije (eng. ban).
+      \item \textbf{\underline{Dodatni uvjeti:}} duljina raznih podataka koje korisnik šalje će biti
+            određena dizajnom baze podataka, a veličina fotografija i videozapisa će biti određena
+            HTTP poslužiteljem.
+\end{enumerate}
+\chapter{Baza podataka}
+Kao upravitelj bazom podataka korišten je PostgreSQL i u svrhu lakšeg razvoja također
+je korištena aplikacija sa korisničkim sučeljem za izvođenje upita: PgAdmin.
+Sama baza je relacijskog tipa i modelirana je entitetima i vezama između njih.
+Za modeliranje je korišten web alat ERDPlus. Za upogonjavanje baze je korišten AWS (Amazon Web Services)
+točnije njihov RDS (Relational Database Service) servis koji se koristi upravo za upogonjavanje baza podataka u oblaku.
+
+\section{Entiteti}
+Entiteti su modelirani prema zahtjevima zadatka, a veze su modelirane prema stvarnim situacijama.
+Postojeći entiteti su: recept, sastojak, korak pripreme, korisnik, uloga, videozapis i
+fotografija. Dakle postoji glavni entitet koji je središte aplikacije, a to je recept
+njega opisuju njegov identifikacijski broj, ime, opis, trajanje pripreme
+te na kraju parametar koji pokazuje je li recept odobren od strane administatora ili nije.
+Nadalje recept ne bi imao smisla da nema svoje korake pripreme i potrebne sastojke.
+Također postoje fotografije i videozapisi jer svaki recept može imati
+više videozapisa ili fotografija koji će uređivati korisničko sučelje
+i pomoći korisnicima pri odabiru prikladnog recepta.
+Korisnici su također modelirani kao jedan od entiteta jer mogu interagirati sa receptima
+na razne načine, a te interakcije su opisane vezama kao što su komentiranje,
+dodavanje u favorite, ocjenjivanje\dots Slika modela (eng. Entity relationship diagram)
+je prikazana slikom \ref{fig:ER Diagram}
+
+\begin{figure}
+      \includegraphics[width=\textwidth]{ERDiagram.png}
+      \caption{ERDiagram}
+      \label{fig:ER Diagram}
+\end{figure}
+
+\section{Relacije}
+Iz prethodno opisanog modela pretvorbom iz entiteta u relacijsku shemu dobiveno je 10
+tablica. One odgovaraju
+entitetima i vezama između njih, tako se pojavljuju nove tablice koje predstavljaju:
+komentare, favorite i ocjene. Dobivene tablice su stvorene u oblaku na upogonjenoj bazi.
+Relacijska shema je prikaza slikom \ref{fig:Relacijska shema} i kodom \ref{lst:SQL kod}
+
+\begin{figure}
+      \includegraphics[width=\textwidth]{RelationalSchema.png}
+      \caption{Relacijska shema}
+      \label{fig:Relacijska shema}
+\end{figure}
+
+\begin{multicols}{2}[h]
+      \lstinputlisting[language=SQL,basicstyle=\scriptsize,caption={SQL kod},captionpos=b]{./code/database.sql}
+      \label{lst:SQL kod}
+\end{multicols}
+
+\chapter{Poslužiteljska strana}
+Poslužiteljska strana je pisana u programskom jeziku java verzije 11, pritom koristeći
+SpringBoot radni okvir. Kao arhitekturni stil korišten je GraphQL koji je alternativna REST-u.
+Projekt je modeliran kao maven projekt, a za upravljanje njime je korišten Git alat. Za upogonjavanje
+se također koristio AWS i njihov ElasticBeanstalk servis. U svrhe razvoja korišteno je okruženje VSCode.
+
+\section{GraphQL}
+
+\subsection{Povijest}
+Jedan od većih problema dizajniranja web poslužitelja pa tako i samih web aplikacije u REST
+arhitekturnom stilu je problem prekomjernog dohvata podataka odnosno nedovoljnog dohvata podataka
+(eng. overfetching and underfetching). Ako bi se taj problem pokušao riješiti sa
+stvaranjem više krajnjih točaka (eng. endpoint), a uz to i više prijenosnih objekata takozvanih DTO-ova
+(Data Transfer Object), došlo bi do nagomilavanja izvornog koda. Tako je tvrtka Facebook došla
+do ideje GraphQL-a. Naime razvojni programeri su tada radili sa velikim brojem podataka koji su
+bili međusobno ugnježđenji i povezani na razne načine i da bi aplikacija radila dovoljno brzo
+i efikasno bilo je nužno dohvatiti samo one podatke koji se uistinu i koriste, a da se dohvaćaju sa
+što manjeg broja krajnjih točaka.
+
+\subsection{Definicija}
+GraphQL je upitni jezik specifično dizajniran za korisničku stranu aplikacije da bi mogla
+od puslužiteljske strane zatražiti i dobiti samo one podatke koji su potrebni. Također
+dopušta i definiranje formata i oblika podataka koji će se zahtijevati od poslužiteljske strane, a
+da se ujedno upiti šalju na samo jednu krajnju točku. U GraphQL-u postoje 2 vrste upita:
+upiti i mutacije (eng. query and mutation), razlika je u tome što upiti služe za dohvaćanje podataka,
+a mutacije za mijenjanje podataka.
+
+\subsection{Implementacija}
+Unatoč tome GraphQL nudi puno izmjena i lakši pristup podacima u usporedi sa REST-om implementacija
+nije otežana. U okviru ovoga rada u pom.xml datoteku u kojoj se dodaju ovisnosti (eng. dependencies)
+bilo je potrebno dodati 2 nove ovisnosti: graphql-spring-boot-starter, graphql-java-tools
+i po potrebi treću ovisnost koja nudi mogućnost testiranja sučelja,
+a ta je graphiql-spring-boot-starter (Slika \ref{fig:graphql}). Nakon toga ove ovisnosti zahtijevaju
+izradu jedne datoteke u kojoj će pisati sve moguće vrste podataka koje se mogu tražiti, i sve
+moguće upite koji se mogu primiti i takva datoteka se najčešće imenuje schema.graphqls ().
+U slučaju ovog rada podatci su bili ujedno i relacijski modeli iz baze podataka,
+a upiti postoje razni i bili su dodavani jedan po jedan ovisno o potrebi aplikacije (Slika \ref{fig:graphql}).
+Iz priložene slike vidimo da postoji velik broj mutacija i upita, ali to i dalje ne mijenja činjenicu da postoji
+samo jedna krajnja točka koja je u ovom slučaju /graphql, također je priložen primjer jednog tipa podatka: Recipe
+i iz njegovog opisa možemo primjetiti da je to upravo jedan od relacijskih modela iz baze podataka u koji su dodani
+još neki dodatni parametri. Treba samo zapamtiti da se imena i tipovi polja iz javine klase i tipa podatka iz
+graphql sheme moraju podudarati jer se koristi refleksija za dohvat tih polja.
+\begin{figure}[h]
+      \centering
+      \subfloat[\centering GraphQL ovisnosti]{{\includegraphics[width=.486\textwidth]{graphql_dependencies.png} }}
+      \subfloat[\centering Primjer GraphQL sheme]{{\includegraphics[width=.45\textwidth]{graphql_schema.png} }}
+      \caption{GraphQL postavke}
+      \label{fig:graphql}
+\end{figure}
+\\
+Nakon dodavanja sheme i ovisnosti potrebno je dodati takozvane Resolvere. U ovome projektu postoje 3 vrste resolvera:
+QueryResolver, MutationResolver i obični Resolver, oni su u prethodno navedenim ovisnostima definirani kao sučelja:
+GraphQLQueryResolver, GraphQLMutationResolver, GraphQLResolver. Prvi služi za prihvaćanje upita, drugi služi za prihvaćanje
+mutacija, a treći služi za rješavanje problema spomenutih dodatnih parametara koji su umetnuti u GraphQL tip,
+na način da se definira način dohvata tih podataka. Također se može implementirati sučelje GraphQLErrorHandler koji
+će presretati greške sa poslužiteljske strane i vraćati odgovarajuću poruku korisničkoj strani, jer naime GraphQL
+ima jednu manu, a ta mana je da se na korisničku stranu uvijek vraća HTTP status kod 200 OK, pa se rukovanje greškama
+obavlja na drukčiji način. Taj način je da se u odgovor u slučaju greške doda parametar errors koji će sadržavati
+sve greške koje su se dogodile (slika \ref{fig:Handled error}).
+Ukoliko se ne implementira sučelje GraphQLErrorHandler poslužitelj će uvijek vraćati predefiniranu pogrešku (slika \ref{fig:Default error}). \\
+\begin{figure}[h]
+      \includegraphics[width=\textwidth]{graphql_handled_error.png}
+      \caption{Primjer greške ukoliko postoji GraphQLErrorHandler}
+      \label{fig:Handled error}
+\end{figure}
+\begin{figure}[h]
+      \includegraphics[width=\textwidth]{graphql_default_error.png}
+      \caption{Primjer predefenirane pogreške}
+      \label{fig:Default error}
+\end{figure}
+\\
+Za kraj nakon implementacije svih navedenih sučelja (slika \ref{fig:GraphQL implementation}) sada se
+uspješno može izvršiti prvi upit koji je demonstriran kroz sučelje GraphiQL koji
+prikazuje strukturu upita i odgovora (slika \ref{fig:GraphQL query}).
+\begin{figure}[h]
+      \centering
+      \includegraphics[width=.5\textwidth]{graphql_implementation_classes.png}
+      \caption{Izgled graphql implementacije}
+      \label{fig:GraphQL implementation}
+\end{figure}
+\begin{figure}[h]
+      \centering
+      \includegraphics[width=\textwidth]{graphql_query.png}
+      \caption{Primjer ispravnog upita}
+      \label{fig:GraphQL query}
+\end{figure}
+
+
+\section{Autentifikacija i autorizacija}
+
+\subsection{JWT}
+U području autentifikacije i autorizacije se vidi jedna velika razlika između mobilne aplikacije i aplikacije koja
+se pokreće na web pregledniku, a to je odsutnost sesije. Zato se mobilne aplikacije koriste drugim mehanizmom, a
+to su tokeni. U ovoj aplikaciji se koriste tokeni pod imenom JWT (JSON Web Token), takvi tokeni koriste
+kriptografske algoritme (kao na primjer HMACSHA256) da bi se podatci na siguran način mogli prenositi između dvije strane.
+Pa će se u takvom tokenu nalaziti korisničko ime, istek tokena i slični podatci koji će omogućiti
+autentifikaciju i autorizaciju korisnika aplikacije.
+\subsection{Autentifikacija}
+Da bi se ovo ostvarilo prvo je bilo potrebno dodati ovisnost prema \linebreak
+SpringSecurity-u (slika \ref{fig:Security dependency}) i prema jjwt. Nakon toga da bi aplikacija mogla doći do podataka trebalo je implementirati dva sučelja:
+UserDetails i UserDetailsService. Prvo sučelje služi za omotavanje osnovnih podataka o korisniku,
+kao na primjer korisničko ime, lozinka, je li korisnik suspendiran, je li korisnik potvrdio svoj identitet,
+koje su korisnikove uloge (administator ili korisnik) i slično,
+a drugo sučelje služi za dohvat tih podataka na osnovu korisničkog imena. U ovoj aplikaciji sučelje UserDetails omotava
+podatke iz baze podataka, a drugo sučelje dohvaća podatke iz baze i sprema ih u prvo sučelje.
+\begin{figure}[h]
+      \centering
+      \includegraphics[width=.5\textwidth]{security_dependency.png}
+      \caption{Ovisnost za autentifikaciju i autorizaciju}
+      \label{fig:Security dependency}
+\end{figure}
+\\
+Nadalje da bi se ti podatci mogli dohvatiti u bilo kojem trenutku potrebno ih je spremiti negdje u nekom trenutku.
+Zato je bilo potrebno napraviti jedan Filter. Filter su posebni objekti u web aplikaciji koji presreću bilo koji
+zahtjev koji stigne na poslužitelj, obrade taj zahtjev i onda ga proslijede dalje prema web aplikaciji.
+Filter za autentifikaciju će provjeriti postoji li HTTP zaglavlje pod imenom: Authorization i ako
+postoji pretpostavit će da se unutra nalazi token kojeg će pokušati isparsirati i iz njega dohvatiti korisničko ime.
+Na osnovu tog korisničkog imena i uz pomoć sučelja UserDetailsService vrlo jednostavno se dohvati sučelje UserDetails.
+Na kraju će filter spremiti bitne podatke u takozvani SecurityContextHolder koji će pružiti mogućnost dohvata trenutnog
+korisnika u bilo kojem trenutku.
+\\\\
+Jedan od mogućih scenarija je da će podatci poslani u tokenu biti ili nevažeći ili isteknuti zato je potrebno napraviti
+takozvani EntryPoint koji će u slučaju pogrešne autorizacije korisniku vratiti odgovarajuću poruku. Taj EntryPoint
+se naziva AuthenticationEntryPoint koji će preko HTTP odgovora poslati pogrešku u svojoj metodi commence. Struktura
+svih implementiranih sučelja u projektu prikazana je na slici \ref{fig:Security}
+
+\begin{figure}[h]
+      \centering
+      \includegraphics[width=.5\textwidth]{security_implementation.png}
+      \caption{Struktura sigurnosnog dijela}
+      \label{fig:Security}
+\end{figure}
+
+\subsection{Autorizacija}
+Na kraju je potrebno definirati autorizaciju i spojiti s autentifikacjom, a to se obavlja kroz takozvani WebSecurityConfig.
+U kojem je definirano koji će se EntryPoint koristiti u slučaju pogreške, koji algoritam se koristi za šifriranje lozinki,
+kada se poziva filter za autentifikaciju i kada se obavlja autorizacija. U ovoj aplikaciji se koristi prethodno
+definirani EntryPoint, za šifriranje lozinke se koristi BCrypt algoritam, filter se poziva prije svakog zahtjeva, a
+autorizacija je omogućena da se definira za svaku metodu zasebno uz pomoć anotacije @PreAuthorize (slika \ref{fig:WebSecurityConfig}).
+Koristi se na način da se u tijelo anotacije stave sve uloge koje smiju pristupati anotiranoj metodi (slika \ref{fig:PreAuthorize}).
+Te anotacije se najčešće koriste ili u QueryResolver-u ili u MutationResolver-u i tako će se ograničiti pristup
+neautorizirani korisnicima.
+\begin{figure}[h]
+      \centering
+      \includegraphics[width=\textwidth]{WebSecurityConfig.png}
+      \caption{Izgled sigurnosne konfiguracije}
+      \label{fig:WebSecurityConfig}
+\end{figure}
+\begin{figure}[h]
+      \centering
+      \includegraphics[width=\textwidth]{PreAuthorize.png}
+      \caption{Izgled metode sa anotacijom @PreAuthorize}
+      \label{fig:PreAuthorize}
+\end{figure}
+
+\section{Pristup podacima}
+Za pristup podacima se koriste dva sloja prvi sloj je sloj za perzistenciju a drugi sloj je sloj usluge. Sloj za perzistenciju
+modeliran je uz pomoć takozvanog ORM-a (Object Realtional Mapper) čija je zadaća preslikavanje relacija u javine objekte.
+Postoji više vrsta različitih ORM-ova, a ovdje se koristi Hibernate. Za sve to se morala dodati ovisnost prema odgovarajućim
+JPA i JDBC maven ovisnostima (slika \ref{fig:Data dependencies} (a)).
+\begin{figure}[h]
+      \centering
+      \subfloat[\centering Ovisnosti]{{\includegraphics[width=.486\textwidth]{data_dependencies.png} }}
+      \subfloat[\centering Sve usluge]{{\includegraphics[width=.45\textwidth]{services.png} }}
+      \caption{Ovisnosti za pristup podacima i sloj usluge}
+      \label{fig:Data dependencies}
+\end{figure}
+
+\subsection{Sloj za perzistenciju}
+U programskom jeziku java hibernate se koristi kroz JPA (Java Persistence API) programsko sučelje.
+JPA zahtijeva da se način preslikavanja iz relacije u objekt definira ili anotacijama
+ili u posebnoj konfiguracijskoj datoteci, u ovome projektu je to učinjeno preko anotacija, a sve takve klase prikazane su na
+slici \ref{fig:JPA} (a). Anotacije i način anotiranja koji se mora poštivati prikazan je na slici \ref{fig:JPA} (b). Može se primjetititi
+da u modelima ovoga projekta nisu anotirane sve veze koje su određene samom bazom podataka
+jer je to riješeno uz pomoć Resolvera iz GraphQL-a. Nakon kreiranja svih modela potrebno je napraviti sučelja koja nasljeđuju sučelje
+JPARepository preko kojeg se pristupa samim podacima, a u tom sučelju su definirane metode kao na primjer metoda
+za dohvaćanje svih relacija, metoda za dohvaćanje relacija po identifikacijskom atributu, ili nekom drugom atributu
+i slične metode.
+\begin{figure}[h]
+      \centering
+      \subfloat[\centering Svi anotirani modeli]{{\includegraphics[width=.486\textwidth]{models.png} }}
+      \subfloat[\centering Primjer anotiranja klase]{{\includegraphics[width=.45\textwidth]{jpa_annotations.png} }}
+      \caption{JPA konfiguracija}
+      \label{fig:JPA}
+\end{figure}
+\\\\
+Također iz slike \ref{fig:JPA} (b) može se primjetiti da se slika u bazu sprema kao hiperveza na samo sliku, a to je moguće jer se za
+spremanje slika koristi firebase. Za pristup firebase-u je bilo potrebno dodati ovisnost (slika \ref{fig:Data dependencies}) i jednu datoteku u kojoj su zapisani
+podaci za pristup bazi koja iz sigurnosnih razloga nije priložena. Nakon je toga je vrlo lako uz pomoć metode \textit{create} primljenu
+sliku dignuti na firebase oblak.
+
+\subsection{Sloj usluge}
+Jedno od SOLID načela programiranja (\textit{"Single responsibility"}) nalaže da jedna klasa ima samo jednu odgovornost
+zato je sloj za perzistenciju od \textit{resolver-a} odvojen slojem usluge. U sloju usloge se nalazi sva logika
+potrbena za pristup i obradi podatka da bi se razdvojila odgovornost obrade podataka od odgovornosti obrade zahtjeva.
+\\\\
+Također osim same obrade podataka u sloju usluge se nalazi i klasa koja služi za slanje elktroničke pošte.
+Ta usluga se koristi za slanje poruke za potvrdu identiteta i za slanje liste za kupnju
+koja se šalje ukoliko neki korisnik doda recept u svoje favorite. Tijelo poruke se gradi
+kao HTML dokument, a šalje se uz pomoć Java Mail API-a za koji je bilo potrebno dodati ovisnost
+prikazanu na slici \ref{fig:Data dependencies}. I konačno sve usluge su prikazane na slici \ref{fig:Data dependencies} (b).
+
+\section{Upogonjavanje}
+Upogonjavanje se obavlja uz pomoć github actions gdje je definiran takozvani \textit{CI/CD pipeline}
+(slika \ref{fig:Backend cicd}) uz pomoć kojeg se kod prevodi u .jar arhivu i podiže na \textit{AWS ElasticBeanstalk} servis.
+Jedini problem je bio što nakon upogonjavanja poslužitelj može primati relativno male zahtjeve
+, a za ovu aplikaciju su potrebni poprilično veliki zahtjevi jer se šalju i fotografije i videozapisi
+zato se uz .jar arhivu mora dodati i konfiguracijska datoteka za ngnix poslužitelj koja će povećati
+pretpostavljenu maksimalnu veličinu zahtjeva. To je postignuto uz pomoć maven-ovog antrun \textit{plugin-a}
+(slika \ref{fig:antrun}) koji će .jar arhivu i konfiguracijsku datoteku spremiti u .zip arhivu i proslijediti to dalje.
+\begin{figure}[h]
+      \centering
+      \includegraphics[width=.5\textwidth]{backend_cicd.png}
+      \caption{Github actions zadatak za podizanje web poslužitelja}
+      \label{fig:Backend cicd}
+\end{figure}
+\begin{figure}[h]
+      \centering
+      \includegraphics[width=\textwidth]{antrun.png}
+      \caption{Plugin za stvaranje zip arhive za upogonjavanje}
+      \label{fig:antrun}
+\end{figure}
+\chapter{Korisnička strana}
+\section{Ekrani}
+\section{BLoC}
 
 \chapter{Zaključak}
 Zaključak.
@@ -32,17 +384,17 @@ Zaključak.
 \bibliographystyle{fer}
 
 \begin{sazetak}
-Sažetak na hrvatskom jeziku.
+      Sažetak na hrvatskom jeziku.
 
-\kljucnerijeci{Ključne riječi, odvojene zarezima.}
+      \kljucnerijeci{Ključne riječi, odvojene zarezima.}
 \end{sazetak}
 
 % TODO: Navedite naslov na engleskom jeziku.
-\engtitle{Title}
+\engtitle{Mobile application for recipe managment}
 \begin{abstract}
-Abstract.
+      Abstract.
 
-\keywords{Keywords.}
+      \keywords{Keywords.}
 \end{abstract}
 
 \end{document}
