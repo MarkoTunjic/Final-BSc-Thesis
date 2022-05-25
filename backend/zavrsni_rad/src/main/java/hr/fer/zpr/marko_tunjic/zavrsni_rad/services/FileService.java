@@ -26,7 +26,7 @@ public class FileService {
         byte[] file = Base64.getDecoder().decode(base64File);
         if (fileName.endsWith(".png") && file.length > 12000000)
             throw new IllegalArgumentException("Too big image");
-        if (!fileName.endsWith(".png") && file.length > 50000000)
+        if (!fileName.endsWith(".png") && file.length > 20000000)
             throw new IllegalArgumentException("Too big image");
         BlobId blobId = BlobId.of("finalbscthesis.appspot.com", fileName);
         BlobInfo blobInfo = BlobInfo.newBuilder(blobId).setContentType("media").build();

@@ -53,7 +53,7 @@ class _BlocVideosWidgetState extends State<BlocVideosWidget> {
                 Padding(
                   padding: EdgeInsets.only(top: 15, bottom: 15),
                   child: Text(
-                    "(Up To 50MB)",
+                    "(Up To 20MB)",
                     style: TextStyle(color: constants.grey, fontSize: 10),
                   ),
                 ),
@@ -65,7 +65,7 @@ class _BlocVideosWidgetState extends State<BlocVideosWidget> {
               if (video != null) {
                 video.length().then(
                   (value) {
-                    if (value < 50000000) {
+                    if (value < 20000000) {
                       File file = File(video.path);
                       BlocProvider.of<BlocVideo>(context)
                           .add(AddVideo(video: file));

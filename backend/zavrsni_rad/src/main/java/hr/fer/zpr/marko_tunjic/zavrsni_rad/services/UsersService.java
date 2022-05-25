@@ -100,8 +100,8 @@ public class UsersService {
             url = FileService.DEFAULT_PROFILE_PICTURE;
         Users user = new Users(payload.getUsername(), payload.geteMail(), encoder.encode(payload.getPassword()),
                 url, false, false, roleRepository.getById((long) 1), codeBuilder.toString());
-        userRepository.save(user);
         mailService.sendConfirmationMail(user);
+        userRepository.save(user);
         return user;
     }
 
