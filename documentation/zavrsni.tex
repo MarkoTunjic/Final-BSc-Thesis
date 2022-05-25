@@ -248,6 +248,7 @@ to su tokeni. U ovoj aplikaciji se koriste tokeni pod imenom JWT (JSON Web Token
 kriptografske algoritme (kao na primjer HMACSHA256) da bi se podatci na siguran način mogli prenositi između dvije strane.
 Pa će se u takvom tokenu nalaziti korisničko ime, istek tokena i slični podatci koji će omogućiti
 autentifikaciju i autorizaciju korisnika aplikacije.
+
 \subsection{Autentifikacija}
 Da bi se ovo ostvarilo prvo je bilo potrebno dodati ovisnost prema \linebreak
 SpringSecurity-u (slika \ref{fig:Security dependency}) i prema jjwt. Nakon toga da bi aplikacija mogla doći do podataka trebalo je implementirati dva sučelja:
@@ -373,9 +374,94 @@ pretpostavljenu maksimalnu veličinu zahtjeva. To je postignuto uz pomoć maven-
       \caption{Plugin za stvaranje zip arhive za upogonjavanje}
       \label{fig:antrun}
 \end{figure}
+
 \chapter{Korisnička strana}
+Korisnička strana je pisana u programskom jeziku dart, pritom koristeći
+Flutter radni okvir. Struktura projekta je napravljena potpuno slobodno (slika \ref{fig:Frontend}(a)).
+Za upogonjavanje aplikacije korištena je github-ova mogućnost
+stvaranja izdanja. Upogonjavanje je obavljeno uz pomoć github actions (slika \ref{fig:Frontend})(b).
+U svrhe razvoja korišteno je okruženje VSCode.
+\begin{figure}[h]
+      \centering
+      \subfloat[\centering Izgled strukture projekta]{{\includegraphics[width=.486\textwidth]{frontend_structure.png} }}
+      \subfloat[\centering GitHub actions za upogonjavanje aplikacije]{{\includegraphics[width=.45\textwidth]{frontend_cicd.png} }}
+      \caption{Osnovne karakteristike korisničke strane}
+      \label{fig:Frontend}
+\end{figure}
+
+\section{Flutter}
+Flutter je google-ov javno dostupni (\textit{eng. Open Source}) projekt koji je namijenjen
+za stvaranje lijepih i brzih mobilnih, web, računalnih ili ugrađenih aplikacija. Karakteristika
+\textit{flutter-a } je da se aplikacija sa samo jednim programskim kodom može pokrenuti na
+svim navedenim uređajima. Također jedna od prednosti tog ovog radnog okvira je da je vrlo lako napraviti
+dinamične aplikacije jer se koristi upravljanje stanjem (eng. \textit{state managment}). Postoji više načina
+kako pristupiti ovoj funkcionalnosti, a u ovome radu korištem je \textit{BLoC} pristup koji je ujedno
+i google-ov preporučeni pristup.
+
+\subsection{BLoC}
+BLoC (Business Logic Components) je obrazac za upravljanjem stanja aplikacije. Karakteristika ovog obrasca
+je da međusobno razdvaja prikaz komponente, upravljanje njenim stanjem i logiku iza upravljanja stanjem.
+Srž obrasca je da bi sve u aplikaciji trebalo biti modelirano kao tok događaja na način da jedna komponenta
+na osnovu interakcije s okolinom kreira događaje i šalje ih u ulazni tok događaja, a svaka komponenta koja
+ovisi o tom toku događaja će kroz izlazni tok događaja primiti te podatke i na osnovu njih ažurirati svoje stanje.
+\begin{figure}[h]
+      \centering
+      \subfloat[\centering BLoCProvider i modeli događaja]{{\includegraphics[width=.486\textwidth]{bloc_provider.png} }}
+      \subfloat[\centering Primjer BLoCBuilder-a]{{\includegraphics[width=.45\textwidth]{bloc_builder.png} }}
+      \caption{Implementacija BLoC-a}
+      \label{fig:BLoC}
+\end{figure}
+U implementaciji se to postiže uz pomoć 3 stvari: klase koje predstavljaju događaje (u njima se mogu prenositi
+potrebni podaci) (slika \ref{fig:BLoC} (a)), \textit{BlocProvider} (slika \ref{fig:BLoC} (a))
+i \textit{BlocBuilder} (slika \ref{fig:BLoC} (b)). BlocProvider predstavlja dio \textit{BLoC-a}
+koji se bavi presretanjem svakog ulaznog događaja, obrađivanjem i slanjem u izlazni tok, a BlocBuilder
+služi za izgradnju komponente na osnovu trenutnog događaja u izlaznom toku.
+
 \section{Ekrani}
-\section{BLoC}
+U radnom okviru flutter ne postoji razlika između ekrana (eng \textit{screen}) i na primjer teksta jer je sve definirano
+kao takozvani \textit{widget}, ali iz semantičkih razloga svaku skupinu \textit{widgeta} koja
+se prikazuje u istome trenutku nazivamo ekran, također se broj ekrana često uzima kao stupanj
+složenosti aplikacije. Tako ovaj rad ima 9 ekrana koji nisu dostupni svim korisnicima nego
+su podijeljeni po ulogama.
+
+\subsection{Ekran dobrodošlice, prijave i registracije}
+Ekran dobrodošlice (slika \ref{fig:WelcomeLogin} (a)) nema nekakvu posebnu namijenu osim estetske to jest da bi
+korisniku ostavila dobar dojam. Također karakteristika ekrana dobrodišlice je
+da se prikazuje samo jednom i to kada se aplikacija prvi puta pokreće na trenutnom
+uređaju. To svojstvo se postiže podizanjem zastavice u memoriji uređaja uz pomoć
+sučelja \textit{"SharedPreferences"}.
+\begin{figure}[h]
+      \centering
+      \subfloat[\centering Ekran dobrodošlice]{{\includegraphics[width=.26\textwidth]{welcome_screen.jpg} }}
+      \subfloat[\centering Ekran prijave]{{\includegraphics[width=.26\textwidth]{login_screen.jpg} }}
+      \subfloat[\centering Ekran prijave u slučaju pogreške]{{\includegraphics[width=.26\textwidth]{login_failed.jpg} }}
+      \caption{Ekran dobrodošlice i prijave}
+      \label{fig:WelcomeLogin}
+\end{figure}
+Ekran za prijavu sadrži 2 polja za unos i 3 gumba (slika \ref{fig:WelcomeLogin} (b)). Prvo polje je polje za unos
+korisničkog imena ili e-pošte, drugo polje je polje za unos pripadajuće lozinke. Ukoliko je uneseno
+krivo korisničko ime ili lozinka prikazuje se odgovarajuća poruka (slika \ref{fig:WelcomeLogin} (c)). Nadalje
+prvi gumb je gumb za preskakanje prijave i prelazak na stranicu sa svim receptima, drugi gumb je gumb
+za potvrdu prijave, a treći gumb je gumb za prelazak na ekran za registraciju.
+\\\\
+Ekran za registraciju sadrži 5 polja za unos: unos računa elktroničke pošte, unos
+korisničkog imena, unos lozinke, potvrda lozinke i odabir profilne slike koje je, za
+razliku od ostalih opcionalno polje te 2 gumba (slika \ref{fig:Register} (a)). Karakteristika polja za lozinku je da ima posebne
+validacijske kriterije, koji zahtijevaju da lozinka mora
+sadržavati barem 8 znakova, jedno veliko slovo i jedan specijalni znak. Nakon uspješne registracije
+prikaže se poruka da je registracija uspješno izvršena (slika \ref{fig:Register} (b))i da je potrebno izvršiti potvrdu identiteta
+putem e-mail račun-a koji je bio unesen.
+\begin{figure}[h]
+      \centering
+      \subfloat[\centering Ekran neuspješne registracije]{{\includegraphics[width=.32\textwidth]{register_failed.jpg} }}
+      \subfloat[\centering Ekran uspješne registracije]{{\includegraphics[width=.32\textwidth]{register_success.jpg} }}
+      \caption{Ekran za registraciju}
+      \label{fig:Register}
+\end{figure}
+\subsection{Ekran za pregled svih recepata}
+\subsection{Ekran za pregled pojedinog recepta}
+\subsection{Ekran za dodavanje novog recepta}
+\subsection{Ekran za upravljanje korisnicima}
 
 \chapter{Zaključak}
 Zaključak.
