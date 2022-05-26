@@ -378,6 +378,7 @@ pretpostavljenu maksimalnu veličinu zahtjeva. To je postignuto uz pomoć maven-
 \chapter{Korisnička strana}
 Korisnička strana je pisana u programskom jeziku dart, pritom koristeći
 Flutter radni okvir. Struktura projekta je napravljena potpuno slobodno (slika \ref{fig:Frontend}(a)).
+Za komunikaciju sa poslužiteljskom stranom korišten je paket flutter-graphql.
 Za upogonjavanje aplikacije korištena je github-ova mogućnost
 stvaranja izdanja. Upogonjavanje je obavljeno uz pomoć github actions (slika \ref{fig:Frontend})(b).
 U svrhe razvoja korišteno je okruženje VSCode.
@@ -397,6 +398,12 @@ svim navedenim uređajima. Također jedna od prednosti tog ovog radnog okvira je
 dinamične aplikacije jer se koristi upravljanje stanjem (eng. \textit{state managment}). Postoji više načina
 kako pristupiti ovoj funkcionalnosti, a u ovome radu korištem je \textit{BLoC} pristup koji je ujedno
 i google-ov preporučeni pristup.
+\\\\
+Također se sadržaj dinamički mijenja u ovisnosti o upitima na poslužiteljsku stranu i ta dinamičnost
+se postiže uz pomoć \textit{widgeta} namijenjenih za slanje graphql upita koji se zovu Query i Mutation.
+Navedeni \textit{widgeti} imaju jednu funkciju koja se poziva svaki put kada se promjeni stanje upita i
+zove se \textit{builder}. Toj funkciju se kao ulazni parametar šalje rezultat i stanje izvođenja upita to jest mutacije
+i dužnost joj je vratiti \textit{widget} koji će se prikazati na ekranu.
 
 \subsection{BLoC}
 BLoC (Business Logic Components) je obrazac za upravljanjem stanja aplikacije. Karakteristika ovog obrasca
@@ -455,13 +462,81 @@ putem e-mail račun-a koji je bio unesen.
       \centering
       \subfloat[\centering Ekran neuspješne registracije]{{\includegraphics[width=.32\textwidth]{register_failed.jpg} }}
       \subfloat[\centering Ekran uspješne registracije]{{\includegraphics[width=.32\textwidth]{register_success.jpg} }}
-      \caption{Ekran za registraciju}
+      \subfloat[\centering Ekran za upravljanje korisnicima]{{\includegraphics[width=.32\textwidth]{bans.jpg} }}
+      \caption{Ekrani za registraciju i upravljanje korisnicima}
       \label{fig:Register}
 \end{figure}
+
 \subsection{Ekran za pregled svih recepata}
+Ekran za pregled svih recepata će uvijek biti prvi ekran koji će se prikazati ukoliko postoji
+prijavljeni korisnik, a to se također postiže uz pomoć dijeljenih tajni (eng. SharedPreferences).
+Estetski gledano ekran će biti jednak i za korisnike (prijavljene ili neprijavljene) i za administratore jedine dvije
+razlike su u prikazu gumba za dodavanje u favorite i u
+u navigacijskoj traci koja sadržava samo one gumbove koji vode do ekrana koji je dozvoljen
+trenutno prijavljenom to jest neprijavljenom korisniku (slika \ref{fig:All recipes}).
+\\\\
+U dijeljenje tajne se spremaju podatci o trenutnom korisniku kao na primjer: korisničko ime, identifikacijski
+broj i JWT token za autentifikaciju i autorizaciju.
+To je bitno jer će se prije svakog upita, koji se obavlja daljnjom interakcijom
+korisnika i aplikacije, u HTTP zaglavlje staviti spomenuti token uz pomoć kojeg će
+poslužiteljska strana obaviti autentifikaciju i autorizaciju. Ukoliko korisnik ne bude uspješno
+autoriziran biti će odjavljen i preusmjeren na ekran za prijavu sa odgovarajućom porukom.
+\\\\
+Na ovom ekranu možemo vidjeti sve recepte koji sa nalaze u bazi podataka. Recepti su podijeljeni u stranice,
+a svaka stranica sadrži 10 recepata, ukoliko postoji više od 10 recepata na dnu ekrana će se pojaviti
+jedan poseban \textit{widget} koji služi za prelazak na sljedeću, prethodnu ili neku određenu stranicu.
+Svaki recept je opisan autorom i proflinom slikom autora, pozadinskom slikom recepta, nazivom,
+prosječnom ocjenom i vremenom potrebnim za pripremu. Klikom na bilo koji opisnik recepta se otvara novi ekran,
+a to je ekran za pregled pojedinog recepta. Na kraju postoji i gumb koji služi za prisanje recepta i koji
+je prikazan samo u slučaju da je recept pripada trenutno prijavljenom korisniku ili je trenutno prijavljeni
+korisnik zapravo administrator.
+\begin{figure}[h]
+      \centering
+      \subfloat[\centering Ekran sa svim receptima za neprijavljenog korisnika]{{\includegraphics[width=.25\textwidth]{not_loggedin.jpg} }}
+      \subfloat[\centering Ekran sa svim receptima za prijavljenog korisnika]{{\includegraphics[width=.25\textwidth]{user_all_recipes.jpg} }}
+      \subfloat[\centering Ekran sa favoritima]{{\includegraphics[width=.25\textwidth]{favorites.jpg} }}
+      \subfloat[\centering Ekran za odobravanje recepata]{{\includegraphics[width=.25\textwidth]{approovals.jpg} }}
+      \caption{Ekrani sa receptima}
+      \label{fig:All recipes}
+\end{figure}
+
 \subsection{Ekran za pregled pojedinog recepta}
+Ekran za pregled pojedinog recepta će prikazivati sve podatke o receptu, a to su:
+sastojci, koraci pripreme, svi videozapisi i fotografije
+koje se nalaze u scrolabilnoj listi s kojom se interagira pokretima lijevo i desno, te dodatno ukoliko
+trenutno prijavljeni korisnik ima dovoljne ovlasti moći će interagirati sa gumbom za ocijenjivanje i
+poljem za unos komentara
+\\\\
+Ovaj ekran je također poprilično jednak i za obične korisnike i za administratore,
+sa razlikom da administratori imaju pristup gumbu za odobravanje ili onemogućavanje recepta i ne prijavljeni
+korisnici nemaju pristup gumbu za ocjenjivanje i komentiranje (slika \ref{fig:Single recipe} (c) i (d)).
+\begin{figure}[h]
+      \centering
+      \subfloat[\centering Prvi dio ekrana za dodavanje recepta]{{\includegraphics[width=.25\textwidth]{new_recipe1.jpg} }}
+      \subfloat[\centering Drugi dio ekrana za dodavanje recepta]{{\includegraphics[width=.25\textwidth]{new_recipe2.jpg} }}
+      \subfloat[\centering Prvi dio ekrana za detalje o receptu]{{\includegraphics[width=.25\textwidth]{single_recipe_user.jpg} }}
+      \subfloat[\centering Drugi dio ekrana za detalje o receptu]{{\includegraphics[width=.25\textwidth]{images_videos_comments.jpg} }}
+      \caption{Ekrani za pojedini recept}
+      \label{fig:Single recipe}
+\end{figure}
+
 \subsection{Ekran za dodavanje novog recepta}
+Ekran za dodavanje novog recepta je dostupan samo prijavljenim korisnicma koji nisu administratori.
+Ovaj ekran se sastoji od velikog broja polja za unos i odabir videozapisa i fotografija te gumba za potvrdu.
+Karakterisitika svakog polja je da ne smije biti prazno i ne smije sadržavati više znakova od broja koji
+je određen bazom podataka. Posebne sekcije su sekcije za unos sastojaka, koraka pripreme, videozapisa i
+fotagrafija jer su sve te sekcije modelirane BLoC obrascom jer ne možemo unaprijed znati koliko
+takivih objekata korisnik želi dodati pa je bilo potrebno dodati opciju za dinamičko dodavanje
+polja za unos (slika \ref{fig:Single recipe} (a) i (b)).
+
 \subsection{Ekran za upravljanje korisnicima}
+Posljedni ekran je ekran za upravljanje korisnicima je dostupan samo administratorima. Na ovoj stranici se
+nalazi popis svih korisnika koji su također podijeljeni u stranice gdje svaka stranica sadrži 10 korisnika
+i straničenje funkcionira na potupno jednak način kao i straničenje za recepte.
+Jedan korisnik je opisan svojim korisničkom imenom profilnom slikom i gumbom za suspendiranje to jest
+odsuspendiranje korisnika. Nema opcije za prisanje korisnika jer bi to značilo da bi pojedini recepti
+ostali bez autora ili bi bili obrisani iz baze što nije poželjna funkcionalnost. Pa je korinsiku
+samo onemogućena prijava u sustav (slika \ref{fig:Register} (c)).
 
 \chapter{Zaključak}
 Zaključak.
