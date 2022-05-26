@@ -539,23 +539,68 @@ ostali bez autora ili bi bili obrisani iz baze što nije poželjna funkcionalnos
 samo onemogućena prijava u sustav (slika \ref{fig:Register} (c)).
 
 \chapter{Zaključak}
-Zaključak.
+Mobilne aplikacije su postale važan dio modernog društva. Iz tog razloga ih je potrebno napraviti što je
+bolje moguće. Za takve svrhe postoje razni obrasci, načela programiranja, stilovi i tehnike: neke od
+korištenijih su MVC obrasac, podjela na poslužiteljsku stranu, korisničku stranu i bazu podataka,
+native pristup razvoju aplikacija, oblak, GraphQL stil i slično.
+\\\\
+Najbitnija stvar je da krajnji korisnik bude zadovoljan, a to se postiže uz ergonomski dizajn aplikacije,
+brzinu i sigurnost. Zato postoje alati kao: flutter uz pomoć kojeg se lako napravi aplikacija koja
+je laka za koristit, SpringBoot s kojim se lako implementira sigurnost i podjela uloga,  GraphQL koji
+nudi brzinu i optimalnost aplikacije te oblak uz pomoć kojeg sve postaje javno dostupno.
 
 \bibliography{literatura}
 \bibliographystyle{fer}
 
 \begin{sazetak}
-      Sažetak na hrvatskom jeziku.
-
-      \kljucnerijeci{Ključne riječi, odvojene zarezima.}
+      Mobilne aplikacije su danas vrlo popularna stvar i u posljednje vrijeme popularnost sve više raste.
+      Uzrok tomu je brzina i lakoća korištenja u usporedbi za klasičnim web aplikacijama. Iako su mobilne
+      i web aplikacije u puno stvari slične kao na primjer MVC obrazac ili razdvajanje na poslužiteljsku i
+      korisničku stranu postoji i puno razlika a neke su nemogućnost korištenja SOAP protokola u mobilnim
+      aplikacijama, odsutnost sjednica, različiti jezici i radni okviri na korisničkoj strani i slično.
+      \\\\
+      Kao zamjena za SOAP protokol se vrlo često koristi REST arhitekturni stil, ali postoje i različiti
+      stilovi kao na primjer GraphQL. GraphQL predstavlja stil u kojem se korisničkoj strani dopušta
+      potupuna sloboda u biranju podataka, njihovom formatu i obliku. Njegova karakteristika je što
+      rješava problem dohvata previše podatak, problem dohvata premalo podataka, problem velikog broja
+      završnih točki na poslužitelju\dots U spring boot radnom okviru se GraphQL vrlo lako implementira uz
+      pomoć ovisnosti prema graphql-spring-boot-starter i graphql-java-tools. Naime potrebno je samo definirati
+      shemu i napraviti takozvane resolvere.
+      \\\\
+      Sada zbog GraphQL-a korisnička strana vrlo lako dohvati podatke koji su joj potrebni. Na primjer
+      u flutter radnom okviru uz pomoć paketa flutter-graphql koji sadrži \textit{widget-e} koji su
+      zaduženi za komunikaciju sa graphql poslužiteljem. Također GraphQL dopušta komunikaciju uz pomoć tokena
+      pa je tako uz na primjer \textit{JWT token} vrlo lako obaviti autorizaciju i autentifikaciju te spremiti
+      taj token u dijeljene tajne i na uz pomoć njega obaviti filtriranje ekrana koje trenutni korisnik smije
+      vidjeti.
+      \\\\
+      \kljucnerijeci{Mobilna aplikacija, baza podataka, poslužiteljska strana, korisnička strana, oblak, PostgreSQL, SpringBoot, GraphQL, Flutter, Native, AWS .}
+      \\\\\\\\
 \end{sazetak}
-
 % TODO: Navedite naslov na engleskom jeziku.
 \engtitle{Mobile application for recipe managment}
 \begin{abstract}
-      Abstract.
+      Mobile applications are a very popular thing nowadays and since the past few years the popularity has
+      grown by quite a lot. That is becouse they are very easy to use and very fast in comparison with
+      web applications. Web and mobile applications have a lot in common like: MVC pattern or splitting
+      the application on the database, backend, frontend, but they also have some differences like the
+      absence of SOAP protocol in mobile applications, no sessions in mobile applications, different
+      coding languages and frameworks on the frontend and so on.
+      \\\\
+      A commonly used substitute for the SOAP protocol is REST architetural style, but there are some other
+      options like GraphQL. GraphQL is a style that allows the frontent do define which data to fetch
+      and in which shape and form. Its characteristic is that it solves the problem of overfetching, underfetching,
+      then the problem of lot of endpoints\dots In the SpringBoot framework the GraphQL functionality
+      is very easily implemented with the graphql-spring-boot-starter and graphql-java-tools dependency.
+      The only thing that is neccessary is a schema and some resolvers.
+      \\\\
+      Now becouse of GraphQL the frontend can fetch the neccessary data without any problems. For example
+      in the flutter framework with the help of flutter-graphql package that contains widgets that
+      are used for communication with a GraphQL server. Also GraphQL allows communications with tokens
+      so it is possible to use JWT tokens for authorization and autentification, which will be saved
+      in SharedPreferences and used for filtering the screens that the current user can see.
 
-      \keywords{Keywords.}
+      \keywords{Mobile application, databse, backend, frontend, cloud, PostgreSQL, SpringBoot, GraphQL, Flutter, Native, AWS.}
 \end{abstract}
 
 \end{document}
