@@ -43,8 +43,6 @@ jobs:
         working-directory: ./frontend/zavrsni_rad
       - run: flutter build apk
         working-directory: ./frontend/zavrsni_rad
-      - run: flutter build appbundle
-        working-directory: ./frontend/zavrsni_rad
       - name: Push to Releases
         uses: ncipollo/release-action@v1
         with:
