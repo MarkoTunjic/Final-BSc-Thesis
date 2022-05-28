@@ -123,11 +123,16 @@ class _FilterWidgetState extends State<FilterWidget> {
                                           ),
                                         ),
                                       ),
-                                      const Flexible(
-                                        child: Text(
-                                          "(60% of ingredients must match for a recipe to be shown)",
-                                          overflow: TextOverflow.visible,
-                                        ),
+                                      Flex(
+                                        direction: Axis.horizontal,
+                                        children: const [
+                                          Flexible(
+                                            child: Text(
+                                              "(60% of ingredients must match for a recipe to be shown)",
+                                              overflow: TextOverflow.visible,
+                                            ),
+                                          )
+                                        ],
                                       ),
                                       InputFieldWidget(
                                         hintText: "Ingredient name",
