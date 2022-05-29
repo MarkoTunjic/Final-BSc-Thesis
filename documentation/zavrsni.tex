@@ -48,8 +48,8 @@ poslužiteljskoj strani i dalje koriste stvari kao Spring, ASP.NET i slični okv
 a za bazu upravitelji po izboru na primjer PostgreSQL, MSSQL, MySQL\dots
 Iz tog razloga je još uvijek popularan oblikovni obrazac MVC (Model-View-Controller).
 \\\\
-Jedini problem je što mobilne aplikacije nažalost ne podržavaju HTTP i SOAP protokol
-na način kao i web preglednici pa se mobilne aplikacije koriste novijim načinom prijenosa
+Radi jednostavnosti se mobilne aplikacije ne koriste starijim protoklima kao na primjer
+SOAP nego se koriste novijim načinom prijenosa
 podataka između upravljačkog dijela aplikacije i korisničkog dijela aplikacije.
 To je JSON format podataka s odgovarajućim JSON zahtjevima prema poslužitelju.
 Uz JSON se koristi neki od arhitekturnih stilova kao REST ili GraphQL koji su alternativa
@@ -560,7 +560,7 @@ nudi brzinu i optimalnost aplikacije te oblak uz pomoć kojeg sve postaje javno 
       Mobilne aplikacije su danas vrlo popularna stvar i u posljednje vrijeme popularnost sve više raste.
       Uzrok tomu je brzina i lakoća korištenja u usporedbi za klasičnim web aplikacijama. Iako su mobilne
       i web aplikacije u puno stvari slične kao na primjer MVC obrazac ili razdvajanje na poslužiteljsku i
-      korisničku stranu postoji i puno razlika a neke su nemogućnost korištenja SOAP protokola u mobilnim
+      korisničku stranu postoji i puno razlika a neke su napuštanje SOAP protokola u mobilnim
       aplikacijama, odsutnost sjednica, različiti jezici i radni okviri na korisničkoj strani i slično.
       \\\\
       Kao zamjena za SOAP protokol se vrlo često koristi REST arhitekturni stil, ali postoje i različiti
