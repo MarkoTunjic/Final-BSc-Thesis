@@ -60,11 +60,14 @@ public class UsersService {
         if (identifier.contains("@")) {
             Optional<Users> optionalUser = userRepository.findByeMail(identifier);
             if (optionalUser.isEmpty())
-                throw new IllegalStateException("Invalid username or password");
+                throw new IllegalStateException("Bad credentials");
             user = optionalUser.get();
             username = user.getUsername();
         } else {
-            user = userRepository.findByUsername(identifier).get();
+            Optional<Users> optionalUser = userRepository.findByUsername(identifier);
+            if (optionalUser.isEmpty())
+                throw new IllegalStateException("Bad credentials");
+            user = optionalUser.get();
             username = identifier;
         }
 
