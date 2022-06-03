@@ -172,7 +172,7 @@ public class RecipeService {
 
     public Recipes getRecipesForFilter(Filter filter) {
         List<Recipe> recipes;
-        String nameLike = filter.getNameLike() == null ? "" : filter.getNameLike();
+        String nameLike = filter.getNameLike() == null ? "" : filter.getNameLike().toLowerCase();
         int cookingDuration = filter.getMaxCookingDuration() == null ? Integer.MAX_VALUE
                 : filter.getMaxCookingDuration();
         if (filter.getAuthorId() == null)

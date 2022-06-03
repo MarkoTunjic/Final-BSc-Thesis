@@ -23,9 +23,9 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
 
     Users findByConfirmationCode(String confirmationCode);
 
-    @Query(value = "SELECT * FROM users WHERE username LIKE %?2% ORDER BY id LIMIT 10 OFFSET ?1", nativeQuery = true)
+    @Query(value = "SELECT * FROM users WHERE LOWERCASE(username) LIKE %?2% ORDER BY id LIMIT 10 OFFSET ?1", nativeQuery = true)
     List<Users> getTen(Integer offset, String nameLike);
 
-    @Query("SELECT COUNT(u) FROM Users u WHERE u.username LIKE %?1%")
+    @Query("SELECT COUNT(u) FROM Users u WHERE LOWERCASE(u.username) LIKE %?1%")
     Long countByName(String nameLike);
 }

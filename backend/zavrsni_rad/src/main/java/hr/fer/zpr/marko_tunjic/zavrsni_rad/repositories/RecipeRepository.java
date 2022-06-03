@@ -13,26 +13,26 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
         List<Recipe> findByUserId(Long userId);
 
-        @Query("SELECT r FROM Recipe r WHERE r.recipeName LIKE %?1% AND r.isApprooved=?2 AND r.cookingDuration<=?3")
+        @Query("SELECT r FROM Recipe r WHERE LOWER(r.recipeName) LIKE %?1% AND r.isApprooved=?2 AND r.cookingDuration<=?3")
         List<Recipe> findByApprovedAndNameLikeAndCookingDuration(String nameLike, Boolean isApproved,
                         Integer cookingDuration);
 
-        @Query("SELECT r FROM Recipe r WHERE r.recipeName LIKE %?1% AND r.isApprooved=?2 AND r.cookingDuration<=?3 AND r.user.id=?4")
+        @Query("SELECT r FROM Recipe r WHERE LOWER(r.recipeName) LIKE %?1% AND r.isApprooved=?2 AND r.cookingDuration<=?3 AND r.user.id=?4")
         List<Recipe> findByApprovedAndNameLikeAndCookingDurationAndUserId(String nameLike, Boolean isApproved,
                         Integer cookingDuration,
                         Long userId);
 
-        @Query(value = "SELECT * FROM recipe WHERE is_approoved=?2 AND recipe_name LIKE %?3% ORDER BY id LIMIT 10 OFFSET ?1", nativeQuery = true)
+        @Query(value = "SELECT * FROM recipe WHERE is_approoved=?2 AND LOWER(recipe_name) LIKE %?3% ORDER BY id LIMIT 10 OFFSET ?1", nativeQuery = true)
         List<Recipe> getTen(Integer offset, Boolean approved, String nameLike);
 
-        @Query(value = "SELECT COUNT(*) FROM recipe WHERE recipe_name LIKE %?1% AND is_approoved=?2", nativeQuery = true)
+        @Query(value = "SELECT COUNT(*) FROM recipe WHERE LOWER(recipe_name) LIKE %?1% AND is_approoved=?2", nativeQuery = true)
         Long countByNameAndApprooved(String nameLike, Boolean approved);
 
         @Query(value = "SELECT recipe.* " +
                         "FROM recipe INNER JOIN favorite " +
                         "ON recipe.id=favorite.recipe_id " +
                         "WHERE favorite.user_id=?1 AND recipe.is_approoved=true " +
-                        "AND recipe.recipe_name LIKE %?2% AND recipe.cooking_duration<=?3 " +
+                        "AND LOWER(recipe.recipe_name) LIKE %?2% AND recipe.cooking_duration<=?3 " +
                         "ORDER BY recipe.id", nativeQuery = true)
         List<Recipe> getFavorites(Long userId, String nameLike, Integer cookingDuration);
 }
