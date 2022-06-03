@@ -125,7 +125,7 @@ public class UsersService {
     }
 
     public UsersResponse getUsers(Filter filter) {
-        String nameLike = filter.getNameLike() == null ? "" : filter.getNameLike();
+        String nameLike = filter.getNameLike() == null ? "" : filter.getNameLike().toLowerCase();
         List<Users> users = userRepository.getTen((filter.getIndex() - 1) * USERS_PER_PAGE, nameLike);
         Double numberOfPages = Math.ceil(userRepository.countByName(nameLike) / (USERS_PER_PAGE * 1.d));
         return new UsersResponse(users, numberOfPages.intValue(), filter.getIndex());
