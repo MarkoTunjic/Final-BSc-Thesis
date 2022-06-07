@@ -31,40 +31,42 @@
 \chapter{Uvod}
 Internet i web stranice su već dugo vremena dio ljudske svakodnevice no zbog
 današnje potrebe za brzinom i efikasnošću sve popularnije su mobilne aplikacije. Naime one
-su vrlo jednostavne za koristiti jer je potrebno samo izvaditi mobitel
-kliknuti na aplikaciju i sve je spremno. Upravo zato danas puno web aplikacija
+su vrlo jednostavne za koristiti jer je sva potrebna funkcionalnost na dohvat ruke.
+Upravo zato danas velik broj web aplikacija
 također ima i svoju mobilnu inačicu.
 \\\\
-Problem kod mobilnih uređaja je što jednom napisani programski kod u jezicima kao na primjer:
+Problem kod mobilnih uređaja je što jednom napisani programski kod u jezicima poput:
 java, kotlin ili swift neće biti moguće pokretati na različitim operacijskim sustavima.
-Tako se do danas pojavilo nekolicina jezika
-i radnih okvira za pisanje programskog koda koji će se moći pokretati
-na većini operacijskih sustava, a neki od poznatijih su flutter i react native.
+Iz tog razloga se tijekom godina razvila nekolicina
+i radnih okvira za pisanje programskog koda koji će se može pokretati
+na većini operacijskih sustava, a neki od poznatijih su Flutter i React Native.
 Takav pristup izradi mobilnih aplikacija se naziva nativni \textit{(eng. native)} pristup.
 \\\\
-Unatoč tranziciji sa preglednika na mobilne uređaje nije nestala potreba
+Unatoč tranziciji s preglednika na mobilne uređaje nije nestala potreba
 za poslužiteljskim dijelom i bazom podataka, jer takva arhitektura omogućava
-komunikaciju i dijeljenje sadržaja među ljudima širom svijeta. Pa se tako na
+komunikaciju i dijeljenje sadržaja ljudima širom svijeta. Tako se na
 poslužiteljskoj strani i dalje koriste Spring, ASP.NET i slični okviri,
 a za bazu podataka upravitelji po izboru na primjer PostgreSQL, MSSQL, MySQL\dots
-Stoga je još uvijek popularan oblikovni obrazac model-pogled-upravljač \textit{(eng. Model-View-Controller)}
-koji propisuje oblikovanje arhitekture na način da: model ima ulogu
+Zbog ovakvog pristupa je još uvijek popularan oblikovni obrazac model-pogled-upravljač \textit{(eng. Model-View-Controller)}
+koji propisuje oblikovanje arhitekture na način da model ima ulogu
 spremanja podataka, pogled ulogu prikaza podataka, a upravljač ulogu dohvata podataka.
 \\\\
-Radi jednostavnosti se mobilne aplikacije ne koriste starijim protokolima kao na primjer
-SOAP i XML formatom podatka nego se koriste novijim načinom prijenosa
-podataka između poslužiteljskog dijela aplikacije i korisničkog dijela aplikacije.
-To je JSON format podataka s odgovarajućim JSON zahtjevima prema poslužitelju.
+Radi jednostavnosti mobilne aplikacije ne koriste starije protokolie (kao na primjer
+SOAP i XML) formatom podatka, nego se koriste novijim načinom prijenosa
+podataka između poslužiteljskog i korisničkog dijela aplikacije.
+To je JSON format (ref: \cite{json}) podataka s odgovarajućim JSON zahtjevima prema poslužitelju.
+Objekti u JSON formatu izgledaju kao mape gdje je ključ ime varijable, a vrijednost je
+upravo i vrijednost te varijable.
 Uz JSON se koristi neki od arhitekturnih stilova kao REST ili GraphQL koji su alternativa
-za SOAP protokol i s njime mogu i web i mobilne aplikacije uspješno i jednostavno uspostavljati komunikaciju.
+za SOAP protokolu te uz pomoć navedenih stilova web i mobilne aplikacije mogu uspješno i jednostavno uspostavljati komunikaciju.
 \\\\
-Zbog potrebe da poslužiteljska strana i baza podataka moraju biti uvijek dostupni
-pojavio se \textit{"oblak"} i usluge u oblaku \textit{(eng. Cloud, Cloud Services)}.
+Radi zahtjeva da poslužiteljska strana i baza podataka moraju biti uvijek dostupni
+pojavio se \textit{"oblak"} i usluga u oblaku \textit{(eng. Cloud, Cloud Services; ref: \cite{CloudServices})}.
 Uz pomoć tih usluga vrlo je lako pokrenuti instancu potrebne baze i poslužitelja
-u \textit{"oblaku"} koje će biti globalno i neprestano dostupane. Kao pružatelji takvih usluga ističu se:
-AWS, Heroku, Azure i tako dalje.
+u \textit{"oblaku"} koja će biti globalno i neprestano dostupna. Kao pružatelji takvih usluga ističu se
+AWS, Heroku, Azure i drugi.
 \\\\
-Cilj ovoga rada bio je izraditi mobilnu aplikaciju koja će korisnicima olakšati: pristup,
+Cilj ovoga rada je izraditi mobilnu aplikaciju koja će korisnicima olakšati pristup,
 spremanje, dijeljenje i pretraživanje recepata. Sadržaj je podijeljen u 4 dijela u kojima
 će se opisati zahtjevi, način izrade svakog sloja aplikacije (baza podataka,
 poslužiteljski i korisnički dio), korištene tehnologije i konačni proizvod.
@@ -77,72 +79,70 @@ definiraju ograničenja na funkcionalne zahtjeve,
 i zahtjeve domene primjene koji proizlaze iz načina primjene sustava.
 \section{Korisnički zahtjevi}
 \begin{enumerate}
-      \item \textbf{\underline{Korisnici aplikacije:}} postoje 3 vrste korisnika:
-            anonimni, prijavljeni i administratori, a ovisno o vrsti korisnika kojoj pripada, svaki korisnik ima
-            različite ovlasti i uloge.
+      \item \textbf{\underline{Korisnici aplikacije:}} Ovisno o dostupnim funkcionalnostima i ovlastima,
+      \item u sustavu za recepte razlikujemo 3 glavna tipa korisnika: anonimne, prijavljenje i administratore
       \item \textbf{\underline{Anonimni korisnici:}} mogu samo pregledavati i pretraživati
             postojeće recepte.
       \item \textbf{\underline{Prijavljeni korisnici:}} uz funkcionalnosti
-            anonimnih korisnika, prijavljeni korisnici mogu također i dodavati vlastite recepte, komentirati,
+            anonimnih korisnika, prijavljeni korisnici mogu također i dodavati vlastite recepte, ostavljati komentare,
             ocjenjivati ocjenama od 0 do 5 i dodavati željene recepte u listu omiljenih recepata.
       \item \textbf{\underline{Administratori:}} njihova uloga je održavanje
-            aplikacije primjerenom, zato će recepti prije negoli postanu javno vidljivi
-            morati biti odobreni od strane administratora.
+            aplikacije primjerenom, zato će recepti morati biti odobreni prije negoli postanu javno vidljivi
+             od strane administratora.
 \end{enumerate}
 
 \section{Funkcionalni zahtjevi}
 \begin{enumerate}
       \item \textbf{\underline{Registracija:}} korisnik će pri registraciji morati predati neku vlastitu
-            postojeću e-mail adresu na koju će primati liste za kupnju od recepata koje dodaju u svoje favorite.
-      \item \textbf{\underline{Lista za kupnju:}} prilikom dodavanja recepta u favorite
-            korisnik na vlastiti e-mail dobije poruku s listom potrebnih sastojaka koja
+            postojeću e-mail adresu na koju će primati liste za kupnju od recepata koje dodaju u svoj popis omiljenih.
+      \item \textbf{\underline{Lista za kupnju:}} prilikom dodavanja recepta na popis omiljenih
+            korisnik na vlastiti e-mail prima poruku s popisom potrebnih sastojaka koja
             može poslužiti kao lista za kupnju.
-      \item \textbf{\underline{Pretraživanje recepata:}} po nazivu i/ili po sastojcima pri čemu se pretraga po
+      \item \textbf{\underline{Pretraživanje recepata:}} recepti se pretražuju po nazivu i/ili po sastojcima pri čemu se pretraga po
             sastojcima može obaviti po sastojcima koje recept ne smije sadržavati (što je bitno zbog
             alergija) ili po sastojcima koje korisnik ima pri ruci.
       \item \textbf{\underline{Upravljanje receptima:}} ako korisnici smatraju da su objavili komentar ili recept
             koji nisu htjeli objaviti moći će ih obrisati. Također ako smatraju da je neki komentar na njihovom receptu
             neprikladan i njega će moći obrisati.
       \item \textbf{\underline{Upravljanje ponašanjem korisnika:}} ako administratori smatraju da je bilo koji
-            recept ili komentar potpuno neprikladan mogu ga obrisati.
+            recept ili komentar neprikladan mogu ga obrisati.
 \end{enumerate}
 
 \section{Nefunkcionalni zahtjevi}
 \begin{enumerate}
       \item \textbf{\underline{Podaci koji moraju biti priloženi prilikom izrade recepta:}} naziv, opis, koraci pripreme,
-            sastojci. Također postoji mogućnost da se priloži više fotografija
+            sastojci. Dodatno postoji mogućnost da se priloži više fotografija
             i/ili videozapisa koji pobliže opisuju recept i pomažu korisnicima pri kuhanju.
       \item \textbf{\underline{Veličina podataka:}} duljina raznih podataka koje korisnik šalje će biti
-            određena dizajnom baze podataka. Veličina fotografija i videozapisa će biti određena
-            HTTP poslužiteljem.
-      \item \textbf{\underline{Ekran dobrodošlice:}} iz estetskih razloga je potrebno napraviti
+            određena dizajnom baze podataka. Maksimalna veličina fotografija i videozapisa će biti određena
+            u konfiguracijskoj datoteci HTTP poslužitelja.
+      \item \textbf{\underline{Ekran dobrodošlice:}} iz estetskih razloga potrebno je napraviti
             ekran dobrodošlice
-      \item \textbf{\underline{Ekrani za pregled favorita:}} taj ekran
-            je koristan jer olakšava pronalazk svih favorita prijavljenim korisnicima.
-      \item \textbf{\underline{Ekran za pregled neodobrenih recepata:}} taj ekran
-            je koristan jer olakšava pronalazak svih neodobrenih recepata administratoru koji je trenutno aktivan.
+      \item \textbf{\underline{Ekrani za pregled favorita:}} slući kako bi olakšao pronalazak omiljenih recepata prijavljenim korisnicima
+      \item \textbf{\underline{Ekran za pregled neodobrenih recepata:}} olakšava pronalazak svih neodobrenih recepata administratoru koji je trenutno aktivan.
 \end{enumerate}
 
 \section{Zahtjevi domene primjene}
 \begin{enumerate}
       \item \textbf{\underline{Upravljanje korisnicma:}} neki od korisnika često imaju namjeru
-            upropaštavanja aplikacije zlouporabom vlastitih ovlasti zato će administratori imati
+            upropaštavanja aplikacije zlouporabom vlastitih ovlasti - zato će administratori imati
             mogućnost suspendiranja takvih korisnika.
 
 \end{enumerate}
 \chapter{Baza podataka}
-Kao upravitelj bazom podataka korišten je PostgreSQL i u svrhu lakšeg razvoja također
-je korištena aplikacija sa korisničkim sučeljem za izvođenje upita: PgAdmin.
+Kao upravitelj bazom podataka korišten je \textit{PostgreSQL} (ref. \cite{PostgreSQL})  i njegovo korisničko sučelje \textit{PgAdmin} (ref. \cite{PgAdmin}).
 Sama baza je relacijskog tipa i modelirana je entitetima i vezama između njih.
-Za modeliranje je korišten web alat ERDPlus. Za upogonjavanje baze je korišten \textit{AWS (Amazon Web Services)}
+Relacijske baze su skupine podataka koje imaju unaprijed određene veze. Ti podaci su organizirani kao tablice sa retcima
+i stupcima.
+Za modeliranje je korišten web alat \textit{ERDPlus} (ref. \cite{ERDPlus}). Za upogonjavanje baze je korišten \textit{AWS (Amazon Web Services)}
 točnije njihov \textit{RDS (Relational Database Service)} servis koji se koristi upravo za upogonjavanje baza podataka u oblaku.
 
 \section{Entiteti}
 Entiteti su modelirani prema zahtjevima zadatka, a veze su modelirane prema stvarnim situacijama.
 Postojeći entiteti su: recept, sastojak, korak pripreme, korisnik, uloga, videozapis i
-fotografija. Dakle postoji glavni entitet koji je središte aplikacije, a to je recept
-njega opisuju njegov identifikacijski broj, ime, opis, trajanje pripreme
-te na kraju parametar koji pokazuje je li recept odobren od strane administratora ili nije.
+fotografija. Dakle postoji glavni entitet koji je središte aplikacije, a to je recept.
+Njega opisuje identifikacijski broj, ime, opis, trajanje pripreme
+te parametar koji pokazuje je li recept odobren od strane administratora ili nije.
 Iz zahtjeva da svaki recept mora sadržavati korake pripreme i sastojke izrađena su dva entiteta
 koji upravo njih modeliraju.
 Također postoje entiteti za fotografije i videozapise jer svaki recept može imati
@@ -150,14 +150,14 @@ više videozapisa ili fotografija koji će uređivati korisničko sučelje
 i pomoći korisnicima pri odabiru prikladnog recepta.
 Korisnici su modelirani kao jedan od entiteta jer im je omogućena interakcija sa receptima
 na razne načine, a te interakcije su opisane vezama kao što su komentiranje,
-dodavanje u favorite, ocjenjivanje\dots Slika modela koji je izgrađen iz prethodnog opisa
-\textit{(eng. Entity relationship diagram)} je prikazana na slici \ref{fig:ER Diagram}
+dodavanje u favorite, ocjenjivanje i slično. Slika modela koji je izgrađen iz prethodnog opisa
+\textit{(eng. Entity relationship diagram)} prikazana je na slici \ref{fig:ER Diagram}
 
 \section{Relacije}
 Iz prethodno opisanog modela pretvorbom iz entiteta u relacijsku shemu, što omogućava
-ERDPlus alat, dobiveno je 10 tablica. One odgovaraju
-entitetima i vezama između njih, tako se pojavljuju tablice koje ne predstavljaju ni jedan entitet
-nego veze a to su: komentari, favoriti i ocjene. Da bi tablice bile dostupne aplikaciji pa tako i svim
+ERDPlus alat, dobiveno je 10 tablica koje odgovaraju
+entitetima i vezama između njih. Tako se pojavljuju tablice koje ne predstavljaju direktne entitete
+nego njihove međusobne odnose a to su komentari, favoriti i ocjene. Kako bi tablice bile dostupne aplikaciji pa tako i svim
 korisnicima bilo je potrebno upogoniti bazu u oblaku i dodati tablice odgovarajućim naredbama
 koje su vidljive u odlomku \ref{SQL kod}.
 Relacijska shema je prikaza slikom \ref{fig:Relacijska shema}.
@@ -277,9 +277,9 @@ FOREIGN KEY (recipe_id) REFERENCES Recipe(id)
 \end{figure}
 
 \chapter{Oblikovanje rješenja}
-Za ispunjavanje svih zahtjeva potrebno je 9 ekrana. Svaki ekran pristupa različitoj usluzi na poslužiteljskoj strani gdje
+Za ispunjavanje svih zahtjeva potrebno je 9 ekrana. Svaki od njih pristupa različitoj usluzi na poslužiteljskoj strani gdje
 će se provjeravati smije li trenutni korisnik pristupati tim uslugama.\\\\
-Prvi ekran je ekran dobrodošlice koji spada u nefunkcionalne zahtjeve i dodan je kao
+Prvi ekran je prikaz dobrodošlice koji spada u nefunkcionalne zahtjeve i dodan je kao
 estetski detalj te ne šalje nikakve upite (slika \ref*{fig:WelcomeLogin} (a)).\\
 Drugi ekran namijenjen je za prijavu u aplikaciju te pristupa usluzi za prijavu u sustav
 na poslužitelju (slika \ref*{fig:WelcomeLogin} (a) i (b)).
@@ -291,9 +291,9 @@ na poslužitelju (slika \ref*{fig:WelcomeLogin} (a) i (b)).
       \caption{Ekran dobrodošlice i prijave}
       \label{fig:WelcomeLogin}
 \end{figure}\newpage
-Treći ekran služi za registraciju u sustav. Na njemu će korisnik unositi zahtijevane podatke i
-poslati ih poslužitelju. Poslužitelj validira podatke i odgovora porukom koja može biti potvrdna i zahtijevati
-od korisnika potvrdu identiteta putem elektroničke pošte ili može biti poruka pogreške koja zahtijeva promjenu unesenih
+Treći ekran služi za registraciju u sustav. Na njemu će korisnik unositi zahtjevane podatke i
+poslati ih poslužitelju. Poslužitelj validira podatke i odgovora porukom koja može biti potvrdna i zahtjevati
+od korisnika potvrdu identiteta putem elektroničke pošte ili može biti poruka pogreške koja zahtjeva promjenu unesenih
 podataka (slika \ref*{fig:Register}).
 \begin{figure}[h]
       \centering
@@ -304,8 +304,8 @@ podataka (slika \ref*{fig:Register}).
 \end{figure}\\
 Na četvrtom ekranu se nalaze svi recepti koji postoje u bazi podataka i elementi koji služe za
 filtriranje recepata i dodavanje recepata u favorite.
-Ovaj ekran od poslužitelja zahtijeva sve recepte koje zadovoljavaju odabrani
-filter. Taj filter može biti prazan u slučaju zahtijevanja svih recepata ili popunjen zahtijevanim nazivom
+Ovaj ekran od poslužitelja zahtjeva sve recepte koji zadovoljavaju odabrani
+filter. Taj filter može biti prazan (u slučaju zahtjevanja svih recepata) ili popunjen zahtjevanim nazivom
 i/ili sastojcima koji smiju odnosno ne smiju biti sadržani u receptu (slika \ref*{fig:All recipes}).
 \begin{figure}[h]
       \centering
@@ -314,9 +314,9 @@ i/ili sastojcima koji smiju odnosno ne smiju biti sadržani u receptu (slika \re
       \caption{Ekran sa receptima}
       \label{fig:All recipes}
 \end{figure}\\
-Peti ekran je zapravo formular za dodavanje novog recepta na kojem postoje elementi za dodavanje
-obaveznih podataka o receptu kao na primjer naziv, opis, koraci i slično. Također postoje elementi za odabir fotografija i/ili
-videozapisa. Ti podaci će isto kao i za registraciju biti poslani poslužitelju koji ih validira i odgovara
+Peti ekran je formular za unos novog recepta na kojem postoje elementi za dodavanje
+obveznih podataka o receptu kao na primjer naziv, opis, koraci i slično. Također postoje elementi za odabir fotografija i/ili
+videozapisa. Ti podaci će isto kao i oni za registraciju biti poslani poslužitelju koji ih validira i odgovara
 porukom o uspješnosti dodavanja recepta (slika \ref*{fig:New recipe} (a) i (b)).
 \begin{figure}[h]
       \centering
@@ -327,11 +327,11 @@ porukom o uspješnosti dodavanja recepta (slika \ref*{fig:New recipe} (a) i (b))
       \caption{Ekran za dodavanje recepta i pregled recepta}
       \label{fig:New recipe}
 \end{figure}\newpage
-Na sljedećem ekranu se nalaze svi podaci o pojedinačnom receptu. Do tog ekrana se dolazi klikom na recept
+Na sljedećem ekranu nalaze se svi podaci o pojedinačnom receptu. Do tog se ekrana dolazi klikom na recept
 sa četvrtog ekrana. Uz sve podatke o receptu mora postojati i prostor za ostavljanje komentara i ocjene (slika \ref*{fig:New recipe} (a) i (b)).
 Kada
-je administrator pristupio receptu mora postojati gumb za odobravanje to jest poništavanje odobrenja recepta (slika \ref*{fig:Single recipe} (b)).
-Da bi se omogućile te funkcionalnosti mora se pristupati uslugama: dohvaćanja odabranog recepta,
+je administrator pristupio receptu mora postojati gumb za odobravanje odnosno poništavanje odobrenja recepta (slika \ref*{fig:Single recipe} (b)).
+Da bi se omogućile navedene funkcionalnosti, mora se pristupati uslugama dohvaćanja odabranog recepta,
 ostavljanju komentara, ocjenjivanja i odobravanja recepta na poslužitelju.\\
 \begin{figure}[h]
       \centering
@@ -340,11 +340,11 @@ ostavljanju komentara, ocjenjivanja i odobravanja recepta na poslužitelju.\\
       \caption{Ekrani za administratore}
       \label{fig:Single recipe}
 \end{figure}\newpage
-Sedmi ekran je specifičan samo za administratore i na njemu se nalaze svi registrirani korisnici
-i elementi koji će omogućiti slanje zahtijva za suspendiranje korisnika (slika \ref*{fig:Single recipe} (a)).\\
-Osmi i deveti ekrani su jednaki kao i četvrti ekran. Razlikuju se samo u receptima koji su prikazani.
+Sedmi ekran je rezervian samo za administratore i na njemu se nalaze svi registrirani korisnici
+i elementi koji će omogućiti slanje zahtjeva za suspendiranje korisnika (slika \ref*{fig:Single recipe} (a)).
+Osmi i deveti ekrani su jednaki kao i četvrti ekran, razlikuju se samo u receptima koji su prikazani.
 Na osmom ekranu moraju biti prikazani samo recepti koji se nalaze u favoritima za trenutno prijavljenog korisnika, a na devetom
-samo neodbreni recepti (slika \ref{fig:special}).
+samo neodobreni recepti (slika \ref{fig:special}).
 To se postiže postavljem odgovarajućeg atributa u filter i slanjem zahtjeva na poslužitelj.
 \begin{figure}[h]
       \centering
@@ -359,58 +359,60 @@ To se postiže postavljem odgovarajućeg atributa u filter i slanjem zahtjeva na
 U ovom poglavlju je opisana arhitektura, implementacija
 i korištene tehnologije na poslužiteljskoj i korisničkoj strani aplikacije.
 \section{Poslužiteljska strana}
-Poslužiteljska strana je pisana u programskom jeziku Java verzije 11 jer je najveća podržana verzija
-u odabranoj usluzi oblaka upravo java 11. Korišteni radni okvir je
-SpringBoot koji je namijenjen upravo za izradu poslužiteljske strane web i mobilnih aplikacija.
+Poslužiteljska strana pisana je u programskom jeziku Java (ref \cite{ProgramiranjeUJavi}) verzije 11 jer je najnovija podržana verzija
+u odabranoj usluzi oblaka upravo Java 11. Korišteni radni okvir je
+\textit{SpringBoot} (ref. \cite{GraphQL}) koji je namijenjen upravo za izradu poslužiteljske strane web i mobilnih aplikacija.
 Kao arhitekturni stil korišten je GraphQL koji predstavlja upitni jezik koji je specifično dizajniran za korisničku stranu aplikacije.
 Tako GraphQL omogućava korisničkoj strani da od poslužiteljske strane zatraži i dobije samo one podatke koji su potrebni.
-Projekt je strukturiran kao maven projekt koji omogućava dohvat i korištenje biblioteka koje nisu
+Projekt je strukturiran kao Maven (ref. \cite{maven}) projekt koji omogućava dohvat i korištenje biblioteka koje nisu
 dio standardnog javinog paketa.
-Za verzioniranje projekta je korišten alat \textit{git} koji nudi razne mogućnosti, ali jedna od
+Za verzioniranje projekta je korišten alat Git (ref \cite{git}) koji nudi razne mogućnosti, ali jedna od
 bitnijih je da je vrlo lako vratiti projekt na staru verziju
 ukoliko se dogodi veća pogreška u pisanju programskog koda. Za upogonjavanje
-se kao i za bazu podataku koristi \textit{AWS}, ali drugi servis: \textit{ElasticBeanstalk} servis.
-U svrhe razvoja korišteno je okruženje VSCode.
+se kao i za bazu podataku koristi \textit{AWS} (ref. \cite{AWS}), ali drugi servis: \textit{ElasticBeanstalk} servis.
+Navedeni servis omogućava da se samo uploada .jar arhiva i sve ostalo će biti
+automatski dodano.
+U svrhe razvoja korišteno je okruženje \textit{VSCode} (ref. \cite{vsc}).
 
 \subsection{GraphQL}
 
 \subsubsection{Povijest}
-Jedan od većih problema dizajniranja web poslužitelja pa tako i samih web aplikacije u REST
+Jedan od većih problema dizajniranja web poslužitelja pa tako i samih web aplikacija u REST
 arhitekturnom stilu je problem prekomjernog dohvata podataka odnosno nedovoljnog dohvata podataka
-\textit{(eng. overfetching and underfetching)}. Ako bi se taj problem pokušao riješiti sa
-stvaranjem više krajnjih točaka \textit{(eng. endpoint)} za dohvat specifičnog skupa podataka,
+\textit{(eng. overfetching and underfetching)}. Ako bi se taj problem pokušao riješiti sa REST
+arhitekturnim stilom bilo bi potrebno stvariti više krajnjih točaka \textit{(eng. endpoint)} za dohvat specifičnog skupa podataka,
 a uz to i više prijenosnih objekata.
 Uloga takvih objekata je spremanje i slanje samo onih podataka koji su potrebni za ispunjavanje zahtjeva.
 \\\\
 Tako je tvrtka Facebook došla
-do ideje GraphQL-a. Naime razvojni programeri su tada radili s velikim brojem podataka koji su
-bili međusobno ugnježđenji i povezani na razne načine i da bi aplikacija radila dovoljno brzo
-i efikasno bilo je nužno dohvatiti samo one podatke koji se uistinu i koriste, a da se pritom dohvaćaju sa
+do ideje GraphQL-a. Naime, razvojni programeri su tada radili s velikim brojem podataka koji su
+bili međusobno ugnježđenji i povezani na razne načine. Da bi aplikacija radila dovoljno brzo
+i efikasno bilo je nužno dohvatiti samo one podatke koji se uistinu i koriste, a da se pritom dohvaćaju koristeći
 što manje zahtjeva.
 
 \subsubsection{Definicija}
 GraphQL je upitni jezik koji korisničkoj strani
-dopušta definiranje formata i oblika podataka koji će zahtijevati od poslužiteljske strane. Također omogućava
+dopušta definiranje formata i oblika podataka koji će zahtjevati od poslužiteljske strane. Također omogućava
 da se upiti šalju na samo jednu krajnju točku. U GraphQL-u postoje 2 vrste upita:
-upiti i mutacije \textit{(eng. query and mutation)}, razlika je u tome što upiti služe za dohvaćanje podataka,
+upiti i mutacije \textit{(eng. query and mutation)}. Razlika je u tome što upiti služe za dohvaćanje podataka,
 a mutacije za mijenjanje podataka.
 
 \subsubsection{Implementacija}
-Unatoč tome što GraphQL koji je u usporedbi sa REST-om dosta različit, implementacija
-nije otežana. U okviru ovoga rada u \textit{pom.xml} datoteku u kojoj se dodaju ovisnosti \textit{(eng. dependencies)}
-bilo je potrebno dodati 2 nove ovisnosti: graphql-spring-boot-starter, graphql-java-tools
+U okviru ovoga rada u \textit{pom.xml} datoteku u kojoj se dodaju ovisnosti \textit{(eng. dependencies)}
+bilo je potrebno dodati 2 nove ovisnosti: \textit{graphql-spring-boot-starter, graphql-java-tools}
 i po potrebi treću ovisnost koja nudi mogućnost testiranja sučelja,
-a ona je graphiql-spring-boot-starter (odlomak \ref{graphqlDependecies}). Nakon toga ove ovisnosti zahtijevaju
+a ona je \textit{graphiql-spring-boot-starter} (odlomak \ref{graphqlDependecies}). Nakon toga ove ovisnosti zahtjevaju
 izradu jedne datoteke u kojoj će pisati sve moguće vrste podataka koje se mogu tražiti, i sve
-moguće upite koji se mogu primiti. Takva datoteka se najčešće imenuje schema.graphqls.
+moguće upite koji se mogu primiti. Takva datoteka se najčešće imenuje \textit{schema.graphqls}.
 U ovom radu podaci u shemi su bili ujedno i relacijski modeli iz baze podataka.
-Upiti postoje razni i bili su dodavani jedan po jedan ovisno o potrebi aplikacije (odlomak \ref{graphqlSchema}).
-U odlomku koji prikazuje graphql upite (\ref{graphqlType})
-postoji velik broj mutacija i upita, ali to i dalje ne mijenja činjenicu da postoji
+Postoje razni upiti, a bili su dodavani jedan po jedan ovisno o potrebi aplikacije (odlomak \ref{graphqlSchema}).
+U odlomku koji prikazuje GraphQL upite (\ref{graphqlType})
+postoji velik broj mutacija i upita, ali to ne mijenja činjenicu da postoji
 samo jedna krajnja točka koja je u ovom slučaju \textit{/graphql}. Iz priloženog primjera jednog GraphQL tipa podatka u odlomku \ref{graphqlType}
-je moguće primjetiti da je tip podatka upravo jedan od relacijskih modela iz baze podataka. Razlika je u tome da postoje neki dodatni podaci
-koji rješavaju problem nedovoljnog dohvata podataka. Bitan detalj je da se imena i tipovi polja iz Javine klase i tipa podatka iz
-graphql sheme moraju podudarati jer se koristi refleksija za dohvat tih polja.
+moguće je primjetiti da je tip podatka upravo jedan od relacijskih modela iz baze podataka. Razlika je u tome da postoje neki dodatni podaci
+koji rješavaju problem nedovoljnog dohvata podataka. Bitan detalj je da se imena i tipovi polja iz Java klase i tipa podatka iz
+GraphQL sheme moraju podudarati jer se koristi refleksija za dohvat tih polja. Refleksija služi za dohvaćanje i pozivanje po imenu
+metoda iz opisnika klase.
 \newpage
 \subsubsection{GraphQL ovisnosti}
 \label{graphqlDependecies}
@@ -484,22 +486,22 @@ type Recipe{
 }
 \end{Verbatim}
 Nakon dodavanja sheme i ovisnosti potrebno je dodati razrješivače (eng. \textit{resolvere}). U ovom projektu postoje 3 vrste razrješivača:
-QueryResolver, MutationResolver i obični Resolver, oni su u prethodno navedenim ovisnostima definirani kao sučelja:
-GraphQLQueryResolver, GraphQLMutationResolver, GraphQLResolver. Prvi služi za prihvaćanje upita, drugi služi za prihvaćanje
+\textit{QueryResolver, MutationResolver} i obični \textit{Resolver}, oni su u prethodno navedenim ovisnostima definirani kao sučelja:
+\textit{GraphQLQueryResolver}, \textit{GraphQLMutationResolver}, \textit{GraphQLResolver}. Prvi služi za prihvaćanje upita, drugi za prihvaćanje
 mutacija, a treći služi za rješavanje problema prethodno spomenutih dodatnih parametara koji su umetnuti u GraphQL shemu. To se radi
 na način da se zasebno definira način dohvata tih podataka. Također se može implementirati sučelje GraphQLErrorHandler koji
-će presretati greške s poslužiteljske strane i vraćati odgovarajuću poruku korisničkoj strani. Naime GraphQL
-ima jednu manu, a ta mana je da se na korisničku stranu uvijek vraća HTTP status kod 200 OK, pa se rukovanje greškama
-obavlja na drukčiji način. Taj način je da se u odgovor u slučaju greške doda parametar \textit{errors} koji će sadržavati
+će presretati greške s poslužiteljske strane i vraćati odgovarajuću poruku korisničkoj strani. Naime, GraphQL
+ima jednu manu, a to je da se na korisničku stranu uvijek vraća HTTP status kod 200 OK, pa se rukovanje greškama
+obavlja na drukčiji način - u slučaju greške u odgovor se doda parametar \textit{errors} koji će sadržavati
 sve greške koje su se dogodile (slika \ref{fig:Handled error}).
-Ako se ne implementira sučelje GraphQLErrorHandler poslužitelj će uvijek vraćati predefiniranu pogrešku. \\
+Ako se ne implementira sučelje \textit{GraphQLErrorHandler} poslužitelj će uvijek vraćati predefiniranu pogrešku. \\
 \begin{figure}[h]
       \includegraphics[width=\textwidth]{graphql_handled_error.png}
       \caption{Primjer greške ako postoji GraphQLErrorHandler}
       \label{fig:Handled error}
 \end{figure}
 \\
-Za kraj nakon implementacije svih navedenih sučelja (slika \ref{fig:GraphQL implementation}) sada se
+Nakon implementacije svih navedenih sučelja (slika \ref{fig:GraphQL implementation}) se
 uspješno može izvršiti prvi upit koji je demonstriran kroz sučelje \textit{GraphiQL} i
 prikazuje strukturu upita i odgovora (slika \ref{fig:GraphQL query}).
 \begin{figure}[h]
@@ -519,25 +521,25 @@ prikazuje strukturu upita i odgovora (slika \ref{fig:GraphQL query}).
 \subsection{Autentifikacija i autorizacija}
 
 \subsubsection{JWT}
-U području autentifikacije i autorizacije se vidi jedna velika razlika između
-moderne izrade mobilne i web aplikcije, a to je odsutnost sesije. Jedna od namjena sesije je
+U području autentifikacije i autorizacije vidi se jedna velika razlika između
+moderne izrade mobilne i web aplikcije, a to je odsutnost sesije odnosno nacina očuvanja stanja izmešu klijenta i poslužitelja. Jedna od namjena sesije je
 identificiranje trenutno prijavljenog korisnika na temelju nekog atributa koji je jedinstven za tog korisnika.
 Problem kod implementacije sesija je uporaba kolačića koji se ne koriste u mobilnim aplikacijama.
 Zato se mobilne aplikacije koriste drugim mehanizmom, a
-to su tokeni. U ovoj aplikaciji se koriste tokeni pod imenom \textit{JWT (JSON Web Token)}, takvi tokeni
+to su tokeni. U ovoj aplikaciji se koriste tokeni pod imenom \textit{JWT (JSON Web Token)} (ref. \cite{jwt}), koji
 u sebi sadrže podatke koji se koriste za uspostavu autentifikacije korisnika. Da bi se ti podaci
 mogli sigurno prenositi između poslužiteljske i korisničke strane koriste se
-kriptografski algoritmi (kao na primjer HMACSHA256) za enkripciju tokena.
-Pa će se u takvom tokenu nalaziti korisničko ime, istek tokena, korišteni algoritmi i slični podaci koji će omogućiti
+kriptografski algoritmi (kao na primjer HMACSHA256 (ref. \cite{HMAC})) za enkripciju tokena.
+U nekom takvom tokenu će se primjerice nalaziti nalaziti korisničko ime, istek tokena, korišteni algoritmi i slični podaci koji će omogućiti
 autentifikaciju i autorizaciju korisnika aplikacije.
 
 \subsubsection{Autentifikacija}
 Da bi se ovo ostvarilo prvo je bilo potrebno dodati ovisnost prema \linebreak
-SpringSecurity-u i prema jjwt (odlomak \ref{Security dependency}). Nakon toga da bi aplikacija mogla doći do podataka trebalo je implementirati dva sučelja:
+\textit{SpringSecurity-u} i prema \textit{JJWT-u} (odlomak \ref{Security dependency}). Nakon toga, da bi aplikacija mogla doći do podataka trebalo je implementirati dva sučelja
 \textit{UserDetails} i \textit{UserDetailsService}. Prvo sučelje služi za omotavanje osnovnih podataka o korisniku,
 kao na primjer korisničko ime, lozinka, je li korisnik suspendiran, je li korisnik potvrdio svoj identitet,
-koje su korisnikove uloge (administrator ili korisnik) i slično,
-a drugo sučelje služi za dohvat tih podataka na osnovu korisničkog imena jer je to jedinstven atribut za svakog korisnika.
+koje su korisnikove uloge (administrator ili korisnik) i slično.
+Drugo sučelje služi za dohvat tih podataka na osnovu korisničkog imena jer je to jedinstven atribut za svakog korisnika.
 U ovoj aplikaciji sučelje \textit{UserDetails} omotava
 podatke iz baze podataka, a sučelje \textit{UserDetailsService} dohvaća podatke iz baze i sprema ih u prvo sučelje.
 \paragraph{Ovisnosti prema bibliotekama potrebnih za implementaciju autentifikacije i autorizacije}
@@ -553,17 +555,17 @@ podatke iz baze podataka, a sučelje \textit{UserDetailsService} dohvaća podatk
       <version>0.9.1</version>
 </dependency>
 \end{Verbatim}
-Nadalje da bi se ti podaci mogli dohvatiti u bilo kojem trenutku potrebno ih je spremiti "negdje" u "nekom" trenutku.
+Nadalje, kako bi se ti podaci mogli dohvatiti u bilo kojem trenutku potrebno ih je u nekom trenutku spremiti.
 Zato je bilo potrebno napraviti jedan \textit{Filter}. \textit{Filteri} su posebni objekti u web aplikaciji koji presreću bilo koji
-zahtjev koji stigne na poslužitelj, obrade taj zahtjev i onda ga proslijede dalje prema web aplikaciji.
-Filter za autentifikaciju će provjeriti postoji li HTTP zaglavlje pod imenom: \textit{Authorization} i ako
-postoji pretpostaviti će da se unutra nalazi token kojeg će pokušati isparsirati i iz njega dohvatiti korisničko ime.
+zahtjev koji stigne na poslužitelj, obrade taj zahtjev i proslijede ga dalje prema web aplikaciji.
+Filter za autentifikaciju će provjeriti postoji li HTTP zaglavlje \textit{Authorization} i, ako
+postoji, pretpostavit će da se unutra nalazi token kojeg će pokušati analizirati i iz njega dohvatiti korisničko ime.
 Na osnovu tog korisničkog imena i uz pomoć sučelja \textit{UserDetailsService} vrlo jednostavno se dohvati sučelje \textit{UserDetails}.
 Da bi podaci bili dostupni cijelom poslužiteljskom dijelu aplikacije, filter će spremiti bitne podatke u klasu koja se zove
 \textit{SecurityContextHolder} koja će pružiti mogućnost dohvata trenutnog
 korisnika u bilo kojem trenutku.
 \\\\
-Jedan od mogućih scenarija je da će podaci poslani u tokenu biti ili nevažeći ili isteknuti zato je potrebno napraviti
+Jedan od mogućih scenarija je da će token biti ili nevažeći ili isteknut zato je potrebno napraviti
 ulaznu točku koja će (eng. \textit{EntryPoint}) u slučaju pogrešne autorizacije korisniku vratiti odgovarajuću poruku. Ta
 ulazna točka
 se u implementaciji naziva \textit{AuthenticationEntryPoint} koja putem HTTP odgovora šalje pogrešku u svojoj metodi commence. Struktura
@@ -581,12 +583,12 @@ Na kraju je potrebno definirati autorizaciju i spojiti s autentifikacijom, a to 
 proširi klasa \textit{WebSecurityConfigurerAdapter}.
 U njoj je definirano koja će se ulazna točka koristiti u slučaju pogreške, koji algoritam se koristi za šifriranje lozinki,
 kada se poziva filter za autentifikaciju i kada se obavlja autorizacija. U ovoj aplikaciji se koristi prethodno
-definirana ulazna točka, za šifriranje lozinke se koristi \textit{BCrypt} algoritam, filter se poziva prije svakog zahtjeva, a
-autorizacija je omogućena da se definira za svaku metodu zasebno. To se obavlja
-uz pomoć anotacije \textit{@PreAuthorize} (slika \ref{fig:WebSecurityConfig}).
-Ona se koristi na način da se u tijelo anotacije stave sve uloge koje smiju pristupati anotiranoj metodi (slika \ref{fig:PreAuthorize}).
+definirana ulazna točka, za šifriranje lozinke se koristi \textit{BCrypt} (ref. \cite{BCrypt}) algoritam, filter se poziva prije svakog zahtjeva, a
+autorizacija se definira za svaku metodu zasebno. To se obavlja
+uz pomoć oznake \textit{@PreAuthorize} (slika \ref{fig:WebSecurityConfig}).
+Ona se koristi na način da se u tijelo oznake stave sve uloge koje smiju pristupati označenoj metodi (slika \ref{fig:PreAuthorize}).
 One se najčešće stavljaju ili u \textit{QueryResolver-u} ili u \textit{MutationResolver-u} i tako će se ograničiti pristup
-neautorizirani korisnicima.
+neautoriziranim korisnicima.
 \begin{figure}[h]
       \centering
       \includegraphics[width=\textwidth]{WebSecurityConfig.png}
@@ -596,17 +598,17 @@ neautorizirani korisnicima.
 \begin{figure}[h]
       \centering
       \includegraphics[width=\textwidth]{PreAuthorize.png}
-      \caption{Izgled metode s anotacijom @PreAuthorize}
+      \caption{Izgled metode s oznakom @PreAuthorize}
       \label{fig:PreAuthorize}
 \end{figure}
 \newpage
 \subsection{Pristup podacima}
-Za pristup podacima se koriste dva sloja prvi sloj je sloj za perzistenciju, a drugi sloj je sloj usluge. Sloj za perzistenciju
+Za pristup podacima se koriste dva sloja: prvi sloj je sloj za perzistenciju, a drugi je sloj usluge. Sloj za perzistenciju
 modeliran je uz pomoć \textit{ORM-a (Object Realtional Mapper)} čija je zadaća preslikavanje relacija
-iz baze podataka u Javine objekte. Postoji više vrsta različitih ORM-ova, a u ovom projektu se koristi \textit{Hibernate}.
+iz baze podataka u Java objekte. Postoji više vrsta različitih ORM-ova, a u ovom projektu se koristi \textit{Hibernate} (ref. \cite{Hibernate}).
 \\\\
-U sloju usluge se nalazi sva logika potrebna za pristup i obradu podatka.
-Sloj usluge je implementiran da bi se razdvojila odgovornost obrade podataka i dohvata podataka od odgovornosti obrade zahtjeva.
+U sloju usluge nalazi se sva logika potrebna za pristup i obradu podatka.
+Sloj usluge je implementiran zbog razdvajanja odgovornosti obrade podataka i dohvata podataka od odgovornosti obrade zahtjeva.
 Za sve to je bilo potrebno dodati ovisnost prema odgovarajućim
 \textit{JPA} i \textit{JDBC} ovisnostima (odlomak \ref{dataAccess}).
 \begin{figure}[h]
@@ -639,16 +641,16 @@ Za sve to je bilo potrebno dodati ovisnost prema odgovarajućim
 
 
 \subsubsection{Sloj za perzistenciju}
-U programskom jeziku java, \textit{hibernate} se koristi kroz \textit{JPA} (Java Persistence API) programsko sučelje.
-JPA zahtijeva da se način preslikavanja iz relacije u objekt definira ili anotacijama
-ili u posebnoj konfiguracijskoj datoteci, u ovom projektu je to učinjeno preko anotacija, a sve takve klase prikazane su na
+U programskom jeziku Java, \textit{hibernate} se koristi kroz \textit{JPA} (Java Persistence API) programsko sučelje.
+\textit{JPA} zahtjeva da se način preslikavanja iz relacije u objekt definira ili oznakama
+ili u posebnoj konfiguracijskoj datoteci. U ovom projektu je to učinjeno preko anotacija, a sve takve klase prikazane su na
 slici \ref{fig:JPA} (a). Anotacije i način anotiranja koji se mora poštivati prikazan je na slici \ref{fig:JPA} (b).
 U izvornom kodu implementacije vidljivo je
-da u modelima ovoga projekta nisu anotirane sve veze koje su određene samom bazom podataka
+da u modelima ovoga projekta nisu označene sve veze koje su određene samom bazom podataka
 jer je to riješeno uz pomoć razrješivača iz \textit{GraphQL-a}. Nakon kreiranja svih modela potrebno je napraviti sučelja koja nasljeđuju sučelje
-\textit{JPARepository} preko kojeg se pristupa samim podacima, a u tom sučelju su definirane metode kao na primjer metoda
-za dohvaćanje svih relacija, metoda za dohvaćanje relacija po identifikacijskom atributu, ili nekom drugom atributu
-i slične metode.
+\textit{JPARepository} preko kojeg se pristupa samim podacima, a u tom sučelju su definirane metode
+za dohvaćanje svih relacija, metoda za dohvaćanje relacija po identifikacijskom (ili nekom drugom) atributu
+i slične.
 \begin{figure}[h]
       \centering
       \subfloat[\centering Primjer anotiranja klase]{{\includegraphics[width=\textwidth]{jpa_annotations.png} }}
@@ -656,23 +658,25 @@ i slične metode.
       \label{fig:JPA}
 \end{figure}
 Također iz slike \ref{fig:JPA} (b)
-na kojoj je prikazan model koji preslikava tablicu \textit{image} u javinu klasu,
-može se primjetiti da se slika u bazu sprema kao hiperveza na samo sliku. To je moguće jer se za
-spremanje slika koristi \textit{firebase}. Za pristup firebase-u je bilo potrebno dodati ovisnost (odlomak \ref{dataAccess}) i jednu datoteku u kojoj su zapisani
-podaci za pristup bazi koja iz sigurnosnih razloga nije priložena. Nakon je toga je vrlo lako uz pomoć metode \textit{create} primljenu
-sliku "dignuti" na \textit{firebase oblak}.
+na kojoj je prikazan model koji preslikava tablicu \textit{image} u Javinu klasu,
+može se primjetiti da se slika u bazu sprema kao hiperveza na samu sliku. To je moguće jer se za
+spremanje slika koristi \textit{Firebase} (ref. \cite{Firebase}). Firebase
+je također jedna usluga u "oblaku" i u ovom radu se koristi za
+spremanje datoteka. Za pristup firebase-u je bilo potrebno dodati ovisnost (odlomak \ref{dataAccess}) i jednu datoteku u kojoj su zapisani
+podaci za pristup bazi koja iz sigurnosnih razloga nije priložena. Nakon je toga se primljena slika uz pomoć metode \textit{create}
+prenosi na \textit{firebase oblak}.
 \newpage
 \subsubsection{Sloj usluge}
 \label{serviceLayer}
-Jedno od SOLID načela programiranja (\textit{"Single responsibility"}) nalaže da jedna klasa ima samo jednu odgovornost
+Jedno od dobrih načela programiranja nalaže da jedna klasa ima samo jednu odgovornost
 zato je sloj za perzistenciju od razrješivača odvojen slojem usluge.
 \\\\
-Također osim same obrade podataka u sloju usluge se nalazi i klasa koja služi za slanje elktroničke pošte.
-Ta usluga se koristi za slanje poruke za potvrdu identiteta i za slanje liste za kupnju
+Također, osim same obrade podataka u sloju usluge nalazi se i klasa koja služi za slanje elektroničke pošte.
+Ta usluga se koristi za slanje poruka za potvrdu identiteta i za slanje popisa za kupnju
 koja se šalje ako neki korisnik doda recept u svoje favorite. Tijelo poruke se gradi
 kao HTML dokument, a šalje se uz pomoć \textit{Java Mail API-a} za koji je bilo potrebno dodati ovisnost
-prikazanu u odlomku \ref{dataAccess}. I konačno sve usluge su prikazane u odlomku \ref{dataAccess} (b).
-Prikaz svih paketa (slojeva) i veza između njih prikazana je na slici (\ref{fig:packageDijagram})
+prikazanu u odlomku \ref{dataAccess}. Konačno sve usluge prikazane su u odlomku \ref{dataAccess} (b).
+Prikaz svih paketa (slojeva) i veza između njih nalazi se na slici (\ref{fig:packageDijagram})
 \begin{figure}[h]
       \centering
       \includegraphics[width=\textwidth]{packageDiagram.png}
@@ -681,20 +685,20 @@ Prikaz svih paketa (slojeva) i veza između njih prikazana je na slici (\ref{fig
 \end{figure}
 \subsection{Kontinuirana isporuka}
 Kontinuirana isporuka predstavlja proces prevođenja programskog koda i upogonjavanja na predviđeno mjesto (u ovom slučaju je to "oblak").
-Ona se obavlja uz pomoć \textit{github actions}. To je zapravo samo jedan pogramski kod
+Ona se obavlja uz pomoć tzv \textit{Github} akcija. Jedna akcija je jedan pogramski kod
 (slika \ref{fig:Backend cicd}) uz pomoć kojeg se izvorni kod prevodi u .jar arhivu i podiže na
 oblak u \textit{AWS ElasticBeanstalk} servis.
-Jedini problem je bio što nakon upogonjavanja poslužitelj može primati relativno male zahtjeve
-, a za ovu aplikaciju su potrebni poprilično veliki zahtjevi jer se šalju i fotografije i videozapisi.
-Razlog iz kojeg se fotografije i videozapisi šalju sa korisničke na poslužiteljsku stranu pa tek onda
-na \textit{firebase} je sigurnosni razlog. Naime krajnji korisnici koji imaju loše namjere
+Jedini problem je bio što nakon upogonjavanja poslužitelj može primati relativno male zahtjeve,
+a za ovu aplikaciju su potrebni poprilično veliki zahtjevi jer se šalju i fotografije i videozapisi.
+Fotografije i videozapisi se šalju sa korisničke na poslužiteljsku stranu pa tek onda
+na \textit{firebase} iz sigurnosnih razloga. Naime, krajnji korisnici koji imaju loše namjere
 mogu poslati maliciozne datoteke umjesto pretpostavljenih slika
 i videozapisa pa je prije prihvaćanja datoteke potrebno provjeriti radi li se zaista o slici. Ova funkcionalnost
 nije implementirana u ovom radu jer postoji mogućnost odobravanja recepta, ali unatoč tome to nije potpuno riješen problem.
-Dakle da bi se omogućilo slanje fotografija i videozapisa potrebno je
+Dakle, da bi se omogućilo slanje fotografija i videozapisa potrebno je
 uz .jar arhivu  dodati i konfiguracijsku datoteku za \textit{ngnix} poslužitelj koja će povećati
-pretpostavljenu maksimalnu veličinu zahtjeva. To je postignuto uz pomoć maven-ovog \textit{"antrun plugin-a"}
-(slika \ref{fig:antrun}) koji će .jar arhivu i konfiguracijsku datoteku spremiti u .zip arhivu i proslijediti to dalje.
+pretpostavljenu maksimalnu veličinu zahtjeva. To je postignuto uz pomoć maven \textit{"antrun"} modula
+(slika \ref{fig:antrun}) koji će .jar arhivu i konfiguracijsku datoteku spremiti u .zip arhivu i proslijediti dalje.
 \begin{figure}[h]
       \centering
       \includegraphics[width=\textwidth]{backend_cicd.png}
@@ -709,12 +713,12 @@ pretpostavljenu maksimalnu veličinu zahtjeva. To je postignuto uz pomoć maven-
 \end{figure}
 
 \section{Korisnička strana}
-Korisnička strana je pisana u programskom jeziku dart, pritom koristeći
+Korisnička strana je pisana u programskom jeziku Dart, pritom koristeći
 Flutter radni okvir.
-Za komunikaciju s poslužiteljskom stranom korišten je paket flutter-graphql.
-Za upogonjavanje aplikacije korištena je github-ova mogućnost
-stvaranja izdanja, a sam proces stvaranja je obavljeno uz pomoć \textit{github actions} (slika \ref{fig:Frontend}).
-U svrhe razvoja korišteno je okruženje VSCode.
+Za komunikaciju s poslužiteljskom stranom korišten je paket \textit{flutter-graphql}.
+Za upogonjavanje aplikacije korištena je Github-ova mogućnost
+stvaranja izdanja, a sam proces stvaranja je obavljen uz pomoć \textit{Github} akcija (slika \ref{fig:Frontend}).
+U svrhe razvoja korišteno je okruženje \textit{VSCode}.
 \begin{figure}[h]
       \centering
       \subfloat[\centering GitHub actions za stvaranje nove verzije aplikacije]{{\includegraphics[width=\textwidth]{frontend_cicd.png} }}
@@ -724,23 +728,23 @@ U svrhe razvoja korišteno je okruženje VSCode.
 
 \subsection{Flutter}
 Flutter je googleov javno dostupni (\textit{eng. Open Source}) projekt koji je namijenjen
-za stvaranje lijepih i brzih mobilnih, web ili računalnih. Karakteristika
-\textit{fluttera } je da se aplikacija sa samo jednom napisanim programskim kodom može pokrenuti na
-svim navedenim uređajima i na većini operacijskih sustava. Također jedna od prednosti tog radnog okvira je da je vrlo lako napraviti
+za stvaranje lijepih i brzih mobilnih, web ili računalnih aplikacija. Karakteristika
+\textit{Fluttera} je da se aplikacija sa samo jednom napisanim programskim kodom može pokrenuti na
+svim navedenim uređajima i na većini operacijskih sustava. Dodatno jedna od prednosti tog radnog okvira je da je vrlo lako napraviti
 dinamične aplikacije jer se koristi upravljanje stanjem (eng. \textit{state managment}). Postoji više načina
 kako pristupiti ovoj funkcionalnosti, a u ovom radu korištem je \textit{BLoC} obrazac koji je ujedno
 i googleov preporučeni način.
 \\\\
-Također se sadržaj dinamički mijenja u ovisnosti o upitima na poslužiteljsku stranu i ta dinamičnost
-se postiže uz pomoć komponenti namijenjenih za slanje \textit{graphql} upita koji se zovu \textit{Query i Mutation}.
-Navedene komponente imaju jednu funkciju koja se poziva svaki put kada se promjeni stanje upita i
+Sadržaj se isto tako dinamički mijenja u ovisnosti o upitima prema poslužiteljskoj strani i ta dinamičnost
+se postiže uz pomoć komponenti namijenjenih za slanje \textit{GraphQL} upita koji se zovu \textit{Query i Mutation}.
+Navedene komponente sadrže jednu funkciju koja se poziva svaki put kada se promjeni stanje upita i
 zove se \textit{builder}. Toj funkciji se kao ulazni parametar šalje rezultat i stanje izvođenja upita to jest mutacije,
 i dužnost joj je vratiti komponentu koja će se prikazati na ekranu.
 
 \subsubsection{BLoC}
 BLoC (Business Logic Components) je obrazac za upravljanjem stanjem aplikacije. Karakteristika ovog obrasca
 je da međusobno razdvaja prikaz komponente, upravljanje njenim stanjem i logiku iza upravljanja stanjem.
-Srž obrasca je načelo da bi sve asinkrone operacije u aplikaciji trebalo modelirati kao tok događaja. To se
+Obrazac je razvijen vodeći se načelom da bi sve asinkrone operacije u aplikaciji trebalo modelirati kao tok događaja. To se
 radi na način da jedna komponenta
 na osnovu interakcije s okolinom kreira događaje i šalje ih u ulazni tok događaja, a svaka komponenta koja
 ovisi o tom toku događaja će kroz izlazni tok primiti bitne podatke i na osnovu njih ažurirati svoje stanje.
@@ -757,40 +761,39 @@ i treće \textit{BlocBuilder} (slika \ref{fig:BLoC} (b)). \textit{BlocProvider} 
 koji se bavi presretanjem svakog ulaznog događaja, obrađivanjem i slanjem u izlazni tok, a \textit{BlocBuilder}
 služi za izgradnju komponente na osnovu trenutnog događaja u izlaznom toku događaja.
 
-\subsection{Ekrani}
-U radnom okviru flutter ne postoji razlika između ekrana (eng \textit{screen}) i na primjer teksta jer je sve definirano
+\subsection{Implementacija ekrana u \textit{flutter-u}}
+U radnom okviru \textit{Flutter} ne postoji razlika između primjerice ekrana (eng \textit{screen}) i teksta jer je sve definirano
 kao komponenta (eng. \textit{"widget"}), ali iz semantičkih razloga svaku skupinu komponenti koja
 se prikazuje u istome trenutku nazivamo ekran. Često se broj ekrana uzima kao stupanj
 složenosti aplikacije. Tako ovaj rad ima 9 ekrana, ali oni nisu dostupni svim korisnicima nego
 su podijeljeni po ulogama.
 
 \subsubsection{Ekran dobrodošlice i prijave}
-Ekran dobrodošlice (slika \ref{fig:WelcomeLogin} (a)) nema nekakvu posebnu namjenu osim estetske.
 Karakteristika ekrana dobrodošlice je
-da se prikazuje samo jednom. Prikazivanje je moguće samo kada se aplikacija prvi puta pokreće na trenutnom
+da se prikazuje samo jednom prilikom prvog pokretanja aplikacije
 uređaju. To svojstvo se postiže podizanjem zastavice u memoriji uređaja uz pomoć
 sučelja dijeljenih tajni (eng. \textit{"SharedPreferences"}).
 Ekran za prijavu sadrži 2 polja za unos i 3 gumba (slika \ref{fig:WelcomeLogin} (b)). Prvo polje je polje za unos
 korisničkog imena ili e-pošte, drugo polje je polje za unos pripadajuće lozinke. Ako je uneseno
-krivo korisničko ime ili lozinka prikazuje se odgovarajuća poruka (slika \ref{fig:WelcomeLogin} (c)). Preostali gumbovi su:
+krivo korisničko ime ili lozinka prikazuje se odgovarajuća poruka (slika \ref{fig:WelcomeLogin} (c)). Preostali gumbovi su
 gumb za preskakanje prijave i prelazak na stranicu sa svim receptima, gumb
 za potvrdu prijave koji šalje zahtjev za prijavu na poslužitelj te gumb za prelazak na ekran za registraciju.
 
 \subsubsection{Ekran za registraciju}
-Ekran za registraciju sadrži 5 polja za unos: unos računa elktroničke pošte, unos
-korisničkog imena, unos lozinke, potvrda lozinke i odabir profilne slike. Profilna slika je za
-razliku od ostalih polja opcionalno polje. Karakteristika polja za lozinku je da ima posebne
-validacijske kriterije. Ti kriteriji zahtijevaju da lozinka mora
+Ekran za registraciju sadrži 5 polja za unos: unos računa elektroničke pošte,
+korisničkog imena, lozinke, potvrda lozinke i odabir profilne slike. Profilna slika je, za
+razliku od ostalih polja, opcionalno polje. Karakteristika polja za lozinku je da ima posebne
+validacijske kriterije. Ti kriteriji zahtjevaju da lozinka mora
 sadržavati barem 8 znakova, jedno veliko slovo i jedan specijalni znak.
 Nakon uspješne registracije
-prikaže se poruka da je registracija uspješno izvršena (slika \ref{fig:Register} (b)) i da je potrebno izvršiti potvrdu identiteta
-putem e-mail račun-a koji je bio unesen. Ukoliko je registracija nevaljana prikaže se odgovarajuća poruka (slika \ref{fig:Register} (a)).
+prikaže se poruka o uspješnoj registraciji (slika \ref{fig:Register} (b)) i da je potrebno izvršiti potvrdu identiteta
+putem e-mail računa koji je bio unesen. Ukoliko je registracija nevaljana prikaže se odgovarajuća poruka (slika \ref{fig:Register} (a)).
 
 \subsubsection{Ekran za pregled svih recepata}
 Ekran za pregled svih recepata će uvijek biti prvi ekran koji će se prikazati ako postoji
 prijavljeni korisnik, a to se također postiže uz pomoć dijeljenih tajni \textit{(eng. SharedPreferences)}.
-Ekran za pregled svih recepata se ovisno o ulozi koju trenutni korisnik ima razlikuje
-u navigacijskoj traci. Naime traka sadržava samo one gumbe koji vode do ekrana koji su dozvoljeni
+Ekran za pregled svih recepata se razlikuje u navigacijskoj traci, ovisno o ulozi koja je dodijeljena trenutno prijavljenom korisniku.
+Naime traka sadržava samo one gumbe koji vode do ekrana koji su dozvoljeni
 trenutno prijavljenom korisniku (slika \ref{fig:tracks}).
 \begin{figure}[h]
       \centering
@@ -802,58 +805,58 @@ trenutno prijavljenom korisniku (slika \ref{fig:tracks}).
 \end{figure}
 \\\\
 Trenutno prijavljeni korisnik se određuje na temelju dijeljenjih tajni.
-U njih se spremaju podaci o trenutnom korisniku kao na primjer: korisničko ime, identifikacijski
+U njih se spremaju podaci o trenutnom korisniku, kao na primjer korisničko ime, identifikacijski
 broj i \textit{JWT token} za autentifikaciju i autorizaciju.
 To je bitno jer će se prije svakog upita, koji se obavlja daljnjom interakcijom
 korisnika i aplikacije, u HTTP zaglavlje staviti spomenuti token. Uz pomoć tog tokena će
 poslužiteljska strana obaviti autentifikaciju i autorizaciju. Ako korisnik ne bude uspješno
 autoriziran biti će odjavljen i preusmjeren na ekran za prijavu s odgovarajućom porukom.
 \\\\
-Na ekranu za pregled svih recepata moguće je vidjeti sve recepte koji sa nalaze u bazi podataka. Recepti su podijeljeni u stranice,
+Recepti su podijeljeni u stranice,
 a svaka stranica sadrži 10 recepata. Ako postoji više od 10 recepata na dnu ekrana će se pojaviti
-jedna posebna komponenta koja služi za prelazak na sljedeću, prethodnu ili neku određenu stranicu.
-Za svaki recept naveden je autor i profilna slika autora, pozadinskom slika recepta, naziv,
-prosječna ocjena i vrijeme potrebno za pripremu. Klikom na bilo koji opisnik recepta se otvara novi ekran
+jedna komponenta koja služi za prelazak na sljedeću, prethodnu ili neku određenu stranicu.
+Za svaki recept naveden je autor i profilna slika autora, pozadinska slika recepta, naziv,
+prosječna ocjena i vrijeme potrebno za pripremu. Klikom na bilo koji opisnik recepta otvara se novi ekran
 za pregled pojedinog recepta. U gornjem desnom kutu opisnika postoji
 gumb za dodavanje recepta u favorite. U donjem desnom kutu opisnika postoji gumb koji služi za brisanje recepta koji
 je prikazan samo u slučaju da recept pripada trenutno prijavljenom korisniku ili je trenutno prijavljeni
-korisnik zapravo administrator.
+korisnik administrator.
 \\\\
-Također na samom vrhu ekrana postoji komponenta koja služi za filtriranje recepata po nazivu,
-a pored njega se nalazi jedan gumb koji prilikom dodira otvara dijalog kojim
-se mogu filtrirati recepti po sastojcima i vremenu pripreme.
+Također, na samom vrhu ekrana postoji komponenta koja služi za filtriranje recepata po nazivu,
+a pored njega se nalazi jedan gumb koji prilikom dodira otvara prozorčić koj
+omogućava filtriranje recepata po sastojcima i vremenu pripreme.
 
 
 \subsubsection{Ekran za pregled pojedinog recepta}
 Ekran za pregled pojedinog recepta će prikazivati sve podatke o receptu, a to su:
 sastojci, koraci pripreme, svi videozapisi i fotografije
-koje se nalaze u skrolabilnoj listi s kojom se interagira pokretima lijevo i desno. Dodatno ako
+koje se nalaze u pomičnoj listi s kojom se interagira pokretima lijevo i desno. Dodatno, ako
 trenutno prijavljeni korisnik ima dovoljne ovlasti moći će kliknuti na gumb za ocjenjivanje i
 vidjeti polje za unos komentara. Ako je prijavljeni korisnik administrator moći će kliknuti na
-gumb za dobrovanja to jest poništavanje odobrenja recepta (slika \ref{fig:New recipe} (c) i (d)).
+gumb za odobravanje, to jest poništavanje odobrenja recepta (slika \ref{fig:New recipe} (c) i (d)).
 
 
 \subsubsection{Ekran za dodavanje novog recepta}
-Ekran za dodavanje novog recepta je dostupan samo prijavljenim korisnicima koji nisu administratori.
-Ovaj ekran se sastoji od velikog broja polja za unos i odabir videozapisa i fotografija te gumba za potvrdu.
+Ekran za dodavanje novog recepta dostupan je samo prijavljenim korisnicima koji nisu administratori.
+Ovaj ekran sastoji se od velikog broja polja za unos i odabir videozapisa i fotografija te gumba za potvrdu.
 Karakteristika svakog polja je da ne smije biti prazno i ne smije sadržavati više znakova od broja koji
 je određen bazom podataka. Posebne sekcije su sekcije za unos sastojaka, koraka pripreme, videozapisa i
-fotografija jer su sve te sekcije modelirane BLoC obrascem. To je bilo potrebno jer nije moguće unaprijed znati koliko
-takvih objekata korisnik želi dodati pa postoji opcija za dinamičko dodavanje
+fotografija jer su one modelirane BLoC obrascem. To je potrebno jer nije moguće unaprijed znati koliko
+takvih objekata korisnik želi dodati, stoga postoji opcija za dinamičko dodavanje
 polja za unos (slika \ref{fig:New recipe} (a) i (b)).
 
 \subsubsection{Ekran za upravljanje korisnicima}
-Posljednji ekran je ekran za upravljanje korisnicima, one je dostupan samo administratorima. Na ovoj stranici se
-nalazi popis svih korisnika koji, a straničenje funkcionira na potpuno jednak način kao i straničenje za recepte.
-Za svakog korisnika navedeno je korisničko ime, profilna slika i gumb za suspendiranje to jest
+Posljednji ekran je ekran za upravljanje korisnicima, on je dostupan samo administratorima. Na ovoj stranici nalazi se
+popis svih korisnika, a straničenje funkcionira na potpuno jednak način kao i straničenje za recepte.
+Za svakog korisnika navedeno je korisničko ime, profilna slika i gumb za suspendiranje, to jest
 poništavanje suspenzije. Nema opcije za brisanje korisnika jer bi to značilo da bi pojedini recepti
 ostali bez autora ili bi bili obrisani iz baze što nije poželjna funkcionalnost. Zato je korinsiku koji je suspendiran
 samo onemogućena prijava u sustav (slika \ref{fig:Single recipe} (a)).
 
 \chapter{Upute za instalaciju i pokretanje rješenja}
-Preduvjet za instalaciju aplikacije je posjedovanje android uređaja jer je aplikacija namijenjena samo
+Preduvjet za instalaciju aplikacije je posjedovanje Android uređaja jer je aplikacija namijenjena samo
 za takve uređaje. Za instalaciju potreban je instalacijski paket koji je moguće preuzeti iz jednog od izdanja
-na sljedećoj stranici: \href{https://github.com/MarkoTunjic/Final-BSc-Thesis}{github}. Prije pokretanja
+na: \href{https://github.com/MarkoTunjic/Final-BSc-Thesis}{github.com/MarkoTunjic}. Prije pokretanja
 procesa instalacije potrebno je u postavkama mobitela odobriti instalaciju iz nepoznatih izvora jer aplikacija
 nije odobrena od strane \textit{Google play-a}. Kada instalacija završi aplikacija je spremna za uporabu.
 \\\\
@@ -867,21 +870,21 @@ nadograditi u budućim radovima.
 \\\\
 Prednost baze podataka je što se slike i videozapisi spremaju kao hiperveze
 jer to održava veličinu baze najmanje mogućom. To je postignuto na način da se fotografije i videozapisi
-spremaju u "oblak" točnije \textit{firebase}. Nedostatak
+spremaju u "oblak" točnije \textit{Firebase}. Nedostatak
 je taj što se ne koriste pohranjene procedure koje bi bilo korisno implementirati
-u budućim radovima jer bi to dodatno ubrzalo proces dohvata podataka.
+u budućim radovima jer bi to dodatno olakšalo i osiguralo proces dohvata podataka.
 \\\\
 Poslužiteljska strana ima prednost jer je implementirana GraphQL
 arhitekturnim stilom koji smanjuje gomilanje prijenosnih objekata i krajnjih točaka. Uz to rješava problem
 prekomjernog i nedovoljnog dohvata podataka.
-Mana je ta što se ne obavlja provjera pristiglih fotografija i videozapisa prije slanja na \textit{firebase} i time
-je sigurnost aplikacije narušena. To obavezno mora biti popravljeno u budućim verzijama rada.
+Mana je ta što se ne obavlja provjera pristiglih fotografija i videozapisa prije slanja na \textit{Firebase} čime je
+je sigurnost aplikacije narušena. Ovo nužno mora biti popravljeno u budućim verzijama rada.
 \\\\
 Velika prednost korisničke strane je što se za upravljanje stanjem koristio
 \textit{BLoC} obrazac koji je brz i razdvaja logiku obrade događaja od prikaza komponenti.
 Time je aplikacija prikladno uslojena i oblikovana po SOLID načelima. Nedostatak je taj što nisu implementirane
-obavijesti. Dakle korisnici neće primati obavijesti ukoliko je netko ocjenio ili komentirao njihov recept, a administratori neće
-primiti obavijest ukoliko neki korisnik doda novi recept. Ova funkcionalnost bi bila korisna za implementirati
+obavijesti. Dakle, korisnici neće primati obavijesti ukoliko je netko ocjenio ili komentirao njihov recept, a administratori neće
+primiti obavijest ukoliko neki korisnik doda novi recept. Ova funkcionalnost bila bi korisna za implementirati
 jer bi poboljšala iskustvo prilikom korištenja aplikacije.
 
 \bibliography{literatura}
@@ -906,51 +909,43 @@ jer bi poboljšala iskustvo prilikom korištenja aplikacije.
       Za razvoj poslužiteljske strane korišten je radni okvir SpringBoot. Kao arhitekturni stil je korišten GraphQL.
       GraphQL predstavlja upitni jezik namijenjen korisničkoj strani za dohvat samo onih podataka
       koji su uistinu potrebni. GraphQL omogućavanje smanjenje gomilanja prijenosnih objekata i krajnjih točaka,
-      a uz to rješava problem prekomjernog i nedovoljnog dohvata podataka. Za implementaciju je bilo potrebno definirati
-      shemu koja definira format podataka i upita te razrješivače koji na temelju sheme omogućuju prihvat upita.
-      Taj proces je vrlo jednostavan u korištenom radnom okviru. Također radni okvir omogućava vrlo jednostavnu
-      implementaciju autentifikacije i autorizacije uz pomoć sučelja \textit{SpringSecurity} i JWT tokena.
+      a uz to rješava problem prekomjernog i nedovoljnog dohvata podataka. Autentifikacija i autorizacija se vrši
+      uz pomoć jwt tokena.
       \\
       Korisnička strana je implementirana u flutter radnom okviru. Jedna od prednosti tog radnog okvira je da se
       temelji na nativnom (eng. native) pristupu razvoju aplikacija. Takav pristup omogućava pisanje samo jednog izvornog koda koji će se moći pokrenuti
       na većini operacijskih sustava. Također omogućava i izradu dinamičnih i responzivnih aplikacija. Jedan od načina kako
       izraditi takvu aplikaciju je uz pomoć \textit{BLoC} obrasca. Taj obrazac razdvaja logiku obrade događaja od dizajniranja
-      komponente i tako omogućava prikladno uslojavanje aplikacije i smanjenje međuovisnosti programskog koda. Za pristup
-      poslužiteljskoj strani koriste se posebne komponente koje su oblikovane specifično za razmjenu poruka sa poslužiteljem
-      implementiranog GraphQL arhitekturnim stilom.
+      komponente i tako omogućava prikladno uslojavanje aplikacije i smanjenje međuovisnosti programskog koda.
       \kljucnerijeci{Mobilna aplikacija, baza podataka, poslužiteljska strana, korisnička strana, oblak, PostgreSQL, SpringBoot, GraphQL, Flutter, Native, AWS .}
       \newpage
 \end{sazetak}
 % TODO: Navedite naslov na engleskom jeziku.
 \engtitle{Mobile application for recipe managment}
 \begin{abstract}
-      The result of this project is a mobile application that will help the end users to store and search for recipes.
+      The result of this project is a mobile application that will help the end users store and search for recipes.
       The aplication is divided in three parts: database, backend and frontend. In order for the application
-      to be globally and constantly accessible cloud services from the company Amazon were used. Three kinds of users
+      to be globally and constantly accessible cloud services made by the company Amazon were used. Three kinds of users
       can access this application: anonymus users, logged in users or administrators.
       \\
-      The database is implemented as a relational databse, and PostgreSQL was used as the database manager. The
-      database was modeled with entities and relations between them. The main characteristic of the database
-      is that images and videos are stored on the \textit{"cloud"}, and the databse saves only the hyperlink to that
+      The database is implemented as a relational databse and PostgreSQL was used as the database manager. The
+      database was modeled using entities and relations between them. The main characteristic of the database
+      is that images and videos are stored on the \textit{"cloud"}, and the database saves only the hyperlink to that
       \textit{"cloud"}. Such implementation keeps the database size minimal.
       \\
-      The framework for developing the backend is SpringBoot. The architectural style that was used is GraphQL.
-      GraphQL is a query language meant for the frontend to be able to acces only the needed data. GraphQL also
-      minimizes code duplication that occurs by creating a lot of data transfer objects and endpoints, and
-      solves the problem of overfetching and underfetching. For GraphQL to work firstly a schema must be defined which
-      contains the format of the data and querys. After that follows the implementation of resolvers which based on the schema
-      allow requests to be received. That process is simple with the usage of the SpringBoot framework. Also that framework
-      provides a simple way of implementing authentication and authorization with the help of the SpringSecurity interface
-      and JWT tokens.
+      The framework used to develop the backend is SpringBoot. The architectural style that was used is GraphQL.
+      GraphQL is a query language intended to be used on the frontend to fetch only the required data. GraphQL also
+      minimizes code duplication that occurs by creating large amounts of data transfer objects and endpoints, while
+      also solving the problem of overfetching and underfetching. For Authentication and Authorization JWT tokens were used.
       \\
-      The frontend was implemented in the flutter framework. One of the benefits of that framework is that it uses
-      native approach for development. Such approach enables writing only one source code that can be run
-      on almost every operating system. FLutter also provieds a way of creating dynamic and responsive application. One
-      way of creating such a application is by using the BLoC pattern. That pattern splits the logic of handling events from
-      the logic of designing widgets and that allows the application to be appropriately layered. For accessing the backend special widgets are used which are specifically designed
-      for accessing servers that are implemented with GraphQL.
+      The frontend was implemented using the Flutter framework. One of the benefits of that framework is that it uses
+      a native approach to development. Such an approach enables writing a single codebase which can be run
+      on nearly every operating system. Flutter also provieds a way of creating dynamic and responsive applications. One
+      way of creating such an application is by using the BLoC pattern. This pattern seperates
+      the event handling logic from
+      the logic of designing widgets which allows the application to be appropriately layered.
 
-      \keywords{Mobile application, databse, backend, frontend, cloud, PostgreSQL, SpringBoot, GraphQL, Flutter, Native, AWS.}
+      \keywords{Mobile application, database, backend, frontend, cloud, PostgreSQL, SpringBoot, GraphQL, Flutter, Native, AWS.}
 \end{abstract}
 
 \end{document}
