@@ -36,7 +36,7 @@ Upravo zato danas velik broj web aplikacija
 također ima i svoju mobilnu inačicu.
 \\\\
 Problem kod mobilnih uređaja je što jednom napisani programski kod u jezicima poput:
-java, kotlin ili swift neće biti moguće pokretati na različitim operacijskim sustavima.
+Java, Kotlin ili Swift neće biti moguće pokretati na različitim operacijskim sustavima.
 Iz tog razloga se tijekom godina razvila nekolicina
 i radnih okvira za pisanje programskog koda koji će se može pokretati
 na većini operacijskih sustava, a neki od poznatijih su Flutter i React Native.
@@ -56,7 +56,7 @@ SOAP i XML) formatom podatka, nego se koriste novijim načinom prijenosa
 podataka između poslužiteljskog i korisničkog dijela aplikacije.
 To je JSON format (ref: \cite{json}) podataka s odgovarajućim JSON zahtjevima prema poslužitelju.
 Objekti u JSON formatu izgledaju kao mape gdje je ključ ime varijable, a vrijednost je
-upravo i vrijednost te varijable.
+vrijednost te varijable.
 Uz JSON se koristi neki od arhitekturnih stilova kao REST ili GraphQL koji su alternativa
 za SOAP protokolu te uz pomoć navedenih stilova web i mobilne aplikacije mogu uspješno i jednostavno uspostavljati komunikaciju.
 \\\\
@@ -80,7 +80,7 @@ i zahtjeve domene primjene koji proizlaze iz načina primjene sustava.
 \section{Korisnički zahtjevi}
 \begin{enumerate}
       \item \textbf{\underline{Korisnici aplikacije:}} Ovisno o dostupnim funkcionalnostima i ovlastima,
-      \item u sustavu za recepte razlikujemo 3 glavna tipa korisnika: anonimne, prijavljenje i administratore
+            u sustavu za recepte razlikujemo 3 glavna tipa korisnika: anonimne, prijavljenje i administratore
       \item \textbf{\underline{Anonimni korisnici:}} mogu samo pregledavati i pretraživati
             postojeće recepte.
       \item \textbf{\underline{Prijavljeni korisnici:}} uz funkcionalnosti
@@ -88,7 +88,7 @@ i zahtjeve domene primjene koji proizlaze iz načina primjene sustava.
             ocjenjivati ocjenama od 0 do 5 i dodavati željene recepte u listu omiljenih recepata.
       \item \textbf{\underline{Administratori:}} njihova uloga je održavanje
             aplikacije primjerenom, zato će recepti morati biti odobreni prije negoli postanu javno vidljivi
-             od strane administratora.
+            od strane administratora.
 \end{enumerate}
 
 \section{Funkcionalni zahtjevi}
@@ -134,8 +134,8 @@ Kao upravitelj bazom podataka korišten je \textit{PostgreSQL} (ref. \cite{Postg
 Sama baza je relacijskog tipa i modelirana je entitetima i vezama između njih.
 Relacijske baze su skupine podataka koje imaju unaprijed određene veze. Ti podaci su organizirani kao tablice sa retcima
 i stupcima.
-Za modeliranje je korišten web alat \textit{ERDPlus} (ref. \cite{ERDPlus}). Za upogonjavanje baze je korišten \textit{AWS (Amazon Web Services)}
-točnije njihov \textit{RDS (Relational Database Service)} servis koji se koristi upravo za upogonjavanje baza podataka u oblaku.
+Za modeliranje je korišten web alat \textit{ERDPlus} (ref. \cite{ERDPlus}). Za upogonjavanje baze je korišten \textit{AWS (Amazon Web Services, ref \cite{AWS})}
+točnije njihov \textit{RDS (Relational Database Service, ref. \cite{RDS})} servis koji se koristi upravo za upogonjavanje baza podataka u oblaku.
 
 \section{Entiteti}
 Entiteti su modelirani prema zahtjevima zadatka, a veze su modelirane prema stvarnim situacijama.
@@ -155,7 +155,7 @@ dodavanje u favorite, ocjenjivanje i slično. Slika modela koji je izgrađen iz 
 
 \section{Relacije}
 Iz prethodno opisanog modela pretvorbom iz entiteta u relacijsku shemu, što omogućava
-ERDPlus alat, dobiveno je 10 tablica koje odgovaraju
+ERDPlus alat, dobiveno je 10 tablica (relacija) koje odgovaraju
 entitetima i vezama između njih. Tako se pojavljuju tablice koje ne predstavljaju direktne entitete
 nego njihove međusobne odnose a to su komentari, favoriti i ocjene. Kako bi tablice bile dostupne aplikaciji pa tako i svim
 korisnicima bilo je potrebno upogoniti bazu u oblaku i dodati tablice odgovarajućim naredbama
@@ -164,7 +164,7 @@ Relacijska shema je prikaza slikom \ref{fig:Relacijska shema}.
 \paragraph{SQL naredbe za stvaranje tablica}
 \label{SQL kod}
 \begin{multicols}{2}
-\begin{Verbatim}[fontsize=\scriptsize]
+      \begin{Verbatim}[fontsize=\scriptsize]
 CREATE TABLE role
 (
 id SERIAL,
@@ -263,7 +263,7 @@ PRIMARY KEY (id),
 FOREIGN KEY (user_id) REFERENCES Users(id),
 FOREIGN KEY (recipe_id) REFERENCES Recipe(id)
 );
-\end{Verbatim}
+      \end{Verbatim}
 \end{multicols}
 \begin{figure}[h]
       \includegraphics[width=\textwidth,height=.25\paperheight]{ERDiagram.png}
@@ -366,10 +366,10 @@ Kao arhitekturni stil korišten je GraphQL koji predstavlja upitni jezik koji je
 Tako GraphQL omogućava korisničkoj strani da od poslužiteljske strane zatraži i dobije samo one podatke koji su potrebni.
 Projekt je strukturiran kao Maven (ref. \cite{maven}) projekt koji omogućava dohvat i korištenje biblioteka koje nisu
 dio standardnog javinog paketa.
-Za verzioniranje projekta je korišten alat Git (ref \cite{git}) koji nudi razne mogućnosti, ali jedna od
+Za verzioniranje projekta je korišten alat Git (ref. \cite{git}) koji nudi razne mogućnosti, ali jedna od
 bitnijih je da je vrlo lako vratiti projekt na staru verziju
 ukoliko se dogodi veća pogreška u pisanju programskog koda. Za upogonjavanje
-se kao i za bazu podataku koristi \textit{AWS} (ref. \cite{AWS}), ali drugi servis: \textit{ElasticBeanstalk} servis.
+se kao i za bazu podataku koristi \textit{AWS} (ref. \cite{AWS}), ali drugi servis: \textit{ElasticBeanstalk (ref. \cite{EB})} servis.
 Navedeni servis omogućava da se samo uploada .jar arhiva i sve ostalo će biti
 automatski dodano.
 U svrhe razvoja korišteno je okruženje \textit{VSCode} (ref. \cite{vsc}).
@@ -377,7 +377,7 @@ U svrhe razvoja korišteno je okruženje \textit{VSCode} (ref. \cite{vsc}).
 \subsection{GraphQL}
 
 \subsubsection{Povijest}
-Jedan od većih problema dizajniranja web poslužitelja pa tako i samih web aplikacija u REST
+Jedan od većih problema dizajniranja web poslužitelja pa tako i samih web aplikacija u REST (ref. \cite{REST})
 arhitekturnom stilu je problem prekomjernog dohvata podataka odnosno nedovoljnog dohvata podataka
 \textit{(eng. overfetching and underfetching)}. Ako bi se taj problem pokušao riješiti sa REST
 arhitekturnim stilom bilo bi potrebno stvariti više krajnjih točaka \textit{(eng. endpoint)} za dohvat specifičnog skupa podataka,
@@ -438,51 +438,51 @@ metoda iz opisnika klase.
 \label{graphqlSchema}
 \begin{Verbatim}[fontsize=\scriptsize]
 schema{
-    query: Query
-    mutation: Mutation
+      query: Query
+      mutation: Mutation
 }
 type Query{
-    recipes(filter: Filter!): Recipes!
-    singleRecipe(recipeId: ID!): Recipe!
-    userForId(userId: ID!): Users!
-    users(filter: Filter!): UsersResponse!
-    notApprovedRecipes(filter: Filter!): Recipes!
-    favorites(userId: ID!, filter: Filter!): Recipes!
+      recipes(filter: Filter!): Recipes!
+      singleRecipe(recipeId: ID!): Recipe!
+      userForId(userId: ID!): Users!
+      users(filter: Filter!): UsersResponse!
+      notApprovedRecipes(filter: Filter!): Recipes!
+      favorites(userId: ID!, filter: Filter!): Recipes!
 }
 type Mutation{
-    login(identifier: String!,password:String!): LoginResponse!
-    register(payload: RegisterRequest!): Users!
-    addRecipe(payload: RecipePayload!): Recipe!
-    editFavorite(userId: ID!, recipeId: ID!, state: Boolean!): Boolean!
-    deleteRecipe(recipeId: ID!): Boolean!
-    addComment(userId: ID!,recipeId: ID!,commentText: String!): Comments
-    addRating(userId: ID!,recipeId: ID!, ratingValue: Int!): Boolean!
-    deleteComment(commentId: ID!): Boolean!
-    changeBanStatus(userId: ID!, banStatus: Boolean!): Boolean!
-    changeApproovedStatus(recipeId: ID!, isApprooved: Boolean!): Boolean!
+      login(identifier: String!,password:String!): LoginResponse!
+      register(payload: RegisterRequest!): Users!
+      addRecipe(payload: RecipePayload!): Recipe!
+      editFavorite(userId: ID!, recipeId: ID!, state: Boolean!): Boolean!
+      deleteRecipe(recipeId: ID!): Boolean!
+      addComment(userId: ID!,recipeId: ID!,commentText: String!): Comments
+      addRating(userId: ID!,recipeId: ID!, ratingValue: Int!): Boolean!
+      deleteComment(commentId: ID!): Boolean!
+      changeBanStatus(userId: ID!, banStatus: Boolean!): Boolean!
+      changeApproovedStatus(recipeId: ID!, isApprooved: Boolean!): Boolean!
 }
 \end{Verbatim}
 \paragraph{GraphQL tip podatka}
 \label{graphqlType}
 \begin{Verbatim}[fontsize=\scriptsize]
 type Recipe{
-    id: ID!
-    coverPicture: String!
-    recipeName: String!
-    description: String!
-    isApprooved: Boolean!
-    cookingDuration: Int!
-    user: Users!
-    recipeSteps: [RecipeStep] @relation
-    ingredients: [Ingredient] @relation
-    images: [Image] @relation
-    videos: [Video] @relation
-    ratings: [Rating] @relation
-    comments: [Comments] @relation
-    favoriteTo: [Favorite] @relation
-    averageRating: Float
-    isLikedByCurrentUser: Boolean
-    ratingFromCurrentUser: Int!
+      id: ID!
+      coverPicture: String!
+      recipeName: String!
+      description: String!
+      isApprooved: Boolean!
+      cookingDuration: Int!
+      user: Users!
+      recipeSteps: [RecipeStep] @relation
+      ingredients: [Ingredient] @relation
+      images: [Image] @relation
+      videos: [Video] @relation
+      ratings: [Rating] @relation
+      comments: [Comments] @relation
+      favoriteTo: [Favorite] @relation
+      averageRating: Float
+      isLikedByCurrentUser: Boolean
+      ratingFromCurrentUser: Int!
 }
 \end{Verbatim}
 Nakon dodavanja sheme i ovisnosti potrebno je dodati razrješivače (eng. \textit{resolvere}). U ovom projektu postoje 3 vrste razrješivača:
@@ -899,53 +899,29 @@ jer bi poboljšala iskustvo prilikom korištenja aplikacije.
       U ovom radu napravljena je mobilna aplikacija koja će krajnjim korsinicima olakšati spremanje i pretraživanje
       recepata. Aplikacija se sastoji od 3 dijela: baze podataka, poslužiteljske strane i korisničke strane.
       Da bi aplikacija svima i u svakom trenutku bila dostupna korištene su usluge u oblaku od tvrtke Amazon.
-      Aplikaciji se može pristupiti kao anonimni korisnik, prijavljeni korisnik ili kao administrator.
-      \\
       Baza podataka je implementirana kao relcijska baza podataka, a kao upravitelj je korišten PostgreSQL.
-      Baza je modelirana entitetima i vezama između njih. Glavna karakteristika baze podataka je što se fotografije
-      i videozapisi spremaju u \textit{"oblak"}, a u bazu se sprema samo hiperveza na \textit{"oblak"}. Takva implementacija
-      održavanja veličinu baze podataka najmanje mogućom.
-      \\
       Za razvoj poslužiteljske strane korišten je radni okvir SpringBoot. Kao arhitekturni stil je korišten GraphQL.
       GraphQL predstavlja upitni jezik namijenjen korisničkoj strani za dohvat samo onih podataka
-      koji su uistinu potrebni. GraphQL omogućavanje smanjenje gomilanja prijenosnih objekata i krajnjih točaka,
-      a uz to rješava problem prekomjernog i nedovoljnog dohvata podataka. Autentifikacija i autorizacija se vrši
-      uz pomoć jwt tokena.
-      \\
+      koji su uistinu potrebni.
       Korisnička strana je implementirana u flutter radnom okviru. Jedna od prednosti tog radnog okvira je da se
       temelji na nativnom (eng. native) pristupu razvoju aplikacija. Takav pristup omogućava pisanje samo jednog izvornog koda koji će se moći pokrenuti
-      na većini operacijskih sustava. Također omogućava i izradu dinamičnih i responzivnih aplikacija. Jedan od načina kako
-      izraditi takvu aplikaciju je uz pomoć \textit{BLoC} obrasca. Taj obrazac razdvaja logiku obrade događaja od dizajniranja
-      komponente i tako omogućava prikladno uslojavanje aplikacije i smanjenje međuovisnosti programskog koda.
-      \kljucnerijeci{Mobilna aplikacija, baza podataka, poslužiteljska strana, korisnička strana, oblak, PostgreSQL, SpringBoot, GraphQL, Flutter, Native, AWS .}
-      \newpage
+      na većini operacijskih sustava.
+      \kljucnerijeci{Mobilna aplikacija, baza podataka, poslužiteljska i korisnička, PostgreSQL, SpringBoot, GraphQL, Flutter, AWS .}
 \end{sazetak}
 % TODO: Navedite naslov na engleskom jeziku.
 \engtitle{Mobile application for recipe managment}
 \begin{abstract}
       The result of this project is a mobile application that will help the end users store and search for recipes.
       The aplication is divided in three parts: database, backend and frontend. In order for the application
-      to be globally and constantly accessible cloud services made by the company Amazon were used. Three kinds of users
-      can access this application: anonymus users, logged in users or administrators.
-      \\
-      The database is implemented as a relational databse and PostgreSQL was used as the database manager. The
-      database was modeled using entities and relations between them. The main characteristic of the database
-      is that images and videos are stored on the \textit{"cloud"}, and the database saves only the hyperlink to that
-      \textit{"cloud"}. Such implementation keeps the database size minimal.
-      \\
+      to be globally and constantly accessible cloud services made by the company Amazon were used.
+      The database is implemented as a relational databse and PostgreSQL was used as the database manager.
       The framework used to develop the backend is SpringBoot. The architectural style that was used is GraphQL.
-      GraphQL is a query language intended to be used on the frontend to fetch only the required data. GraphQL also
-      minimizes code duplication that occurs by creating large amounts of data transfer objects and endpoints, while
-      also solving the problem of overfetching and underfetching. For Authentication and Authorization JWT tokens were used.
-      \\
+      GraphQL is a query language intended to be used on the frontend to fetch only the required data.
       The frontend was implemented using the Flutter framework. One of the benefits of that framework is that it uses
       a native approach to development. Such an approach enables writing a single codebase which can be run
-      on nearly every operating system. Flutter also provieds a way of creating dynamic and responsive applications. One
-      way of creating such an application is by using the BLoC pattern. This pattern seperates
-      the event handling logic from
-      the logic of designing widgets which allows the application to be appropriately layered.
+      on nearly every operating system.
 
-      \keywords{Mobile application, database, backend, frontend, cloud, PostgreSQL, SpringBoot, GraphQL, Flutter, Native, AWS.}
+      \keywords{Mobile application, database, backend, frontend, PostgreSQL, SpringBoot, GraphQL, Flutter, AWS.}
 \end{abstract}
 
 \end{document}
